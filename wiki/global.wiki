@@ -1,3 +1,9 @@
+= Please Read =
+ * write everything in english
+ * follow our code conventions
+ * *always* use the svn, before and after the work
+ * more to come ...
+
 = Architecture =
 
 http://www.inf.ufrgs.br/pet/robopet/lib/exe/fetch.php?cache=&media=diagramarobopet.jpeg
