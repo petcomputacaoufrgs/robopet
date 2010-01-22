@@ -4,6 +4,12 @@
  * *always* use the svn, before and after the work
  * more to come ...
 
+= Compilation =
+ * make
+
+= Rebuild =
+ * make -B
+
 = Architecture =
 
 http://www.inf.ufrgs.br/pet/robopet/lib/exe/fetch.php?cache=&media=diagramarobopet.jpeg
