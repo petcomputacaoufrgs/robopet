@@ -8,7 +8,14 @@
 
 = Commiting the project (as a whole) =
  * chmod +x commit-all.sh
- * ./commit-all.sh username
+ * chmod +x commit.sh
+ * ./commit-all.sh "message"
+ * example: ./commit-all.sh "End of the day."
+
+= Commiting one sub-project =
+ * chmod +x commit.sh
+ * ./commit.sh projectname "message"
+ * example: ./commit.sh ai "Better goalkeeper."
 
 = Commands Tutorial =
 
