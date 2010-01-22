@@ -1,5 +1,30 @@
-= First time =
+= Updating your version of the project (as a whole) =
 
+ * svn checkout https://robopet.googlecode.com/svn/trunk robopet --username username@gmail.com
+ * cd robopet
+ * chmod +x checkout-all.sh
+ * chmod +x checkout.sh
+ * ./checkout-all.sh username
 
+= Commiting the project (as a whole) =
+ * chmod +x commit-all.sh
+ * ./commit-all.sh username
 
-= Details =
+= Commands Tutorial =
+
+ * svn delete {file, folder}name - if you want to delete a file or folder
+   * delete just from svn, still needs to delete the folder on your PC
+   * example: svn delete a.txt or svn delete myfolder
+
+ * svn add {file, folder}name - if you want to add a file or folder
+   * add to the svn, so it will be upload in the next time you commit
+   * example: svn add a.txt or svn add *.cpp
+
+ * svn commit . -m "Message"
+   * upload the current version of the code
+   * must be used in the root folder of the project
+   * example:
+     * cd robopet
+     * svn commit . -m "Message" - will commit just robopet
+     * cd robopet/robopet-ai
+     * svn commit . -m "Message" - will commit just robopet-ai
