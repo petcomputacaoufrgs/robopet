@@ -1,0 +1,3 @@
+= Architecture =
+
+http://code.google.com/images/code_sm.png
