@@ -9,9 +9,10 @@
 
 = Uploading the project (as a whole) =
 
+ * *Important note:* remember to add to svn the files you create
+   * use svn status to see the new files (marked with ?)
  * ./commit-all.sh "message"
    * example: ./commit-all.sh "End of the day."
- * *Important note:* remember to add to svn the files you create
 
 = Downloading just one sub-project =
  * ./checkout.sh "projectname" "username"
