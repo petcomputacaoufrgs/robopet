@@ -10,7 +10,7 @@
  * chmod +x commit-all.sh
  * chmod +x commit.sh
  * ./commit-all.sh "message"
- * example: ./commit-all.sh "End of the day."
+   * example: ./commit-all.sh "End of the day."
 
 = Commiting one sub-project =
  * chmod +x commit.sh
