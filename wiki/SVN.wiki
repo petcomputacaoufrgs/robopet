@@ -10,7 +10,8 @@
 = Uploading the project (as a whole) =
 
  * *Important note:* remember to add to svn the files you create
-   * use svn status to see the new files (marked with ?)
+   * use svn status --no-ignore to see the new files (marked with ?)
+   * .o files are ignored (marked with I) but also add then to the svn
  * ./commit-all.sh "message"
    * example: ./commit-all.sh "End of the day."
 
