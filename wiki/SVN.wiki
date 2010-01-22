@@ -31,6 +31,10 @@
    * add to the svn, so it will be uploaded in the next time you commit
    * example: svn add a.txt or svn add `*`.cpp
 
+ * svn list - if you want to see which files are in the svn
+
+ * svn help - to get help
+
  * *Important note:* you must be in the project root folder
  * example:
    * cd robopet
