@@ -1,0 +1,38 @@
+= HELP =
+
+Buenas,
+
+     a comunicação está funcionando. Não comunica nada útil, mas está funcionando. Para utilizá-la basta seguir os exemplos do google protobuf (http://code.google.com/p/protobuf/) ou do robopet-ai.
+
+  Cristiano: Criei a caixa da gui, para isso modifiquei a main e criei um outro makefile (com minúscula) que é executado em vez do Makefile (com maiúscula) criado pelo netbeans. Para a gui voltar a compilar no netbeans, renomeie o makefile (com minúscula). Lembre-se de renomeá-lo novamente antes de upar o código. Na main que eu fiz hoje tem a parte da comunicação, a idéia é colocares o resto da gui ali, só que tens que utilizar o meu makefile (com minúscula), logo tens que acrescentar nele o que faltar para conseguir compilar a gui.
+
+  Fábio, Marcos: Criei a caixa do tracker, com a comunicação. A idéia é colocar a parte que se comunica com a SSL vision, e adaptar o makefile atual.
+
+  Engenheiros: Criei a caixa do rádio, com a comunicação. A idéia é colocar a parte que se comunica com os robôs reais, e adaptar (?) o makefile atual.
+
+  GO, GO desenvolvimento! Manifestem-se na lista caso não saibam o que fazer ou estejam tendo dificuldade. Temos que aproveitar as férias para evoluir o projeto!
+
+= TODO =
+  Proponho desenvolvermos integrando continuamente, a cada passo. Coisas interessantes para fazer semana que vem:
+  * simular movimento no simulador (não precisa ser nem MRU, basta
+interpolar uma reta do ponto onde o objeto está até o ponto onde ele
+quer ir);
+  * função identidade no tracker (apenas repassar o que recebe do
+simulador para a ia)
+  * gui desenhando dois jogadores no campo e permitindo controlar um
+deles (cima / baixo / esquerda / direita)
+  * goleiro da ia (em lua) ficando no mesmo y do outro jogador
+(controlado por um ser humano)
+  * ver isso funcionando em conjunto
+
+  Acho que o ideal seria fazer todos esses pontos, próximo da maneira
+como eu falei, em primeiro lugar, para depois pensar em incrementar
+algum dos projetos mais. Assim teremos todos funcionando minimamente.
+
+  Os próximos passos seriam:
+  * visão vendo dois robôs no campo
+  * radio controlando os robôs conforme a ia
+  * ver funcionando de forma semelhante (?) ao simulador
+
+= DONE =
+ * create TODO (kauê, 22/01)
