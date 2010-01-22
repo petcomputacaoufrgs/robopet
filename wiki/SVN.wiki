@@ -11,7 +11,7 @@
 
  * ./commit-all.sh "message"
    * example: ./commit-all.sh "End of the day."
- * *Important note:* remember to add the files you create
+ * *Important note:* remember to add to svn the files you create
 
 = Downloading just one sub-project =
  * ./checkout.sh "projectname" "username"
