@@ -13,7 +13,7 @@
 
 = Downloading just one sub-project =
  * ./checkout.sh "projectname" "username"
-   * example: ./checkout.sh ai silveira.kaue@gmail.com
+   * example: ./checkout.sh ai robopet@gmail.com
 
 = Uploading just one sub-project =
 
