@@ -14,7 +14,7 @@
  * cd robopet
  * open 5 consoles (ctrl + shift + T)
  * cd robopet-{gui, ia, radio, simulation, tracker}
- * ./{ia, radio, simulator, tracker}
+ * ./{gui, ia, radio, simulator, tracker}
  * press enter in each console (after all 5 are executing)
 
 = Architecture =
