@@ -8,7 +8,7 @@
  * ./commit-all.sh "message"
    * example: ./commit-all.sh "End of the day."
 
-= Commiting one sub-project =
+= Commiting just one sub-project =
  * ./commit.sh projectname "message"
  * example: ./commit.sh ai "Better goalkeeper."
 
