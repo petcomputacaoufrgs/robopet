@@ -32,7 +32,8 @@
    * example: svn add a.txt or svn add `*`.cpp
 
  * svn list - if you want to see which files are in the svn
-
+ * svn status - if you want to see which files you have modified
+ * svn diff - if you want to see your modifications
  * svn help - to get help
 
  * *Important note:* you must be in the project root folder
