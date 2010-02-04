@@ -33,4 +33,4 @@ Buenas,
  * create TODO (kauê, 22/01)
 
 = Long Run =
- * simulator should support two AIs simultaneously
+ * The whole architecture should support two AIs simultaneously
