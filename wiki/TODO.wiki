@@ -31,3 +31,6 @@ Buenas,
 = DONE =
  * função identidade no tracker (apenas repassar o que recebe do simulador para a ia)  (kauê, 22/01)
  * create TODO (kauê, 22/01)
+
+= Long Run =
+ * simulator should support two AIs simultaneously
