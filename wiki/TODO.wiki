@@ -14,7 +14,7 @@ Buenas,
 
 = TODO =
   Proponho desenvolvermos integrando continuamente, a cada passo. Coisas interessantes para fazer semana que vem:
-  * simular movimento no simulador (não precisa ser nem MRU, basta interpolar uma reta do ponto onde o objeto está até o ponto onde ele quer ir);
+  * ~~simular movimento no simulador (não precisa ser nem MRU, basta interpolar uma reta do ponto onde o objeto está até o ponto onde ele quer ir)~~
   * ~~função identidade no tracker (apenas repassar o que recebe do simulador para a ia)~~ 
   * gui desenhando dois jogadores no campo e permitindo controlar um deles (cima / baixo / esquerda / direita)
   * goleiro da ia (em lua) ficando no mesmo y do outro jogador (controlado por um ser humano).
@@ -29,6 +29,7 @@ Buenas,
   * ver funcionando de forma semelhante (?) ao simulador
 
 = DONE =
+ * simular movimento no simulador (não precisa ser nem MRU, basta interpolar uma reta do ponto onde o objeto está até o ponto onde ele quer ir) (kauê, 04/02)
  * função identidade no tracker (apenas repassar o que recebe do simulador para a ia)  (kauê, 22/01)
  * create TODO (kauê, 22/01)
 
