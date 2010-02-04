@@ -1,0 +1,4 @@
+ * commit all (kaue, 04/02)
+ * radio doesn't work alone (kaue, 04/02)
+ * add to svn radio_to_tracker.proto, .o, .h and .cpp (kaue, 04/02)
+ * change all .proto to become "organized" (kaue, 04/02)
