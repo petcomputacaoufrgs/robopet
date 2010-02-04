@@ -1,8 +1,8 @@
 all:
-	cd robopet-ai && $(MAKE)
-	echo "Compilou IA!"
 	cd robopet-communication && $(MAKE)
 	echo "Compilou Communication!"
+	cd robopet-ai && $(MAKE)
+	echo "Compilou IA!"
 	cd robopet-gui && $(MAKE)
 	echo "Compilou GUI!"
 	cd robopet-radio && $(MAKE)
