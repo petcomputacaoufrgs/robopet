@@ -20,3 +20,7 @@
 = Architecture =
 
 http://www.inf.ufrgs.br/pet/robopet/lib/exe/fetch.php?cache=&media=diagramarobopet.jpeg
+
+= Notifications =
+
+Please subscribe to the http://groups.google.com.br/group/robopet group.
