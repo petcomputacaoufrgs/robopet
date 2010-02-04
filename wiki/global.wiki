@@ -4,6 +4,9 @@
  * *always* use the svn, before and after the work
  * more to come ...
 
+= Before you compile =
+ * download and install Google Protobuf (http://code.google.com/p/protobuf/)
+
 = Compilation =
  * make
 
