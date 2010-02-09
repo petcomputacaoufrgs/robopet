@@ -1,3 +1,8 @@
+= Downloading the latest version of subversion =
+ * http://subversion.apache.org/source-code.html
+ * ./configure & make & make check & make install
+ * take libraries from synaptic (apr, etc...)
+
 = Downloading the latest version of the project (as a whole) =
 
  * svn checkout https://robopet.googlecode.com/svn/trunk robopet --username "username"
