@@ -3,6 +3,7 @@
  * checar se o ângulo da visão é para o mesmo lado que o ângulo da IA
  * namespaces and conventions on protos (kaue, 11/02)
  * calibrar os motores a partir da visão
+ * tracker pegar posição mais frequente entre as últimas 10 ou posição perto da atual (ignorar saltos)
 
  * defeitos do robôs
    * as pilhas caem
