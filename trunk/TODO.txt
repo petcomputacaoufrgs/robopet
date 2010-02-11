@@ -1,4 +1,11 @@
- * commit all (kaue, 04/02)
- * radio doesn't work alone (kaue, 04/02)
- * add to svn radio_to_tracker.proto, .o, .h and .cpp (kaue, 04/02)
- * change all .proto to become "organized" (kaue, 04/02)
+
+ * mudar displacement do proto do rádio para float
+ * checar se o ângulo da visão é para o mesmo lado que o ângulo da IA
+ * namespaces and conventions on protos (kaue, 11/02)
+ * calibrar os motores a partir da visão
+
+ * defeitos do robôs
+   * as pilhas caem
+   * a capa atrapalha o movimento (prende na roda)
+   * uma roda é mais forte que a outra
+
