@@ -1,6 +1,16 @@
 
  * mudar displacement do proto do rádio para float
  * checar se o ângulo da visão é para o mesmo lado que o ângulo da IA
+ * ângulos notáveis na IA
+ * girar xor andar
+
+ * rádio com thread vai dar merda quando tiver mais de um robô em campo
+
+ * quando coloca o primeiro robô ele aparece direto
+   * quando coloca o segundo demora
+
+
+
  * namespaces and conventions on protos (kaue, 11/02)
  * calibrar os motores a partir da visão
  * tracker pegar posição mais frequente entre as últimas 10 ou posição perto da atual (ignorar saltos)
