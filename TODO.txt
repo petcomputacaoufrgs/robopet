@@ -9,7 +9,13 @@
  * quando coloca o primeiro robô ele aparece direto
    * quando coloca o segundo demora
 
-
+ * delay muito grande visao->tracker->ai->radio
+   * possíveis causas:
+     * protobuf muito ruim
+       * muitas coisas, tipos, repeated em vez de quantidade fixa
+     * udp ruim
+       * bufferizando, mudar opções
+     * prints
 
  * namespaces and conventions on protos (kaue, 11/02)
  * calibrar os motores a partir da visão
