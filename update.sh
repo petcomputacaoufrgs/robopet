@@ -1,7 +1,7 @@
 #!/bin/sh
-if test $# -ne 1
+if test $# -ne 2
 then
-	echo "usage: $0 projectname"
+	echo "usage: $0 projectname username"
 	echo "given: $*"
 else
 	echo "update $1 ..."
@@ -9,7 +9,7 @@ else
 	then
 		cd robopet-$1
 	fi
-	svn update
+	svn update --username $2
 	if test $1 != "robopet"
 	then
 		cd ..
