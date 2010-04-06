@@ -3,7 +3,7 @@ all:
 	echo "Compilou Communication!"
 	cd robopet-ai && $(MAKE)
 	echo "Compilou IA!"
-	cd robopet-gui && $(MAKE)
+	cd robopet-gui/nbproject && $(MAKE)
 	echo "Compilou GUI!"
 	cd robopet-radio && $(MAKE)
 	echo "Compilou Radio!"
