@@ -38,7 +38,7 @@ constants.o: constants.h
 	$(CC) -c -o $@ $< $(FLAGS)
 
 
-robopet.a: movingObject.o player.o point.o vector.o line.o  fieldInfo.o physicsRobot.o pathplan.o constants.o
+robopet.a: movingObject.o player.o point.o vector.o line.o  fieldInfo.o physicsRobot.o pathplan.o constants.o rrt.o
 #rrt.o
 	$(AA) $(AFLAGS) $@ $^
 
