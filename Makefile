@@ -11,4 +11,5 @@ all:
 	echo "Compilou Simulador!"
 	cd robopet-tracker && $(MAKE)
 	echo "Compilou Tracker!"
-	
+lua:
+	./get_lua.sh
