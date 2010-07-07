@@ -7,9 +7,9 @@ AFLAGS = rsv
 
 OBJECTS= movingObject.o player.o point.o vector.o line.o rrt.o fieldInfo.o physicsRobot.o pathplan.o constants.o
 
-PKG= $(OBJECTS:.o=_pkg.o)
+PKG= vector_pkg.o#$(OBJECTS:.o=_pkg.o)
 
-all: $(OBJECTS) $(PKG) tolua_include
+all: $(OBJECTS) robopet.a
 
 tolua_include:
 	./generate_includes
@@ -44,17 +44,16 @@ pathplan.o: pathplan.cpp pathplan.h
 constants.o: constants.h
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-%_pkg.o: %_pkg.cpp
-	$(CC) -c -o $@ $<
+#%_pkg.o: %_pkg.cpp
+#	$(CC) -c -o $@ $<
 
-%_pkg.cpp: %.h
-	tolua -H $*_pkg.h $< > $@ 
+#%_pkg.cpp: %.pkg
+#	tolua -H $*_pkg.h $< > $@ 
 
 
-robopet.a: $(OBJECTS) $(PKG)
+robopet.a: $(OBJECTS)
 #rrt.o
 	$(AA) $(AFLAGS) $@ $^
 
 clean:
 	rm *.o
-	rm *_pkg.h

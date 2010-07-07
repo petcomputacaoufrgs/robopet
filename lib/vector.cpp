@@ -2,7 +2,7 @@
 #include <cassert>
 #include <math.h>
 
-#define toDegrees(x) ((x) * 180 / (float) RP::PI)
+#define toDegrees(x) ((x) * 180 / (float) PI)
 #define EPS 1e-3
 
 Vector::Vector(): Point(0.0,0.0) {}
@@ -111,7 +111,7 @@ Multiplicando a matriz pelo vetor temos:
 void Vector::rotate(double theta)
 {
 	//Rotaciona o vetor para a esquerda (sentido AH):
-	double angleRadian = theta * RP::PI / 180.0;
+	double angleRadian = theta * PI / 180.0;
 	double cosTheta = cos(angleRadian);
 	double sinTheta = sin(angleRadian);
 
@@ -150,7 +150,8 @@ double Vector::angleDegrees(Vector v) const
 
 /******************************************************
 Função especial pra giraAntes()
-angulo [0-360) com a vertical******************************************************/
+angulo [0-360) com a vertical
+******************************************************/
 #define PI 3.1415
 #define debug_float(x) printf(#x ": %lf\n", (double) x)
 double Vector::angleClockwise() const
