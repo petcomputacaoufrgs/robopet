@@ -38,7 +38,7 @@ class Pathplan
 		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
 		
 		
-		void runPathplan( int pathplanIndex );
+		void runPathplan( int pathplanIndex=PATHPLAN_RRT );
 		
 		void fillEnv(vector<Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
 
