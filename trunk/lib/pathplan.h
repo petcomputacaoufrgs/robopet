@@ -12,7 +12,7 @@
 
 class Pathplan
 {
-	private:
+	protected:
 		list<state> pathFull;  //full solution, showing possible partial branches
 		list<state> pathFinal; //final solution, for path execution purposes
 
@@ -38,7 +38,7 @@ class Pathplan
 		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
 		
 		
-		void runPathplan();
+		void runPathplan( int pathplanIndex );
 		
 		void fillEnv(vector<Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
 
