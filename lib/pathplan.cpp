@@ -86,8 +86,16 @@ void Pathplan::runRRT()
 
 
 
-void Pathplan::runPathplan()
+void Pathplan::runPathplan( int pathplanIndex )
 {
-	
-	runRRT();
+	switch(pathplanIndex){
+
+		case PATHPLAN_RRT:
+			runRRT();
+			break;
+
+
+		case PATHPLAN_ASTAR:
+			break;
+	}
 }
