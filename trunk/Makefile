@@ -11,7 +11,7 @@ all:
 	@echo "Compilou Simulador."
 	@cd robopet-tracker && $(MAKE)
 	@echo "Compilou Tracker."
-	@cd robopet-gui/nbproject && $(MAKE) -f nbproject/Makefile-Release.mk SUBPROJECTS= .build-conf
+	@cd robopet-gui/nbproject && $(MAKE)
 	@echo "Compilou GUI."
 lua:
 	./get_lua.sh

@@ -39,6 +39,12 @@
 #define BALL_RADIUS BALL_RADIUS_MM * PIX_PER_MM / 2
 
 
+// PATHPLANNIG
+enum{
+	PATHPLAN_RRT    = 0,
+	PATHPLAN_ASTAR  = 1
+};
+
 // PATHPLANNING MEASURES
 #define CELLS_PER_MM  MAX_X / ARENA_WIDTH_MM //MAX_X and MAX_Y are dimensions from the matrix on rrt.h
 #define MM_PER_CELLS  ARENA_WIDTH_MM / MAX_X
@@ -52,7 +58,5 @@
 // TRANSFORMATIONS
 #define PIX_TO_MM(x) x * MM_PER_PIX
 #define MM_TO_PIX(x) x * PIX_PER_MM
-
-
 
 #endif
