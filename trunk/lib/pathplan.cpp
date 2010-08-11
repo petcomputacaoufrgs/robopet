@@ -95,6 +95,8 @@ void Pathplan::runPathplan( int pathplanIndex )
 
 bool Pathplan::aStar(RP::Point start, RP::Point goal)
 {
+
+#if 0
 	using RP::Point;
 
 	Closed.clear();
@@ -194,6 +196,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		   }
 		}
 	}
+#endif
 	return false;
 }
 
