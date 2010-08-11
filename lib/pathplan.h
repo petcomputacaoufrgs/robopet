@@ -24,7 +24,9 @@ enum flags
 };
 
 typedef unsigned char byte;
+typedef int Grid;
 
+#if 0
 class Grid
 {
     private:
@@ -48,6 +50,8 @@ class Grid
         //inline byte getCost(){    return cost;    }
 
 };
+#endif
+
 #endif
 
 //RLDU3791
@@ -117,8 +121,8 @@ class Pathplan
 		
 		bool aStar(RP::Point start, RP::Point goal);
 		
-		inline void setBackpointer(int index, int value) { backpointer[index] = value; }
-		inline int getBackpointer(int index) { return backpointer[index]; }
+		//inline void setBackpointer(int index, int value) { backpointer[index] = value; }
+		//inline int getBackpointer(int index) { return backpointer[index]; }
 };
 
 
