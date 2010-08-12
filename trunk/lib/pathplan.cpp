@@ -5,12 +5,6 @@
 
 using namespace std;
 
-Pathplan::Pathplan()
-{
-	
-}
-
-
 Pathplan::Pathplan(Point initialpos, Point finalpos)
 {
 	this->initialpos = initialpos;
@@ -94,6 +88,19 @@ void Pathplan::runPathplan( int pathplanIndex )
 	}
 }
 
+Pathplan::Pathplan()
+{
+	for(int i = 0; i < MAX_X; i++)
+		for(int j = 0; j < MAX_Y; j++) 
+		{
+			g_score[i][j] = 0; 
+			h_score[i][j] = 0; 
+			f_score[i][j] = 0; 
+			cost[i][j] = 0;
+			backpointer[i*MAX_X + j] = -1;
+		}
+}
+
 bool Pathplan::aStar(RP::Point start, RP::Point goal)
 {
 
@@ -111,8 +118,8 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 	//g_score: cost to go from a parent square to a son square	
 	//f_score: h_score + g_score
 
-	int x = start.getX();
-	int y = start.getY();
+	int x = (int)start.getX();
+	int y = (int)start.getY();
 	g_score[x][y] = 0;
 	h_score[x][y] = start.getDistance(goal); 
 	f_score[x][y] = g_score[x][y] + h_score[x][y]; 
@@ -153,20 +160,22 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		      	continue; //goes to another iteration in the loop 'for'
 
 		   	bool podePassar = true;
-           	if(i >= 4) //4 because only RIGHT, LEFT, UP and DOWN are tested. The diagonals aren't because the robots won't move in this ways
-               	for(int j = 0; j < 4; j++)
-                   	if(cost[element + corners[j]] == 1000) 
-                   	{ //se o vizinho (element+corners[j]) tiver um obstáculo, não pode passar
+           	for(int j = 0; j < 4; j++)
+				{
+					Point coords = p + corners[j];
+                   	if(cost[(int)coords.getX()][(int)coords.getY()] == 1000) 
+                   	{ 	
                     	podePassar = false;
                        	break;
                    	}
-
+				}
            	if(!podePassar)
               	continue; //termina a iteração vigente do for e começa outra  
 
-		   	double tentative_g_score = g_score[(int)p.getX()][(int)p.getY()] + p.getDistance(neighbor);
-		   	bool tentative_is_better = false;
+		   	double tentative_g_score = 	g_score[(int)p.getX()][(int)p.getY()] +
+									   	p.getDistance(neighbor);
 
+		   	bool tentative_is_better = false;
 		   	if(env[(int)neighbor.getX()][(int)neighbor.getY()].isNew())
 		   	{
 		       env[(int)neighbor.getX()][(int)neighbor.getY()].setOpen(); 
@@ -177,12 +186,12 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 
 		   	if(tentative_is_better) //se a posição for a melhor, então ela é armazenada
 		   	{   					   //no vetor backpointer
-		       setBackpointer(neighbor, element); //neighbor é o índice de uma posição do campo no 	vetor backpointer
-			   int x = neighbor.getX();
-			   int y = neighbor.getY();
+		       setBackpointer((int)neighbor.getIndex(), (int)p.getIndex());
+			   int x = (int)neighbor.getX();
+			   int y = (int)neighbor.getY();
 		       g_score[x][y] = tentative_g_score;
 		       f_score[x][y] = g_score[x][y] + h_score[x][y] + cost[x][y];
-		       Open.insert(Par(neighbor, f_score[neighbor]));
+		       Open.insert( make_pair(neighbor, f_score[neighbor]) );
 		   	}
 		}
 	}
@@ -190,3 +199,38 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 	return false;
 }
 
+/*
+void Pathplan::print()
+{
+	    //backpointer é um vetor com o tamanho do campo
+        for(int i=0; i<WIDTH; i++)
+            cout << i%10 << " ";
+        cout << endl << endl;
+		for(int j = 0; j < HEIGHT; j++)
+		{
+		   for(int i = 0; i < WIDTH; i++)
+		   {
+			  int pos = INDEX(i,j);
+			  for(int k = 0; k < NUM_NEIGHBORS; k++)
+			  {
+				  if(cost[pos] == 1000)
+				  {
+					  cout << "#" << " ";
+					  break;
+				  }
+				  if(backpointer[pos] == -1)
+				  {
+					  cout << "_" << " ";
+					  break;
+				  }
+				  else if(pos + corners[k] == backpointer[pos])
+				  {
+					  cout << mask[k] << " ";
+				  }
+			  }
+		   }
+		   cout << endl;
+		}
+		cout << endl << "===================" << endl;
+}
+*/
