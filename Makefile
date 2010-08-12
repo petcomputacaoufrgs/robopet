@@ -1,17 +1,17 @@
 all:
 	@cd lib && $(MAKE)
-	@echo "Compilou robopet lib."
+	@echo "Compiled robopet lib."
 	@cd robopet-communication && $(MAKE)
-	@echo "Compilou Communication."
+	@echo "Compiled Communication."
 	@cd robopet-ai && $(MAKE)
-	@echo "Compilou IA."
+	@echo "Compiled AI."
 	@cd robopet-radio && $(MAKE)
-	@echo "Compilou Radio."
+	@echo "Compiled Radio."
 	@cd robopet-simulation && $(MAKE)
-	@echo "Compilou Simulador."
+	@echo "Compiled Simulator."
 	@cd robopet-tracker && $(MAKE)
-	@echo "Compilou Tracker."
+	@echo "Compiled Tracker."
 	@cd robopet-gui/nbproject && make -f nbproject/Makefile-Release.mk ../GUI
-	@echo "Compilou GUI."
+	@echo "Compiled GUI."
 lua:
 	./get_lua.sh

@@ -61,9 +61,10 @@ Point Pathplan::getPathNode(int nodeIndex)
 	return *it;
 }
 
-/*
+
 void Pathplan::runRRT()
 {
+	#if 0
 	//this is the interface for Cristiano's RRT implementation
 	
 	state initial = state( MM_TO_CELLS( initialpos.getX() ), MM_TO_CELLS( initialpos.getY() ));
@@ -76,8 +77,9 @@ void Pathplan::runRRT()
 	this->pathFinal = solutionTree->findSolucao(goal);
 
 	//print(solutionTree,initial,goal,caminhoSolucao,env); //imprime resultado no console
+	#endif
 }
-*/
+
 
 void Pathplan::runPathplan( int pathplanIndex )
 {
@@ -95,7 +97,7 @@ void Pathplan::runPathplan( int pathplanIndex )
 bool Pathplan::aStar(RP::Point start, RP::Point goal)
 {
 
-//#if 0
+#if 0
 	using RP::Point;
 
 	//'Close' and 'Open' are ASet objects. Each of its terms has a point and a double variable
@@ -110,7 +112,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 	//f_score: h_score + g_score
 
 	int x = start.getX();
-	int y = start.getY()
+	int y = start.getY();
 	g_score[x][y] = 0;
 	h_score[x][y] = start.getDistance(goal); 
 	f_score[x][y] = g_score[x][y] + h_score[x][y]; 
@@ -126,7 +128,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 	//RIGHT, LEFT, DOWN, UP, RIGHT_DOWN, LEFT_UP, RIGHT_UP, LEFT_DOWN
 	Point corners[] = { Point(1,0), Point(-1,0), Point(0,1), 
 						Point(0,-1), Point(1,1), Point(-1,-1),
-						Point(1,-1), Point(-1,1) }
+						Point(1,-1), Point(-1,1) };
 
 	while(!Open.empty())
 	{
@@ -137,7 +139,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		     return true; //the goal has been reached, finishes AStar algorithm
 		
 		//we analized the point p. It has to be set as closed, should be placed in the 'Closed' set and erased from the 'Open' one
-		env[p.getX()][p.getY()].setClosed();
+		env[(int)p.getX()][(int)p.getY()].setClosed();
 		Closed.insert(*a); 
 		Open.erase(*a); 
 
@@ -147,7 +149,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		   
 		    /*---- Test the validity of the neighbors here!! ----*/
 		   
-		   	if(env[neighbor.getX()][neighbor.getY()].isClosed())
+		   	if(env[(int)neighbor.getX()][(int)neighbor.getY()].isClosed())
 		      	continue; //goes to another iteration in the loop 'for'
 
 		   	bool podePassar = true;
@@ -162,15 +164,15 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
            	if(!podePassar)
               	continue; //termina a iteração vigente do for e começa outra  
 
-		   	double tentative_g_score = g_score[p.getX()][p.getY()] + p.getDistance(neighbor);
+		   	double tentative_g_score = g_score[(int)p.getX()][(int)p.getY()] + p.getDistance(neighbor);
 		   	bool tentative_is_better = false;
 
-		   	if(env[neighbor.getX()][neighbor.getY()].isNew())
+		   	if(env[(int)neighbor.getX()][(int)neighbor.getY()].isNew())
 		   	{
-		       env[neighbor.getX()][neighbor.getY()].setOpen(); 
+		       env[(int)neighbor.getX()][(int)neighbor.getY()].setOpen(); 
 		       tentative_is_better = true; 
 		   	}
-		   	else if(tentative_g_score < g_score[neighbor.getX()][neighbor.getY()]) 
+		   	else if(tentative_g_score < g_score[(int)neighbor.getX()][(int)neighbor.getY()]) 
 		       tentative_is_better = true;
 
 		   	if(tentative_is_better) //se a posição for a melhor, então ela é armazenada
@@ -184,7 +186,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		   	}
 		}
 	}
-//#endif
+#endif
 	return false;
 }
 
