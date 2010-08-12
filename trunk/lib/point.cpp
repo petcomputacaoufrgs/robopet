@@ -36,7 +36,6 @@ void Point::setXY(const Point &p)
 }
 
 
-
 /***************************************************************
 Método para calcular a distância entre o objeto e o parâmetro
 retorno: uma float com o módulo da distancia
@@ -58,7 +57,7 @@ double Point::getDistanceX(const Point &p) const
 
        // operador ternário, calcula o modulo
        return fabs(distance);
-}
+} 
 
 /***************************************************************
 Método para calcular a dsitância entre o objeto e o parâmetro,
