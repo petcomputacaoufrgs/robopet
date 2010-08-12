@@ -81,30 +81,34 @@ inline int REVERSE_INDEX_Y(int num) { return ((int) num / MAX_Y); }
 double DISTANCE(int num1, int num2);
 
 
-typedef set< pair<RP::Point,double> > ASet;
+typedef set< pair<RP::Point,double> > ASet; //ASet is set of pairs of values. Each pair has pair of coordinates (x,y), representing the position of the squares from the environment matriz and the other is a 
 
 class Pathplan
 {
 	protected:
+
 		list<state> pathFull;  //full solution, showing possible partial branches
 		list<state> pathFinal; //final solution, for path execution purposes
 
+		//----- Sets -----
 		ASet Closed;
 		ASet Open;
 
 		Grid env[MAX_X][MAX_Y]; //environment matrix
 		int backpointer[MAX_X][MAX_Y];
+
+		////-----  -----
 		double g_score[MAX_X][MAX_Y];
 		double h_score[MAX_X][MAX_Y];
 		double f_score[MAX_X][MAX_Y];
 		int cost[MAX_X][MAX_Y];
-
 		
 		void fillEnv_playerBox(int centerx, int centery, int safetyCells);
 		void runRRT(); //driver for RRT
 		
 
 	public:
+
 		//positions are, by convention, in milimeters
 		Point initialpos;
 		Point finalpos;
@@ -113,11 +117,14 @@ class Pathplan
 		Pathplan();
 		Pathplan(Point initialpos, Point finalpos);
 		~Pathplan();
-				
-		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
+		
+		//returns a specific node on pathFinal (initialState is 0)		
+		Point getPathNode(int nodeIndex); 
 		
 		void runPathplan( int pathplanIndex=PATHPLAN_RRT );		
-		void fillEnv(vector<Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
+
+		//fills the enviroment with positions of the obstacles (currently, only for players)
+		void fillEnv(vector<Point> playersPositions); 
 		
 		bool aStar(RP::Point start, RP::Point goal);
 		
