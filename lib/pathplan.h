@@ -95,9 +95,9 @@ class Pathplan
 		ASet Open;
 
 		Grid env[MAX_X][MAX_Y]; //environment matrix
-		int backpointer[MAX_X][MAX_Y];
+		int backpointer[MAX_X * MAX_Y]; //stores the path from the goal to the start
 
-		////-----  -----
+		////----- Matrixes -----
 		double g_score[MAX_X][MAX_Y];
 		double h_score[MAX_X][MAX_Y];
 		double f_score[MAX_X][MAX_Y];
@@ -105,7 +105,7 @@ class Pathplan
 		
 		void fillEnv_playerBox(int centerx, int centery, int safetyCells);
 		void runRRT(); //driver for RRT
-		
+		void print();
 
 	public:
 
