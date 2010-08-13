@@ -38,6 +38,7 @@ class Point
 		Point& operator=(const Point &p);
 		//Point& operator=(Point p);
 
+		bool operator<(const Point &p) const;
         bool operator==(const Point &p) const;
         bool operator!=(const Point &p) const;
         Point operator+(const Point &p) const;

@@ -79,6 +79,14 @@ Operadores:
 ***************************************************************/
 
 /******************************************************
+Operação de comparação de pontos '<'
+******************************************************/
+bool Point::operator<(const Point &pos) const
+{
+	return x < pos.getX() || ((x == pos.getX()) && y < pos.getY())
+}
+
+/******************************************************
 Operação de comparação de pontos '=='
 ******************************************************/
 bool Point::operator==(const Point &pos) const
