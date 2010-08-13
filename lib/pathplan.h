@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "point.h"
+#include "grid.h"
 #include "constants.h"
 #include "rrt.h"
 #include <iostream>
@@ -11,48 +12,6 @@
 #include <cstdio>
 
 using namespace std;
-
-#ifndef _GRID_H_
-#define _GRID_H_
-#define GRID_SIZE_X 5
-#define GRID_SIZE_Y 5
-
-enum flags
-{
-    OPEN_BIT = 1,
-    NEW_BIT = 2
-};
-
-typedef unsigned char byte;
-typedef int Grid;
-
-#if 0
-class Grid
-{
-    private:
-        byte tags; //Flags enumeradas acima
-
-        byte sizeX; //tamanho da grade, para o sistema do RoboPET
-        byte sizeY;
-
-    public:
-        Grid(int sx = GRID_SIZE_X, int sy = GRID_SIZE_Y);
-        ~Grid(){ };
-
-        inline bool isOpen(){    return (tags & OPEN_BIT) && !(tags & NEW_BIT);    }  //está pronto para ser analisado
-        inline bool isClosed(){    return !(tags & OPEN_BIT) && !(tags & NEW_BIT);    } //já analisado
-        inline bool isNew(){    return (tags & NEW_BIT);    } //
-
-        inline void setOpen(){    tags = (tags | OPEN_BIT) - (tags & NEW_BIT);    }
-        inline void setClosed(){    tags = tags - (tags & OPEN_BIT) - (tags & NEW_BIT);    }
-
-        //inline void setCost(byte newCost){    cost = newCost;    }
-        //inline byte getCost(){    return cost;    }
-
-};
-#endif
-
-#endif
 
 //RLDU3791
 

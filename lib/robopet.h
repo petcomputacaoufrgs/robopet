@@ -16,7 +16,6 @@ namespace RP {
 		static const double PI = acos((double)-1);
 
 		class Player;
-
 		class Vector;
 		class Line;
 		class Point;
