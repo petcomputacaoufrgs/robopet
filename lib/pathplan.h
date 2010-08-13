@@ -64,7 +64,6 @@ class Pathplan
 		
 		void fillEnv_playerBox(int centerx, int centery, int safetyCells);
 		void runRRT(); //driver for RRT
-		void print();
 
 	public:
 
@@ -86,9 +85,9 @@ class Pathplan
 		void fillEnv(vector<Point> playersPositions); 
 		
 		bool aStar(RP::Point start, RP::Point goal);
-		
-		//inline void setBackpointer(int index, int value) { backpointer[index] = value; }
-		//inline int getBackpointer(int index) { return backpointer[index]; }
+		inline void setBackpointer(int index, int value) { backpointer[index] = value; }
+		inline int getBackpointer(int index) { return backpointer[index]; }
+		void print();
 };
 
 
