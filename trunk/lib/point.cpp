@@ -83,7 +83,7 @@ Operação de comparação de pontos '<'
 ******************************************************/
 bool Point::operator<(const Point &pos) const
 {
-	return x < pos.getX() || ((x == pos.getX()) && y < pos.getY())
+	return getX() < pos.getX() || ((getX() == pos.getX()) && getY() < pos.getY());
 }
 
 /******************************************************

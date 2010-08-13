@@ -9,7 +9,7 @@ OBJECTS= movingObject.o player.o point.o vector.o line.o rrt.o fieldInfo.o physi
 
 PKG= vector_pkg.o#$(OBJECTS:.o=_pkg.o)
 
-astar_pet: main.cpp pathplan.o
+astar_pet: main.cpp $(OBJECTS)
 	$(CC) $^ -o $@ $(CFLAGS)
 
 all: $(OBJECTS) robopet.a
