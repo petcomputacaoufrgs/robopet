@@ -21,19 +21,18 @@ using namespace std;
 int main()
 {
 		Pathplan campo;
-		
-#if 0		
+
 		Point start(2.0, 2.0);
 		//cout << "1" << endl;
-		Point goal(10.0, 10.0);
-		//cout << "2" << endl; 
+		Point goal(7.0, 7.0);
+		//cout << "2" << endl;
 
-		int i; 
-	
+		int i;
+
 		campo.aStar(start, goal);
 		//cout << "3" << endl;
     	cout << endl << "===================" << endl;
-		
+
 		i = INDEX(goal); //(int)goal.getIndex();
 
 		while(i != INDEX(start))
@@ -46,6 +45,5 @@ int main()
 
 		cout << endl << "===================" << endl;
 		campo.print();
-		cout << endl << "===================" << endl;	
-#endif	
+		cout << endl << "===================" << endl;
 }

@@ -57,7 +57,7 @@ double Point::getDistanceX(const Point &p) const
 
        // operador ternário, calcula o modulo
        return fabs(distance);
-} 
+}
 
 /***************************************************************
 Método para calcular a dsitância entre o objeto e o parâmetro,
@@ -83,7 +83,17 @@ Operação de comparação de pontos '<'
 ******************************************************/
 bool Point::operator<(const Point &pos) const
 {
-	return getX() < pos.getX() || ((getX() == pos.getX()) && getY() < pos.getY());
+	if ( getY() > pos.getY() )
+		return false;
+	if ( getY() < pos.getY() )
+		return true;
+	else //os Y são iguais
+		if ( getX() < pos.getX() )
+			return true;
+		else
+			return false;
+
+		//return  || ((getY() == pos.getY()) && );
 }
 
 /******************************************************
@@ -161,4 +171,3 @@ Point Point::operator-() const
 	Point p(-getX(),-getY());
 	return p;
 }
-
