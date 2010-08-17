@@ -10,6 +10,7 @@
 #include <set>
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
 using namespace std;
 
@@ -28,12 +29,12 @@ enum
 	NUM_NEIGHBORS //8
 };
 
-inline bool IS_BOTTOM_BORDER(int num) { return ((int) num / MAX_Y == MAX_Y - 1) ? true : false; }
-inline bool IS_UPPER_BORDER(int num) { return ((int) num / MAX_Y == 0) ? true : false; }
-inline bool IS_RIGHT_BORDER(int num) { return ((int) num % MAX_X == MAX_X - 1) ? true : false; }
-inline bool IS_LEFT_BORDER(int num) { return ((int) num % MAX_X == 0) ? true : false; }
+inline int INDEX(Point p) { return p.getX() + (p.getY() * MAX_X); }
+inline bool IS_BOTTOM_BORDER(Point p) { return ( INDEX(p) / MAX_Y == MAX_Y - 1) ? true : false; }
+inline bool IS_UPPER_BORDER(Point p) { return ( INDEX(p) / MAX_Y == 0) ? true : false; }
+inline bool IS_RIGHT_BORDER(Point p) { return ( INDEX(p) % MAX_X == MAX_X - 1) ? true : false; }
+inline bool IS_LEFT_BORDER(Point p) { return ( INDEX(p) % MAX_X == 0) ? true : false; }
 
-inline int INDEX(int x, int y) { return x + (y * MAX_X); }
 inline int REVERSE_INDEX_X(int num) { return ((int) num % MAX_X); }
 inline int REVERSE_INDEX_Y(int num) { return ((int) num / MAX_Y); }
 
