@@ -40,24 +40,22 @@ inline int REVERSE_INDEX_Y(int num) { return ((int) num / MAX_Y); }
 
 double DISTANCE(int num1, int num2);
 
+typedef set< pair<double,RP::Point> > ASet; //ASet is set of pairs of values. Each pair has pair of coordinates (x,y), representing the position of the squares from the environment matriz and the other is a
+
 /*
 class AElement
 {
 	private:
-		RP::Point element;
+		Point element;
 		double cost;
 
 	public:
-		AElement(RP::Point p, double c = 0) { element = p; cost = c; }
+		AElement(Point p, double c = 0) { element = p; cost = c; }
 		~AElement() { }
 		bool operator<(const AElement& other) const { return (cost < other.cost) ? true : false; }
-		inline RP::Point getPoint() const { return element; }
+		inline Point getPoint() const { return element; }
 }
 */
-
-
-typedef set< pair<RP::Point,double> > ASet; //ASet is set of pairs of values. Each pair has pair of coordinates (x,y), representing the position of the squares from the environment matriz and the other is a
-
 
 class Pathplan
 {
@@ -67,6 +65,9 @@ class Pathplan
 		list<state> pathFinal; //final solution, for path execution purposes
 
 		//----- Sets -----
+
+		//set<AElement> Closed;
+		//set<AElement> Open;
 		ASet Closed;
 		ASet Open;
 

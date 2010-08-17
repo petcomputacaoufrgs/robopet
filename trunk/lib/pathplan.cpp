@@ -109,7 +109,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 	//'Close' and 'Open' are ASet objects. Each of its terms has a point and a double variable
 	Closed.clear();
 	Open.clear();
-	Open.insert( make_pair(start, 0) );
+	Open.insert( make_pair(0, start) );
 
     //an obstacle has the value 1000. E.g. cost[x][y] = 1000;
 
@@ -131,7 +131,6 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		{
 			Point aux(i,j);
 			h_score[i][j] = aux.getDistance(goal);
-			//cout << i << "," << j << " - " << h_score[i][j] << endl;
 		}
 
 	//RIGHT, LEFT, DOWN, UP, RIGHT_DOWN, LEFT_UP, RIGHT_UP, LEFT_DOWN
@@ -143,9 +142,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 	while(!Open.empty())
 	{
         ASet::iterator a = Open.begin(); //the iterator points to the first item in the set 'Open'
-		Point p = a->first; //the point p now has the first element of the pair pointed by the a iterator
-		count++;
-		//cout << count << " - Astar 7" << endl;
+		Point p = a->second; //the point p now has the first element of the pair pointed by the a iterator
 		if( p == goal)
 		     return true; //the goal has been reached, finishes AStar algorithm
 
@@ -157,18 +154,12 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		for(int i = 0; i < 8; i++) //8 == number of neighbors
 		{
 			Point neighbor = p + corners[i];
-			//getchar();
-			//cout << "p: " << INDEX(p) << ", neighbor: " << INDEX(neighbor) << endl;
-
 
 		    if( (IS_BOTTOM_BORDER(p) && (i == DOWN || i == LEFT_DOWN || i == RIGHT_DOWN)) ||
 		       (IS_UPPER_BORDER(p) && (i == UP || i == LEFT_UP || i == RIGHT_UP)) ||
 		       (IS_RIGHT_BORDER(p) && (i == RIGHT || i == RIGHT_UP || i == RIGHT_DOWN)) ||
 		       (IS_LEFT_BORDER(p) && (i == LEFT || i == LEFT_UP || i == LEFT_DOWN)) )
-			{
-			  //cout << count << " - if" << endl;
 		      continue;
-			}
 
 		   	bool podePassar = true;
            	for(int j = 0; j < 4; j++)
@@ -187,8 +178,6 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 			if(env[(int)neighbor.getX()][(int)neighbor.getY()].isClosed())
 		      	continue; //goes to another iteration in the loop 'for'
 
-			//cout << "podePassar: " << podePassar << ", env: " << env[(int)neighbor.getX()][(int)neighbor.getY()].isClosed() << endl;
-
 		   	double tentative_g_score = 	g_score[(int)p.getX()][(int)p.getY()] +
 									   	p.getDistance(neighbor);
 
@@ -201,8 +190,6 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		   	else if(tentative_g_score < g_score[(int)neighbor.getX()][(int)neighbor.getY()])
 		       tentative_is_better = true;
 
-			//cout << "tentative_g_score: " << tentative_g_score << ", tentative_is_better: " << tentative_is_better << endl;
-
 		   	if(tentative_is_better) //se a posição for a melhor, então ela é armazenada
 		   	{   					   //no vetor backpointer
 		       setBackpointer(INDEX(neighbor), INDEX(p));
@@ -210,8 +197,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 			   int y = (int)neighbor.getY();
 		       g_score[x][y] = tentative_g_score;
 		       f_score[x][y] = g_score[x][y] + h_score[x][y] + cost[x][y];
-		       Open.insert( make_pair(neighbor,f_score[x][y]) );
-		      // cout << "p: " << INDEX(p) << ", neighbor: " << INDEX(neighbor) << endl;
+		       Open.insert( make_pair(f_score[x][y],neighbor) );
 		   	}
 		}
 	}

@@ -23,23 +23,20 @@ int main()
 		Pathplan campo;
 
 		Point start(2.0, 2.0);
-		//cout << "1" << endl;
 		Point goal(7.0, 7.0);
-		//cout << "2" << endl;
 
 		int i;
 
 		campo.aStar(start, goal);
-		//cout << "3" << endl;
     	cout << endl << "===================" << endl;
 
-		i = INDEX(goal); //(int)goal.getIndex();
+		i = INDEX(goal);
 
 		while(i != INDEX(start))
 		{
 			cout << REVERSE_INDEX_X(i) << ", " << REVERSE_INDEX_Y(i) << endl;
 			i = campo.getBackpointer(i); //pega o próximo nodo do caminho de goal até start
-			//cout << "i: " << i << endl;
+			cout << "i: " << i << endl;
 		}
 		cout << REVERSE_INDEX_X(i) << ", " << REVERSE_INDEX_Y(i) << endl;
 
