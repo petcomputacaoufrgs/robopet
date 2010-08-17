@@ -10,8 +10,12 @@
 
 
 //Constantes Variáveis
-#define MAX_X 128 //dimensões da matriz que abstrai o ambiente
-#define MAX_Y 93  //dimensões da matriz que abstrai o ambiente
+
+#define MAX_X 20 //dimensões da matriz que abstrai o ambiente
+#define MAX_Y 20  //dimensões da matriz que abstrai o ambiente
+
+//#define MAX_X 128 //dimensões da matriz que abstrai o ambiente
+//#define MAX_Y 93  //dimensões da matriz que abstrai o ambiente
 
 #define DIRECTIONS_TO_LOOK 3 //para extend, deve estar em {0, 1, ..., 8}
 #define MAX_STEPSIZE 1

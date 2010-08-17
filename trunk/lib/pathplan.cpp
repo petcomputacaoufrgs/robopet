@@ -104,7 +104,6 @@ Pathplan::Pathplan()
 bool Pathplan::aStar(RP::Point start, RP::Point goal)
 {
 
-#if 0
 	using RP::Point;
 
 	//'Close' and 'Open' are ASet objects. Each of its terms has a point and a double variable
@@ -113,6 +112,8 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 	Open.insert( make_pair(start,0) );
 
     //an obstacle has the value 1000. E.g. cost[x][y] = 1000; 
+
+	cost[6][6] = 1000;
 
 	//h_score: heuristics (a guess about the distance from a square to the goal) - this heuristics calculates the distance between two squares (points) on the environment matrix using euclidean distance [sqrt((x-x0)²+(y-y0)²)]
 	//g_score: cost to go from a parent square to a son square	
@@ -130,6 +131,7 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		{
 			Point aux(i,j);	
 			h_score[i][j] = aux.getDistance(goal); 
+			//cout << i << "," << j << " - " << h_score[i][j] << endl;
 		}
 
 	//RIGHT, LEFT, DOWN, UP, RIGHT_DOWN, LEFT_UP, RIGHT_UP, LEFT_DOWN
@@ -137,11 +139,13 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 						Point(0,-1), Point(1,1), Point(-1,-1),
 						Point(1,-1), Point(-1,1) };
 
+	int count = 0;
 	while(!Open.empty())
 	{
         ASet::iterator a = Open.begin(); //the iterator points to the first item in the set 'Open'
 		Point p = a->first; //the point p now has the first element of the pair pointed by the a iterator
-		
+		count++;
+		//cout << count << " - Astar 7" << endl;
 		if( p == goal)
 		     return true; //the goal has been reached, finishes AStar algorithm
 		
@@ -154,7 +158,14 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 		{
 			Point neighbor = p + corners[i];
 		   
-		    /*---- Test the validity of the neighbors here!! ----*/
+		    if( (IS_BOTTOM_BORDER(p) && (i == DOWN || i == LEFT_DOWN || i == RIGHT_DOWN)) ||
+		       (IS_UPPER_BORDER(p) && (i == UP || i == LEFT_UP || i == RIGHT_UP)) ||
+		       (IS_RIGHT_BORDER(p) && (i == RIGHT || i == RIGHT_UP || i == RIGHT_DOWN)) ||
+		       (IS_LEFT_BORDER(p) && (i == LEFT || i == LEFT_UP || i == LEFT_DOWN)) )
+			{
+			  cout << count << " - if" << endl; 	
+		      continue;
+			}
 		   
 		   	if(env[(int)neighbor.getX()][(int)neighbor.getY()].isClosed())
 		      	continue; //goes to another iteration in the loop 'for'
@@ -186,44 +197,49 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 
 		   	if(tentative_is_better) //se a posição for a melhor, então ela é armazenada
 		   	{   					   //no vetor backpointer
-		       setBackpointer((int)neighbor.getIndex(), (int)p.getIndex());
+		       setBackpointer(INDEX(neighbor), INDEX(p));
 			   int x = (int)neighbor.getX();
 			   int y = (int)neighbor.getY();
 		       g_score[x][y] = tentative_g_score;
 		       f_score[x][y] = g_score[x][y] + h_score[x][y] + cost[x][y];
-		       Open.insert( make_pair(neighbor, f_score[neighbor]) );
+		       Open.insert( make_pair(neighbor,f_score[x][y]));
 		   	}
 		}
 	}
-#endif
+
 	return false;
 }
 
-/*
+
 void Pathplan::print()
 {
 	    //backpointer é um vetor com o tamanho do campo
-        for(int i=0; i<WIDTH; i++)
+		char mask[] = "RLDU3791";
+		Point corners[] = { Point(1,0), Point(-1,0), Point(0,1), 
+							Point(0,-1), Point(1,1), Point(-1,-1),
+							Point(1,-1), Point(-1,1) };
+        for(int i=0; i<MAX_X; i++)
             cout << i%10 << " ";
         cout << endl << endl;
-		for(int j = 0; j < HEIGHT; j++)
+		for(int j = 0; j < MAX_Y; j++)
 		{
-		   for(int i = 0; i < WIDTH; i++)
+		   for(int i = 0; i < MAX_X; i++)
 		   {
-			  int pos = INDEX(i,j);
-			  for(int k = 0; k < NUM_NEIGHBORS; k++)
+			  Point pos = Point(i,j);
+			  for(int k = 0; k < 8; k++)
 			  {
-				  if(cost[pos] == 1000)
+				  if(cost[(int)pos.getX()][(int)pos.getY()] == 1000)
 				  {
 					  cout << "#" << " ";
 					  break;
 				  }
-				  if(backpointer[pos] == -1)
+				  Point test = pos + corners[k];
+				  if(backpointer[INDEX(pos)] == -1)
 				  {
 					  cout << "_" << " ";
 					  break;
 				  }
-				  else if(pos + corners[k] == backpointer[pos])
+				  else if(INDEX(test) == backpointer[INDEX(pos)])
 				  {
 					  cout << mask[k] << " ";
 				  }
@@ -233,4 +249,4 @@ void Pathplan::print()
 		}
 		cout << endl << "===================" << endl;
 }
-*/
+
