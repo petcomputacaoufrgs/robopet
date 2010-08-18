@@ -9,14 +9,14 @@ OBJECTS= movingObject.o player.o point.o vector.o line.o rrt.o fieldInfo.o physi
 
 PKG= vector_pkg.o#$(OBJECTS:.o=_pkg.o)
 
+all: robopet.a astar_pet
+
 astar_pet: main.cpp $(OBJECTS)
 	$(CC) $^ -o $@ $(CFLAGS)
 
-all: $(OBJECTS) robopet.a
-
 tolua_include:
 	./generate_includes
-	
+
 movingObject.o: movingObject.h movingObject.cpp
 	$(CC) -c -o $@ movingObject.cpp $(CFLAGS)
 
@@ -32,8 +32,8 @@ vector.o: point.o vector.cpp vector.h
 line.o: vector.o line.cpp line.h
 	$(CC) -c -o $@ -c line.cpp $(CFLAGS)
 
-#rrt.o: rrt.cpp rrt.h point.o
-#	$(CC) -c -o $@ $< $(FLAGS)
+rrt.o: rrt.cpp rrt.h point.o
+	$(CC) -c -o $@ $< $(FLAGS)
 
 fieldInfo.o: fieldInfo.cpp fieldInfo.h
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -44,16 +44,19 @@ physicsRobot.o: physicsRobot.cpp physicsRobot.h
 pathplan.o: pathplan.cpp pathplan.h
 	$(CC) -c -o $@ $< $(CFLAGS)
 
+
+
 #%_pkg.o: %_pkg.cpp
 #	$(CC) -c -o $@ $<
 
 #%_pkg.cpp: %.pkg
-#	tolua -H $*_pkg.h $< > $@ 
+#	tolua -H $*_pkg.h $< > $@
 
 
-robopet.a: $(OBJECTS)
 #rrt.o
+robopet.a: $(OBJECTS)
 	$(AA) $(AFLAGS) $@ $^
 
 clean:
 	rm *.o
+	rm *.a
