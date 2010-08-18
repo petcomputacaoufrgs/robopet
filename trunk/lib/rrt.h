@@ -11,8 +11,9 @@
 
 //Constantes Variáveis
 
-#define MAX_X 20 //dimensões da matriz que abstrai o ambiente
-#define MAX_Y 20  //dimensões da matriz que abstrai o ambiente
+//MAX_X = 28 dá segment fault, com até 122 funciona
+#define MAX_X 15 //dimensões da matriz que abstrai o ambiente
+#define MAX_Y 15  //dimensões da matriz que abstrai o ambiente
 
 //#define MAX_X 128 //dimensões da matriz que abstrai o ambiente
 //#define MAX_Y 93  //dimensões da matriz que abstrai o ambiente
