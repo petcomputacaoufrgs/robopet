@@ -11,8 +11,20 @@ Pathplan::Pathplan(Point initialpos, Point finalpos)
 	this->finalpos = finalpos;
 }
 
-Pathplan::~Pathplan() {};
+Pathplan::Pathplan()
+{
+	for(int i = 0; i < MAX_X; i++)
+		for(int j = 0; j < MAX_Y; j++)
+		{
+			g_score[i][j] = 0;
+			h_score[i][j] = 0;
+			f_score[i][j] = 0;
+			cost[i][j] = 0;
+			backpointer[i*MAX_X + j] = -1;
+		}
+}
 
+Pathplan::~Pathplan() {};
 
 void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
 {
@@ -55,7 +67,6 @@ Point Pathplan::getPathNode(int nodeIndex)
 	return *it;
 }
 
-
 void Pathplan::runRRT()
 {
 	#if 0
@@ -86,19 +97,6 @@ void Pathplan::runPathplan( int pathplanIndex )
 		case PATHPLAN_ASTAR:
 			break;
 	}
-}
-
-Pathplan::Pathplan()
-{
-	for(int i = 0; i < MAX_X; i++)
-		for(int j = 0; j < MAX_Y; j++)
-		{
-			g_score[i][j] = 0;
-			h_score[i][j] = 0;
-			f_score[i][j] = 0;
-			cost[i][j] = 0;
-			backpointer[i*MAX_X + j] = -1;
-		}
 }
 
 bool Pathplan::aStar(RP::Point start, RP::Point goal)
@@ -138,7 +136,6 @@ bool Pathplan::aStar(RP::Point start, RP::Point goal)
 						Point(0,-1), Point(1,1), Point(-1,-1),
 						Point(1,-1), Point(-1,1) };
 
-	int count = 0;
 	while(!Open.empty())
 	{
         ASet::iterator a = Open.begin(); //the iterator points to the first item in the set 'Open'
@@ -244,3 +241,27 @@ void Pathplan::print()
 		}
 		cout << endl << "===================" << endl;
 }
+
+Point Pathplan::nextNode(RP::Point start, RP::Point goal)
+{
+		Pathplan::aStar(start, goal);
+		int i, j;
+    	cout << endl << "===================" << endl;
+
+		i = INDEX(goal);
+
+		while(i != INDEX(start))
+		{
+			cout << REVERSE_INDEX_X(i) << ", " << REVERSE_INDEX_Y(i) << endl;
+			j = i;
+			i = Pathplan::getBackpointer(i); //pega o próximo nodo do caminho de goal até start
+		}
+		cout << REVERSE_INDEX_X(i) << ", " << REVERSE_INDEX_Y(i) << endl;
+		Point p(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));
+
+		cout << endl << "===================" << endl;
+		Pathplan::print();
+		cout << endl << "===================" << endl;
+		return p;
+}
+

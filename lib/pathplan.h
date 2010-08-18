@@ -65,16 +65,13 @@ class Pathplan
 		list<state> pathFinal; //final solution, for path execution purposes
 
 		//----- Sets -----
-
-		//set<AElement> Closed;
-		//set<AElement> Open;
 		ASet Closed;
 		ASet Open;
 
 		Grid env[MAX_X][MAX_Y]; //environment matrix
 		int backpointer[MAX_X * MAX_Y]; //stores the path from the goal to the start
 
-		////----- Matrixes -----
+		//----- Matrixes -----
 		double g_score[MAX_X][MAX_Y];
 		double h_score[MAX_X][MAX_Y];
 		double f_score[MAX_X][MAX_Y];
@@ -82,6 +79,7 @@ class Pathplan
 
 		void fillEnv_playerBox(int centerx, int centery, int safetyCells);
 		void runRRT(); //driver for RRT
+		bool aStar(RP::Point start, RP::Point goal);		
 
 	public:
 
@@ -89,20 +87,20 @@ class Pathplan
 		Point initialpos;
 		Point finalpos;
 
-		//FUNCTIONS
+		//----- Functions -----
 		Pathplan();
 		Pathplan(Point initialpos, Point finalpos);
 		~Pathplan();
 
 		//returns a specific node on pathFinal (initialState is 0)
 		Point getPathNode(int nodeIndex);
+		Point nextNode(RP::Point start, RP::Point goal);
 
 		void runPathplan( int pathplanIndex=PATHPLAN_RRT );
 
 		//fills the enviroment with positions of the obstacles (currently, only for players)
 		void fillEnv(vector<RP::Point> playersPositions);
-
-		bool aStar(RP::Point start, RP::Point goal);
+		
 		inline void setBackpointer(int index, int value) { backpointer[index] = value; }
 		inline int getBackpointer(int index) { return backpointer[index]; }
 		void print();
