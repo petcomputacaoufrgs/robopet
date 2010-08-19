@@ -5,7 +5,7 @@ CFLAGS = -Wall
 AA = ar
 AFLAGS = rsv
 
-OBJECTS= movingObject.o player.o point.o vector.o line.o rrt.o fieldInfo.o physicsRobot.o pathplan.o
+OBJECTS= movingObject.o player.o point.o vector.o line.o rrt.o astar.o fieldInfo.o physicsRobot.o pathplan.o
 
 PKG= vector_pkg.o#$(OBJECTS:.o=_pkg.o)
 
@@ -33,6 +33,9 @@ line.o: vector.o line.cpp line.h
 	$(CC) -c -o $@ -c line.cpp $(CFLAGS)
 
 rrt.o: rrt.cpp rrt.h point.o
+	$(CC) -c -o $@ $< $(FLAGS)
+
+astar.o: astar.cpp astar.h point.o
 	$(CC) -c -o $@ $< $(FLAGS)
 
 fieldInfo.o: fieldInfo.cpp fieldInfo.h

@@ -1,18 +1,19 @@
 #ifndef __ROBOPET_CONSTANTS_H__
 #define __ROBOPET_CONSTANTS_H__
 
-#include "rrt.h"
+//MAX_X = 128 dá segment fault, com até 122 funciona
+#define MAX_X 15 //dimensões da matriz que abstrai o ambiente
+#define MAX_Y 15  //dimensões da matriz que abstrai o ambiente
 
+//#define MAX_X 128 //dimensões da matriz que abstrai o ambiente
+//#define MAX_Y 93  //dimensões da matriz que abstrai o ambiente
 
-
-// MEASURES
-
+//---- MEASURES ----
 #define ARENA_WIDTH_MM 7400
 #define ARENA_HEIGHT_MM 5400
 
 #define PIX_PER_MM SCREEN_WIDTH / ARENA_WIDTH_MM
 #define MM_PER_PIX ARENA_WIDTH_MM / SCREEN_WIDTH
-
 
 #define ARENA_WIDTH SCREEN_WIDTH
 #define ARENA_HEIGHT 5400 * PIX_PER_MM
@@ -31,13 +32,13 @@
 
 #define BORDER 675 * PIX_PER_MM
 
-
 #define ROBOT_RADIUS_MM 90
 #define BALL_RADIUS_MM 43
 
 #define ROBOT_RADIUS ROBOT_RADIUS_MM * PIX_PER_MM
 #define BALL_RADIUS BALL_RADIUS_MM * PIX_PER_MM / 2
 
+//MM_PER_CELLS retorna MAX_X * (MAX_X / 7400)
 
 // PATHPLANNIG
 enum{
@@ -52,7 +53,6 @@ enum{
 #define MM_TO_CELLS(x) x * CELLS_PER_MM
 
 #define CELLS_TO_MM(x) x * MM_PER_CELLS
-
 
 
 // TRANSFORMATIONS
