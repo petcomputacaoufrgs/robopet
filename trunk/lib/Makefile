@@ -12,7 +12,7 @@ PKG= vector_pkg.o#$(OBJECTS:.o=_pkg.o)
 all: robopet.a astar_pet
 
 astar_pet: main.cpp $(OBJECTS)
-	$(CC) $^ -o $@ $(CFLAGS)
+	$(CC) $^ -o $@ $(CFLAGS) -g
 
 tolua_include:
 	./generate_includes

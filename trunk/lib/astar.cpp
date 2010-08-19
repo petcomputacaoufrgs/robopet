@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <cstring>
+#include <list>
 #include "astar.h"
 
 using namespace std;
@@ -136,18 +137,21 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 Point AStar::nextNode(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y])
 {
 		if (aStarPlan(envAStar,start,goal,costAStar))
-		{
+		{	
 			int i, j;
-
+	
 			i = INDEX(goal);
+			Point p(REVERSE_INDEX_X(i),REVERSE_INDEX_Y(i));			
+			pathFullAStar.push_front(p);
+
 			while(i != INDEX(start))
 			{
-				cout << REVERSE_INDEX_X(i) << "," << REVERSE_INDEX_Y(i) << "|";
 				j = i;
 				i = getBackpointer(i); //pega o próximo nodo do caminho de goal até start
+				p.setXY(REVERSE_INDEX_X(i),REVERSE_INDEX_Y(i));
+				pathFullAStar.push_front(p);
 			}
-			cout << REVERSE_INDEX_X(i) << "," << REVERSE_INDEX_Y(i) << endl;
-			Point p(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));
+			p.setXY(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));	
 			printAStar(); //comment this
 			return p;			
 		}
