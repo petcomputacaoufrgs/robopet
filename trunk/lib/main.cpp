@@ -6,10 +6,20 @@
 
 using namespace std;
 
+//runPathplan(PATHPLAN_ASTAR)
+
 int main()
 {
-		Pathplan field;
-		field.runPathplan();
+#if 0
+		Point start(2.0,2.0);
+		Point goal(12.0,12.0);
+		Pathplan field(start, goal);
+		cout << "Runnig AStar" << endl;
+		field.runPathplan(PATHPLAN_ASTAR);
+		
+		cout << "Runnig RRT" << endl;
+		field.runPathplan(PATHPLAN_RRT);
+#endif 
 			
 /*			
 		{

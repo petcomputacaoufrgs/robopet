@@ -16,10 +16,12 @@ class Pathplan
 {
 	protected:
 
+		//---- For RRT ----
 		list<state> pathFull;  //full solution, showing possible partial branches
 		list<state> pathFinal; //final solution, for path execution purposes
-
 		int envRRT[MAX_X][MAX_Y]; //environment matrix for RRT
+
+		//---- For AStar ----
 		Grid envAStar[MAX_X][MAX_Y]; //environment matrix for AStar
 		int costAStar[MAX_X][MAX_Y];
 
