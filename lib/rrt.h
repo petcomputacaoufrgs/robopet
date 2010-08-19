@@ -17,7 +17,6 @@
 #define STEP_BY_STEP 0 //yes or no
 #define STEPS_DELAY 7
 
-
 //constantes
 #define EMPTY_STATE (state(-10, -10))
 #define SQR(x) ((x) * (x)) //para Distance
@@ -65,7 +64,6 @@ class RRTTree
     private:
 
 		void treeToList_recursive(RRTTree *tree,list<state>*caminho);
-
 
     public:
 

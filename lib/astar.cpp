@@ -8,6 +8,13 @@
 
 using namespace std;
 
+/*
+Info:
+	h_score: heuristics (a guess about the distance from a square to the goal) - this heuristics calculates the distance between two squares (points) on the environment matrix using euclidean distance [sqrt((x-x0)²+(y-y0)²)]
+	g_score: cost to go from a parent square to a son square
+	f_score: h_score + g_score
+*/
+
 //Constructor
 AStar::AStar()
 {
@@ -36,18 +43,10 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 			for (int j = 0; j < MAX_Y; j++)
 				cost[i][j] = costAStar[i][j];	
 
-		//'Close' and 'Open' are ASet objects. Each of its terms has a point and a double variable
+		//---- Closed and Open are ASet variables from class astar ----
 		Closed.clear();
 		Open.clear();
 		Open.insert( make_pair(0, start) );
-
-		//an obstacle has the value 1000. E.g. cost[x][y] = 1000;
-
-		cost[6][6] = 1000;
-
-		//h_score: heuristics (a guess about the distance from a square to the goal) - this heuristics calculates the distance between two squares (points) on the environment matrix using euclidean distance [sqrt((x-x0)²+(y-y0)²)]
-		//g_score: cost to go from a parent square to a son square
-		//f_score: h_score + g_score
 
 		int x = (int)start.getX();
 		int y = (int)start.getY();
@@ -75,7 +74,7 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 			if( p == goal)
 				 return true; //the goal has been reached, finishes AStar algorithm
 
-			//we analized the point p. It has to be set as closed, should be placed in the 'Closed' set and erased from the 'Open' one
+			//---- p is set as closed, because we already visited him ----
 			env[(int)p.getX()][(int)p.getY()].setClosed();
 			Closed.insert(*a);
 			Open.erase(*a);
@@ -83,8 +82,7 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 			for(int i = 0; i < 8; i++) //8 == number of neighbors
 			{
 				Point neighbor = p + corners[i];
-
-				if( (IS_BOTTOM_BORDER(p) && (i == DOWN || i == LEFT_DOWN || i == RIGHT_DOWN)) ||
+				if((IS_BOTTOM_BORDER(p) && (i == DOWN || i == LEFT_DOWN || i == RIGHT_DOWN)) ||
 				   (IS_UPPER_BORDER(p) && (i == UP || i == LEFT_UP || i == RIGHT_UP)) ||
 				   (IS_RIGHT_BORDER(p) && (i == RIGHT || i == RIGHT_UP || i == RIGHT_DOWN)) ||
 				   (IS_LEFT_BORDER(p) && (i == LEFT || i == LEFT_UP || i == LEFT_DOWN)) )
@@ -140,21 +138,17 @@ Point AStar::nextNode(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, i
 		if (aStarPlan(envAStar,start,goal,costAStar))
 		{
 			int i, j;
-			cout << endl << "===================" << endl;
 
 			i = INDEX(goal);
 			while(i != INDEX(start))
 			{
-				cout << REVERSE_INDEX_X(i) << ", " << REVERSE_INDEX_Y(i) << endl;
+				cout << REVERSE_INDEX_X(i) << "," << REVERSE_INDEX_Y(i) << "|";
 				j = i;
 				i = getBackpointer(i); //pega o próximo nodo do caminho de goal até start
 			}
-			cout << REVERSE_INDEX_X(i) << ", " << REVERSE_INDEX_Y(i) << endl;
+			cout << REVERSE_INDEX_X(i) << "," << REVERSE_INDEX_Y(i) << endl;
 			Point p(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));
-
-			cout << endl << "===================" << endl;
-			printAStar();
-			cout << endl << "===================" << endl;
+			printAStar(); //comment this
 			return p;			
 		}
 		else
@@ -170,6 +164,7 @@ Point AStar::nextNode(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, i
 void AStar::printAStar()
 {
 	    //backpointer é um vetor com o tamanho do campo
+		cout << "===============================" << endl;
 		char mask[] = "RLDU3791";
 		Point corners[] = { Point(1,0), Point(-1,0), Point(0,1),
 							Point(0,-1), Point(1,1), Point(-1,-1),
