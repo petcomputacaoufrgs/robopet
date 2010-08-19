@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <set>
+#include <list>
 #include "point.h"
 #include "grid.h"
 #include "constants.h"
@@ -47,6 +48,9 @@ class AStar
 		double f_score[MAX_X][MAX_Y];
 		int cost[MAX_X][MAX_Y];
 		int backpointer[MAX_X * MAX_Y]; //stores the path from the goal to the start		
+		
+		//---- Total path ----
+		list<Point> pathFullAStar;
 
 		//----- Sets -----
 		ASet Closed;
@@ -55,7 +59,7 @@ class AStar
 		//---- Functions ----
 		bool aStarPlan(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y]); //executes the Astar algorithm
 		void printAStar();
-
+		
 	public:
 
 		//---- Constructor and Destructor ----
@@ -64,6 +68,8 @@ class AStar
 
 		//---- Functions ----
 		Point nextNode(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y]);
+		list<Point>::iterator pathFullAStarBegin() { return pathFullAStar.begin(); }
+		list<Point>::iterator pathFullAStarEnd() { return pathFullAStar.end(); }
 
 		//---- Inline Functions ----
 		inline void setBackpointer(int index, int value) { backpointer[index] = value; }

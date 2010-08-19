@@ -18,7 +18,7 @@ class Pathplan
 
 		//---- For RRT ----
 		list<state> pathFull;  //full solution, showing possible partial branches
-		list<state> pathFinal; //final solution, for path execution purposes
+		list<state> pathFinal; //final solution, for path execution purposes (next point to visit)
 		int envRRT[MAX_X][MAX_Y]; //environment matrix for RRT
 
 		//---- For AStar ----

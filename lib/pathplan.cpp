@@ -24,11 +24,29 @@ Pathplan::~Pathplan()
 {
 }
 
+void Pathplan::runPathplan( int pathplanIndex )
+{
+	switch(pathplanIndex)
+	{
+		case PATHPLAN_RRT:
+			runRRT();
+			break;
+
+		case PATHPLAN_ASTAR:
+			runAStar();
+			break;
+	}
+}
+
 void Pathplan::runRRT()
 {
 	//this is the interface for Cristiano's RRT implementation
 	state initial = state( MM_TO_CELLS( initialpos.getX() ), MM_TO_CELLS( initialpos.getY() ));
-	state goal    = state( MM_TO_CELLS( finalpos.getX() ), MM_TO_CELLS( finalpos.getY() )) ;
+	//cout << "initial: " << initialpos.getX() << ", " << initialpos.getY() << endl;
+	//cout << "initial mm: " << initial.getX() << ", " << initial.getY() << endl; 
+	state goal = state( MM_TO_CELLS( finalpos.getX() ), MM_TO_CELLS( finalpos.getY() )) ;
+	//cout << "final: " << finalpos.getX() << ", " << finalpos.getY() << endl;
+	//cout << "final mm: " << goal.getX() << ", " << goal.getY() << endl;
 
     RRTTree *solutionTree;
 	solutionTree = RRTPlan(envRRT,initial,goal);
@@ -42,12 +60,17 @@ void Pathplan::runRRT()
 void Pathplan::runAStar()
 {	
 	AStar astar;	
-	Point p = astar.nextNode(envAStar, initialpos, finalpos, costAStar);
+	state path(astar.nextNode(envAStar, initialpos, finalpos, costAStar));
+	pathFinal.push_front(path);	
+	
+	Point p = pathFinal.front();	
 	cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
 	
-	list<state> path;
-	path.push_back( state(astar.nextNode(envAStar, initialpos, finalpos, costAStar)) );
-	this->pathFinal = path;
+	for (list<Point>::iterator a = astar.pathFullAStarBegin(); a != astar.pathFullAStarEnd(); a++)
+	{
+		pathFull.push_back(*a);		
+		cout <<	a->getX() << "," << a->getY() << endl;
+	}
 }
 
 
@@ -61,7 +84,6 @@ void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
             envRRT[x+i - lado/2][y+k - lado/2] = OBSTACULO;
 			costAStar[x+i - lado/2][y+k - lado/2] = OBSTACULO;
 		}
-
 }
 
 
@@ -95,21 +117,6 @@ Point Pathplan::getPathNode(int nodeIndex)
 		nodeIndex--;
 
 	return *it;
-}
-
-
-void Pathplan::runPathplan( int pathplanIndex )
-{
-	switch(pathplanIndex)
-	{
-		case PATHPLAN_RRT:
-			runRRT();
-			break;
-
-		case PATHPLAN_ASTAR:
-			runAStar();
-			break;
-	}
 }
 
 #endif
