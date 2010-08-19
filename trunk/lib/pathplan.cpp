@@ -59,8 +59,12 @@ void Pathplan::runRRT()
 
 void Pathplan::runAStar()
 {	
+	state initial = state( (int) MM_TO_CELLS( initialpos.getX() ), (int) MM_TO_CELLS( initialpos.getY() ));
+	state goal    = state( (int) MM_TO_CELLS( finalpos.getX() ), (int) MM_TO_CELLS( finalpos.getY() )) ;
+	
 	AStar astar;	
-	state path(astar.nextNode(envAStar, initialpos, finalpos, costAStar));
+	state path(astar.nextNode(envAStar, initial, goal, costAStar));
+	//state path(astar.nextNode(envAStar, initialpos, finalpos, costAStar));
 	pathFinal.push_front(path);	
 	
 	Point p = pathFinal.front();	
@@ -108,7 +112,6 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 	}
 
 }
-
 
 Point Pathplan::getPathNode(int nodeIndex)
 {

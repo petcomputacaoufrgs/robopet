@@ -9,6 +9,7 @@
 #include <set>
 #include <cmath>
 #include <cstdio>
+#include "player.h"
 
 using namespace std;
 
