@@ -35,7 +35,6 @@ void Pathplan::runRRT()
 
     this->pathFull = solutionTree->treeToList();
 	this->pathFinal = solutionTree->findSolucao(goal);
-
 	//print(solutionTree,initial,goal,caminhoSolucao,env); //imprime resultado no console
 }
 
@@ -45,6 +44,10 @@ void Pathplan::runAStar()
 	AStar astar;	
 	Point p = astar.nextNode(envAStar, initialpos, finalpos, costAStar);
 	cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
+	
+	list<state> path;
+	path.push_back( state(astar.nextNode(envAStar, initialpos, finalpos, costAStar)) );
+	this->pathFinal = path;
 }
 
 
