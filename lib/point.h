@@ -9,7 +9,6 @@ using RP::Point;
 class Point
 {
     public:
-
         Point() { setXY(0.0 ,0.0); }
         Point(double valueX, double valueY) { setXY(valueX, valueY); }
         Point (const Point &p) { setXY(p); }
@@ -47,10 +46,9 @@ class Point
 
 
 	protected:
-
         double _x;
         double _y;
 };
 
-#endif // _ROBOPET_POINT_H_
+#endif
 

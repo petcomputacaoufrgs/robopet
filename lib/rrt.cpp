@@ -1,5 +1,5 @@
-#ifndef RRT_CPP
-#define RRT_CPP
+#ifndef _RRT_CPP_
+#define _RRT_CPP_
 
 #include <iostream>
 #include <stdlib.h>
@@ -11,8 +11,6 @@
 //#include "matrix/matrix.h"
 //#include "point.h"
 #include "rrt.h"
-
-
 
 using namespace std;
 
