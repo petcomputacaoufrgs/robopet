@@ -26,18 +26,18 @@ enum
 };
 
 inline int INDEX(Point p) { return p.getX() + (p.getY() * MAX_X); }
-inline int INDEX(int x, int y) { return x + (y * MAX_X); }
-inline bool IS_BOTTOM_BORDER(Point p) { return ( INDEX(p) / MAX_Y == MAX_Y - 1) ? true : false; }
+inline int INDEX(int x, int y) { return x + (y * MAX_X); } //y: colums, x: lines
+inline bool IS_BOTTOM_BORDER(Point p) { return ( INDEX(p) / MAX_Y == (MAX_Y - 1)) ? true : false; }
 inline bool IS_UPPER_BORDER(Point p) { return ( INDEX(p) / MAX_Y == 0) ? true : false; }
-inline bool IS_RIGHT_BORDER(Point p) { return ( INDEX(p) % MAX_X == MAX_X - 1) ? true : false; }
+inline bool IS_RIGHT_BORDER(Point p) { return ( INDEX(p) % MAX_X == (MAX_X - 1)) ? true : false; }
 inline bool IS_LEFT_BORDER(Point p) { return ( INDEX(p) % MAX_X == 0) ? true : false; }
 
-inline int REVERSE_INDEX_X(int num) { return ((int) num % MAX_X); }
-inline int REVERSE_INDEX_Y(int num) { return ((int) num / MAX_Y); }
+inline int REVERSE_INDEX_X(int num) { return ((int) num / MAX_X); }
+inline int REVERSE_INDEX_Y(int num) { return ((int) num - (num / MAX_X)*MAX_X ); }
 
 double DISTANCE(int num1, int num2);
 
-typedef set< pair<double,RP::Point> > ASet; //ASet is set of pairs of values. Each pair has pair of coordinates (x,y), representing the position of the squares from the environment matriz and the other is a
+//typedef set< pair<double,RP::Point> > ASet; //ASet is set of pairs of values. Each pair has pair of coordinates (x,y), representing the position of the squares from the environment matriz and the other is a
 
 class Par
 {
@@ -74,8 +74,7 @@ class AStar
 		set<Par> Open;
 
 		//---- Functions ----
-		bool aStarPlan(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y]); //executes the Astar algorithm
-		void printAStar();
+		bool aStarPlan(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y]); //executes the Astar algorithm
 
 	public:
 
@@ -84,7 +83,8 @@ class AStar
 		~AStar();
 
 		//---- Functions ----
-		Point nextNode(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y]);
+		void printAStar();
+		Point nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y]);
 		list<Point>::iterator pathFullAStarBegin() { return pathFullAStar.begin(); }
 		list<Point>::iterator pathFullAStarEnd() { return pathFullAStar.end(); }
 
