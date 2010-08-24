@@ -28,10 +28,10 @@ class Pathplan
 
 		//----- Pathplans -----
 		void runRRT(); //driver for RRT
-		void runAStar(); //driver for AStar		
+		void runAStar(); //driver for AStar
 
 		//---- Functions ----
-		void fillEnv_playerBox(int centerx, int centery, int safetyCells);	
+		void fillEnv_playerBox(int centerx, int centery, int safetyCells);
 
 	public:
 
@@ -44,7 +44,7 @@ class Pathplan
 		Pathplan();
 		~Pathplan();
 
-		//----- Functions -----	
+		//----- Functions -----
 		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
 		void runPathplan(int pathplanIndex);
 		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
