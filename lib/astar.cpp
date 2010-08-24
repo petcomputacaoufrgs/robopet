@@ -19,20 +19,21 @@ Info:
 
 bool Par::operator<(const Par& other) const
 {
-    return (cost < other.cost) ? true : false;
+    return cost < other.cost;
 }
 
 //Constructor
 AStar::AStar()
 {
-		for(int i = 0; i < MAX_X; i++)
-			for(int j = 0; j < MAX_Y; j++)
+		//x: linhas, y: colunas
+		for (int x = 0; x < MAX_X; x++)
+			for (int y = 0; y < MAX_Y; y++)
 			{
-				g_score[i][j] = 0;
-				h_score[i][j] = 0;
-				f_score[i][j] = 0;
+				g_score[x][y] = 0;
+				h_score[x][y] = 0;
+				f_score[x][y] = 0;
 				//cost[i][j] = 0; já é inicializado no aStarPlan
-				backpointer[i*MAX_X + j] = -1;
+				backpointer[INDEX(x,y)] = -1;
 			}
 }
 
@@ -42,21 +43,20 @@ AStar::~AStar()
 }
 
 //Runs the AStar algorithm
-bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y])
+bool AStar::aStarPlan(Grid env[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y])
 {
 		using RP::Point;
 
 		//---- Closed and Open are ASet variables from class astar ----
-		Closed.clear();
 		Open.clear();
-		Open.insert(start);
+		Closed.clear();
+		Open.insert(Par(start,0));	
 
-		for (int y = 0; y < MAX_X; y++)
-			for (int x = 0; x < MAX_Y; x++)
+		for (int x = 0; x < MAX_X; x++)
+			for (int y = 0; y < MAX_Y; y++)
 				cost[x][y] = costAStar[x][y];
-		//cost[4][5] = 1000;
-		//cost[6][5] = 1000;
-		//cost[6][4] = 1000;
+
+		//cost[6][6] = 1000;
 
 		int x = (int)start.getX();
 		int y = (int)start.getY();
@@ -65,12 +65,12 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 		f_score[x][y] = g_score[x][y] + h_score[x][y];
 
 		//Sets the distance from each square of environment matriz to the goal square
-		for(int y = 0; y < MAX_X; y++)
-			for(int x = 0; x < MAX_Y; x++)
+		for (int x = 0; x < MAX_X; x++)
+			for (int y = 0; y < MAX_Y; y++)
 			{
 				Point aux(x,y);
 				h_score[x][y] = aux.getDistance(goal);
-				cout << INDEX(x,y) << " - " << h_score[x][y] << endl;
+				//cout << INDEX(x,y) << " - " << h_score[x][y] << endl;
 			}
 
 		//RIGHT, LEFT, DOWN, UP, RIGHT_DOWN, LEFT_UP, RIGHT_UP, LEFT_DOWN
@@ -78,15 +78,10 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 							Point(0,-1), Point(1,1), Point(-1,-1),
 							Point(1,-1), Point(-1,1) };
 
-		//int count = 0;
 		while(!Open.empty())
 		{
 		    set<Par>::iterator a = Open.begin(); //the iterator points to the first item in the set 'Open'
-			//count++;
 			Point p = a->getPoint(); //the point p now has the first element of the pair pointed by the a iterator
-			//cout << count << " - Astar while" << endl;
-			//cout << "p: " << p.getX() << "," << p.getY() << endl;
-			//getchar();
 			if( p == goal)
 				 return true; //the goal has been reached, finishes AStar algorithm
 
@@ -103,14 +98,6 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 				   (IS_RIGHT_BORDER(p) && (i == RIGHT || i == RIGHT_UP || i == RIGHT_DOWN)) ||
 				   (IS_LEFT_BORDER(p) && (i == LEFT || i == LEFT_UP || i == LEFT_DOWN)) )
 				  continue;
-
-				int lala = (IS_BOTTOM_BORDER(p) && (i == DOWN || i == LEFT_DOWN || i == RIGHT_DOWN))
-					 || (IS_UPPER_BORDER(p) && (i == UP || i == LEFT_UP || i == RIGHT_UP))
- 					 || (IS_RIGHT_BORDER(p) && (i == RIGHT || i == RIGHT_UP || i == RIGHT_DOWN))
-					 || (IS_LEFT_BORDER(p) && (i == LEFT || i == LEFT_UP || i == LEFT_DOWN));
-
-				//cout << neighbor.getX() << "," << neighbor.getY() << " - " << lala << endl;
-				//getchar();
 
 			   	bool podePassar = true;
 		       	for(int j = 0; j < 4; j++)
@@ -131,8 +118,6 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 
 			   	double tentative_g_score = 	g_score[(int)p.getX()][(int)p.getY()] +
 										   	p.getDistance(neighbor);
-			   //cout << "g_score[element] = " << g_score[(int)p.getX()][(int)p.getY()] << endl;
-		   //cout << "tentative_g_score for neighbor = " << tentative_g_score << "\n";
 
 			   	bool tentative_is_better = false;
 			   	if(env[(int)neighbor.getX()][(int)neighbor.getY()].isNew())
@@ -143,8 +128,6 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 			   	else if(tentative_g_score < g_score[(int)neighbor.getX()][(int)neighbor.getY()])
 				   tentative_is_better = true;
 
-				//cout << "tentative_is_better: " << tentative_is_better << endl;
-
 			   	if(tentative_is_better) //se a posição for a melhor, então ela é armazenada
 			   	{   					   //no vetor backpointer
 				   setBackpointer(INDEX(neighbor), INDEX(p));
@@ -152,20 +135,7 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 				   int y = (int)neighbor.getY();
 				   g_score[x][y] = tentative_g_score;
 				   f_score[x][y] = g_score[x][y] + h_score[x][y] + cost[x][y];
-				 //cout << "g_score: " << g_score[x][y] << ", h_score: " << h_score[x][y] << "cost: " << cost[x][y] << endl;
-
 				   Open.insert( Par(neighbor,f_score[x][y]) );
-				   //cout << "neighbor is in backpointer list" << endl;
-				   //cout << "Inserted in open set: " << neighbor.getX() << "," << neighbor.getY() << " with cost: " << f_score[x][y] << endl;
-				   //cout << "p: " << p.getX() << "," << p.getY() << " , neighbor: " <<  << endl;
-
-/*
-				cout << "backpointer: ";
-				for(int i=0; i<MAX_X * MAX_Y; i++)
-					if (backpointer[i] != -1)
-						cout << REVERSE_INDEX_X(backpointer[i]) << "," << REVERSE_INDEX_Y(backpointer[i]) << "|";
-*/
-				//getchar();
 			   	}
 
 			}
@@ -175,7 +145,7 @@ bool AStar::aStarPlan(Grid env[][MAX_Y], RP::Point start, RP::Point goal, int co
 }
 
 //Runs the AStar algorithm and returns the next point in the field to visit to reach the goal
-Point AStar::nextNode(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y])
+Point AStar::nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y])
 {
 		if (aStarPlan(envAStar,start,goal,costAStar))
 		{
@@ -190,10 +160,10 @@ Point AStar::nextNode(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, i
 				j = i;
 				i = getBackpointer(i); //pega o próximo nodo do caminho de goal até start
 				p.setXY(REVERSE_INDEX_X(i),REVERSE_INDEX_Y(i));
+				//cout << p.getX() << "," << p.getY() << endl;
 				pathFullAStar.push_front(p);
 			}
 			p.setXY(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));
-			printAStar(); //comment this
 			return p;
 		}
 		else

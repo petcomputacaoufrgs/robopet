@@ -6,12 +6,12 @@
 
 using namespace std;
 
-Pathplan::Pathplan(Point initialpos, Point finalpos)
+Pathplan::Pathplan(Point initial, Point final)
 {
-	this->initialpos = initialpos;
-	this->finalpos = finalpos;
-	for (int y = 0; y < MAX_X; y++)
-			for (int x = 0; x < MAX_Y; x++)
+	this->initialpos = initial;
+	this->finalpos = final;
+	for (int x = 0; x < MAX_X; x++)
+			for (int y = 0; y < MAX_Y; y++)
 				costAStar[x][y] = 0;
 }
 
@@ -21,8 +21,8 @@ Pathplan::Pathplan()
 	Point final(0.0, 0.0);
 	this->initialpos = initial;
 	this->finalpos = final;
-	for (int y = 0; y < MAX_X; y++)
-			for (int x = 0; x < MAX_Y; x++)
+	for (int x = 0; x < MAX_X; x++)
+			for (int y = 0; y < MAX_Y; y++)
 				costAStar[x][y] = 0;
 }
 
@@ -77,11 +77,14 @@ void Pathplan::runAStar()
 	Point p = pathFinal.front();
 	cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
 
+	//prints the full path
+	cout << "Full path: " << endl;
 	for (list<Point>::iterator a = astar.pathFullAStarBegin(); a != astar.pathFullAStarEnd(); a++)
 	{
 		pathFull.push_back(*a);
 		cout <<	a->getX() << "," << a->getY() << endl;
 	}
+	astar.printAStar(); //comment this
 }
 
 
@@ -103,11 +106,11 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 	int centerx, centery;
 	int nSafetyCells = 4;
 
-	for(int i=0;i<MAX_X;i++)
-		for(int j=0;j<MAX_Y;j++)
+	for (int x = 0; x < MAX_X; x++)
+			for (int y = 0; y < MAX_Y; y++)
 		{
-			envRRT[i][j] = LIVRE;
-			costAStar[i][j] = LIVRE;
+			envRRT[x][y] = LIVRE;
+			costAStar[x][y] = LIVRE;
 		}
 
 	vector<Point>::iterator it;
