@@ -102,4 +102,3 @@ void print(RRTTree *tree,state initial,state goal,std::list<state> caminho,int e
 
 
 #endif
-

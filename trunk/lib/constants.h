@@ -2,8 +2,8 @@
 #define __ROBOPET_CONSTANTS_H__
 
 //MAX_X = 128 dá segment fault, com até 122 funciona
-#define MAX_X 45 //dimensões da matriz que abstrai o ambiente
-#define MAX_Y 45  //dimensões da matriz que abstrai o ambiente
+#define MAX_X 20 //dimensões da matriz que abstrai o ambiente
+#define MAX_Y 20  //dimensões da matriz que abstrai o ambiente
 
 //#define MAX_X 128 //dimensões da matriz que abstrai o ambiente
 //#define MAX_Y 93  //dimensões da matriz que abstrai o ambiente

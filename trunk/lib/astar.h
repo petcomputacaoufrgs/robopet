@@ -26,6 +26,7 @@ enum
 };
 
 inline int INDEX(Point p) { return p.getX() + (p.getY() * MAX_X); }
+inline int INDEX(int x, int y) { return x + (y * MAX_X); }
 inline bool IS_BOTTOM_BORDER(Point p) { return ( INDEX(p) / MAX_Y == MAX_Y - 1) ? true : false; }
 inline bool IS_UPPER_BORDER(Point p) { return ( INDEX(p) / MAX_Y == 0) ? true : false; }
 inline bool IS_RIGHT_BORDER(Point p) { return ( INDEX(p) % MAX_X == MAX_X - 1) ? true : false; }
@@ -38,6 +39,22 @@ double DISTANCE(int num1, int num2);
 
 typedef set< pair<double,RP::Point> > ASet; //ASet is set of pairs of values. Each pair has pair of coordinates (x,y), representing the position of the squares from the environment matriz and the other is a
 
+class Par
+{
+	private:
+      RP::Point p;
+      double cost;
+
+	public:
+	  Par() {  }
+	  Par(RP::Point element, double c = 0) { p = element; cost = c; }
+	  ~Par() { }
+
+	  bool operator<(const Par& other) const;
+	  inline Point getPoint() const { return p; }
+	  inline double getCost() const { return cost; }
+};
+
 class AStar
 {
 	protected:
@@ -47,19 +64,19 @@ class AStar
 		double h_score[MAX_X][MAX_Y];
 		double f_score[MAX_X][MAX_Y];
 		int cost[MAX_X][MAX_Y];
-		int backpointer[MAX_X * MAX_Y]; //stores the path from the goal to the start		
-		
+		int backpointer[MAX_X * MAX_Y]; //stores the path from the goal to the start
+
 		//---- Total path ----
 		list<Point> pathFullAStar;
 
 		//----- Sets -----
-		ASet Closed;
-		ASet Open;		
+		set<Par> Closed;
+		set<Par> Open;
 
 		//---- Functions ----
 		bool aStarPlan(Grid envAStar[][MAX_Y], RP::Point start, RP::Point goal, int costAStar[][MAX_Y]); //executes the Astar algorithm
 		void printAStar();
-		
+
 	public:
 
 		//---- Constructor and Destructor ----

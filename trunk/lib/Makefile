@@ -16,7 +16,7 @@ OBJECTS= 	movingObject.o \
 			physicsRobot.o \
 			pathplan.o
 
-USERDATA_OBJECTS= $(addprefix userdata/, $(OBJECTS))
+#USERDATA_OBJECTS= $(addprefix userdata/, $(OBJECTS))
 
 CPPTOLUA_FOLDER = CppToLua_0.1
 
@@ -31,14 +31,14 @@ cpptolua:
 	cd $(CPPTOLUA_FOLDER); make
 	cp $(CPPTOLUA_FOLDER)/cpptolua .
 
-userdata/%.o: %_userdata.cpp
-	$(CC) -c -o $@ $^ $(LUA)
+#userdata/%.o: %_userdata.cpp
+#	$(CC) -c -o $@ $^ $(LUA)
 
-userdata/%.cpp: userdata/%.h
-	$(CC2L) -i $< -o $@ -n $*.h
+#userdata/%.cpp: userdata/%.h
+#	$(CC2L) -i $< -o $@ -n $*.h
 
-userdata/%.h: %.h
-	$(CC2L) -i $< -o $@ -H -N ../$*.h
+#userdata/%.h: %.h
+#	$(CC2L) -i $< -o $@ -H -N ../$*.h
 
 movingObject.o: movingObject.h movingObject.cpp
 	$(CC) -c -o $@ movingObject.cpp $(CFLAGS)
