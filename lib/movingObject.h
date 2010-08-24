@@ -43,6 +43,8 @@ class MovingObject
     //----- Others -----
     Vector calcDisplacementVector();
     void calculateDisplacement();
+    
+    double getDistance(const MovingObject& other);
 
 
     //----- Operators -----
