@@ -78,6 +78,22 @@ Operadores:
 
 ***************************************************************/
 
+bool Point::operator>=(const Point &pos) const
+{
+	if ( this->getY() > pos.getY() )
+		return true;
+	else
+		if ( this->getY() == pos.getY() )	
+		{
+			if ( this->getX() >= pos.getX() )	
+				true;
+			else
+				return false;
+		}
+		else
+			return false;
+}
+
 /******************************************************
 Operação de comparação de pontos '<'
 ******************************************************/

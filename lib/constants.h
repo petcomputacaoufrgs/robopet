@@ -1,8 +1,8 @@
 #ifndef __ROBOPET_CONSTANTS_H__
 #define __ROBOPET_CONSTANTS_H__
 
-#define MAX_X 15 //dimensões da matriz que abstrai o ambiente
-#define MAX_Y 20 //dimensões da matriz que abstrai o ambiente
+#define MAX_X 20 //dimensões da matriz que abstrai o ambiente
+#define MAX_Y 18 //dimensões da matriz que abstrai o ambiente
 
 //---- MEASURES ----
 #define ARENA_WIDTH_MM 7400

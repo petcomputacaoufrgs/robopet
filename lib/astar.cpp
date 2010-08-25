@@ -147,10 +147,12 @@ bool AStar::aStarPlan(Grid env[MAX_X][MAX_Y], RP::Point start, RP::Point goal, i
 //Runs the AStar algorithm and returns the next point in the field to visit to reach the goal
 Point AStar::nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y])
 {
+		if (start == goal)
+			return goal;		
+
 		if (aStarPlan(envAStar,start,goal,costAStar))
 		{
 			int i, j;
-
 			i = INDEX(goal);
 			Point p(REVERSE_INDEX_X(i),REVERSE_INDEX_Y(i));
 			pathFullAStar.push_front(p);
@@ -164,6 +166,7 @@ Point AStar::nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point go
 				pathFullAStar.push_front(p);
 			}
 			p.setXY(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));
+			printAStar(); //comment this
 			return p;
 		}
 		else

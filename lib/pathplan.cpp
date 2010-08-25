@@ -65,26 +65,33 @@ void Pathplan::runRRT()
 
 void Pathplan::runAStar()
 {
+	//me explica esses MM_to_cells cristiano (by joão gross)
 	state initial = state( (int) MM_TO_CELLS( initialpos.getX() ), (int) MM_TO_CELLS( initialpos.getY() ));
 	state goal    = state( (int) MM_TO_CELLS( finalpos.getX() ), (int) MM_TO_CELLS( finalpos.getY() )) ;
 
 	AStar astar;
 	//state path(astar.nextNode(envAStar, initial, goal, costAStar));
+	if (INDEX(initialpos) < 0 || initialpos.getX() > (MAX_X-1) || initialpos.getY() > (MAX_Y-1) || INDEX(finalpos) < 0 || finalpos.getX() > (MAX_X-1) || finalpos.getY() > (MAX_Y-1))
+	{
+		cout << "Points out of range!" << endl;
+		return;		
+	}
+
 	state path(astar.nextNode(envAStar, initialpos, finalpos, costAStar));
-	//state path(astar.nextNode(envAStar, initialpos, finalpos, costAStar));
 	pathFinal.push_front(path);
 
 	Point p = pathFinal.front();
-	cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
-
-	//prints the full path
-	cout << "Full path: " << endl;
-	for (list<Point>::iterator a = astar.pathFullAStarBegin(); a != astar.pathFullAStarEnd(); a++)
+	if (INDEX(p))
 	{
-		pathFull.push_back(*a);
-		cout <<	a->getX() << "," << a->getY() << endl;
+		cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
+		cout << "Full path: " << endl;
+		for (list<Point>::iterator a = astar.pathFullAStarBegin(); 
+			 a != astar.pathFullAStarEnd(); a++)
+		{
+			pathFull.push_back(*a);
+			cout <<	a->getX() << "," << a->getY() << endl;
+		}
 	}
-	astar.printAStar(); //comment this
 }
 
 
