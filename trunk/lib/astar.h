@@ -74,6 +74,7 @@ class AStar
 		set<Par> Open;
 
 		//---- Functions ----
+		void printAStar();
 		bool aStarPlan(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y]); //executes the Astar algorithm
 
 	public:
@@ -83,7 +84,6 @@ class AStar
 		~AStar();
 
 		//---- Functions ----
-		void printAStar();
 		Point nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y]);
 		list<Point>::iterator pathFullAStarBegin() { return pathFullAStar.begin(); }
 		list<Point>::iterator pathFullAStarEnd() { return pathFullAStar.end(); }
