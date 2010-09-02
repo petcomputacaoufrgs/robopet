@@ -45,14 +45,10 @@ void Pathplan::runPathplan( int pathplanIndex )
 }
 
 void Pathplan::runRRT()
+/* interface for Cristiano's RRT implementation */
 {
-	//this is the interface for Cristiano's RRT implementation
 	state initial = state( MM_TO_CELLS( initialpos.getX() ), MM_TO_CELLS( initialpos.getY() ));
-	//cout << "initial: " << initialpos.getX() << ", " << initialpos.getY() << endl;
-	//cout << "initial mm: " << initial.getX() << ", " << initial.getY() << endl;
 	state goal = state( MM_TO_CELLS( finalpos.getX() ), MM_TO_CELLS( finalpos.getY() )) ;
-	//cout << "final: " << finalpos.getX() << ", " << finalpos.getY() << endl;
-	//cout << "final mm: " << goal.getX() << ", " << goal.getY() << endl;
 
     RRTTree *solutionTree;
 	solutionTree = RRTPlan(envRRT,initial,goal);
@@ -69,27 +65,30 @@ void Pathplan::runAStar()
 	state initial = state( (int) MM_TO_CELLS( initialpos.getX() ), (int) MM_TO_CELLS( initialpos.getY() ));
 	state goal    = state( (int) MM_TO_CELLS( finalpos.getX() ), (int) MM_TO_CELLS( finalpos.getY() )) ;
 
+	//cout << initial.getX() << " " << initial.getY() << endl;
+	//cout << goal.getX() << " " << goal.getY() << endl;
+
 	AStar astar;
 	//state path(astar.nextNode(envAStar, initial, goal, costAStar));
-	if (INDEX(initialpos) < 0 || initialpos.getX() > (MAX_X-1) || initialpos.getY() > (MAX_Y-1) || INDEX(finalpos) < 0 || finalpos.getX() > (MAX_X-1) || finalpos.getY() > (MAX_Y-1))
+	if (INDEX(initial) < 0 || initial.getX() > (MAX_X-1) || initial.getY() > (MAX_Y-1) || INDEX(goal) < 0 || goal.getX() > (MAX_X-1) || goal.getY() > (MAX_Y-1))
 	{
 		cout << "Points out of range!" << endl;
 		return;		
 	}
 
-	state path(astar.nextNode(envAStar, initialpos, finalpos, costAStar));
+	state path(astar.nextNode(envAStar, initial, goal, costAStar));
 	pathFinal.push_front(path);
 
 	Point p = pathFinal.front();
 	if (INDEX(p))
 	{
-		cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
-		cout << "Full path: " << endl;
+		//cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
+		//cout << "Full path: " << endl;
 		for (list<Point>::iterator a = astar.pathFullAStarBegin(); 
 			 a != astar.pathFullAStarEnd(); a++)
 		{
 			pathFull.push_back(*a);
-			cout <<	a->getX() << "," << a->getY() << endl;
+			//cout <<	a->getX() << "," << a->getY() << endl;
 		}
 	}
 }
@@ -97,13 +96,14 @@ void Pathplan::runAStar()
 
 void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
 {
-	const int lado = MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
-
+	const int lado = 2; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
+	//printf("%i\n",lado);
+		
 	for(int i=0; i<lado; i++)
-        for(int k=0; k<lado; k++)
+		for(int k=0; k<lado; k++)
 		{
-            envRRT[x+i - lado/2][y+k - lado/2] = OBSTACULO;
-			costAStar[x+i - lado/2][y+k - lado/2] = 1000;
+			envRRT[x+i][y+k] = OBSTACULO;
+			costAStar[x+i][y+k] = 1000;
 		}
 }
 
@@ -111,7 +111,7 @@ void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
 void Pathplan::fillEnv(vector<Point> playersPositions)
 {
 	int centerx, centery;
-	int nSafetyCells = 4;
+	int nSafetyCells = 0;
 
 	for (int x = 0; x < MAX_X; x++)
 			for (int y = 0; y < MAX_Y; y++)
