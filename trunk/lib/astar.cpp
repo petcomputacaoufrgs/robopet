@@ -161,12 +161,12 @@ Point AStar::nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point go
 			{
 				j = i;
 				i = getBackpointer(i); //pega o próximo nodo do caminho de goal até start
-				p.setXY(REVERSE_INDEX_X(i),REVERSE_INDEX_Y(i));
+				p.setXY(REVERSE_INDEX_Y(i),REVERSE_INDEX_X(i));
 				//cout << p.getX() << "," << p.getY() << endl;
 				pathFullAStar.push_front(p);
 			}
 			p.setXY(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));
-			printAStar(); //comment this
+			//printAStar(); //comment this
 			return p;
 		}
 		else
