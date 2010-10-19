@@ -26,3 +26,11 @@
    * a capa atrapalha o movimento (prende na roda)
    * uma roda é mais forte que a outra
 
+ * dimensoes
+ * qual lado que está
+ * ia tem que mandar o número de robôs
+ * temos que fazer o juiz, funcionar multicast
+ * código que delega papéis
+ * código para achar o robo atual
+ * código para achar o papel do robo atual
+
