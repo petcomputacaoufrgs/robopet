@@ -1,13 +1,18 @@
 
- * mudar displacement do proto do rádio para float
- * checar se o ângulo da visão é para o mesmo lado que o ângulo da IA
- * ângulos notáveis na IA
- * girar xor andar
+ * qual lado que está [aparentemente pronto]
 
- * rádio com thread vai dar merda quando tiver mais de um robô em campo
+ * ia tem que mandar o número de robôs [depois]
+ 
+ * código que delega papéis para 
+   * ataque [x]
+   * defesa [ ]
 
- * quando coloca o primeiro robô ele aparece direto
-   * quando coloca o segundo demora
+ * código dos papéis 
+   * OLHEM OS PAPEIS DAS MAQUINAS
+
+-------------------------------
+
+VELHO 
 
  * delay muito grande visao->tracker->ai->radio
    * possíveis causas:
@@ -20,17 +25,4 @@
  * namespaces and conventions on protos (kaue, 11/02)
  * calibrar os motores a partir da visão
  * tracker pegar posição mais frequente entre as últimas 10 ou posição perto da atual (ignorar saltos)
-
- * defeitos do robôs
-   * as pilhas caem
-   * a capa atrapalha o movimento (prende na roda)
-   * uma roda é mais forte que a outra
-
- * dimensoes
- * qual lado que está
- * ia tem que mandar o número de robôs
- * temos que fazer o juiz, funcionar multicast
- * código que delega papéis
- * código para achar o robo atual
- * código para achar o papel do robo atual
-
+---------------------------------
