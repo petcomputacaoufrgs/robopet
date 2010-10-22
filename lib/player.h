@@ -35,6 +35,8 @@ class Player: public MovingObject
     void setFutureAngle( double newFutureAngle );
     void setDeltaAngle( double newDeltaAngle );
 
+    inline void setAngle(double a) { setCurrentAngle(a); } 
+    
     void setRole( Role newRole );
 
     void setDisplacementWithBall( double newDisplacementWithBall ) ;
