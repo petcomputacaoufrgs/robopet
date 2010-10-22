@@ -5,6 +5,8 @@
 #define MAX_Y 54 //dimensões da matriz que abstrai o ambiente
 
 //---- MEASURES ----
+//FIXME I commented those, but maybe it has something to do with the vision
+//TODO ask the guys if it's alright
 #define ARENA_WIDTH_MM 7400
 #define ARENA_HEIGHT_MM 5400
 
@@ -14,8 +16,10 @@
 #define ARENA_WIDTH SCREEN_WIDTH
 #define ARENA_HEIGHT 5400 * PIX_PER_MM
 
-#define FIELD_WIDTH 6050 * PIX_PER_MM
-#define FIELD_HEIGHT 4050 * PIX_PER_MM
+//FIXME I commented those, but maybe it has something to do with the vision
+//TODO ask the guys if it's alright
+#define FIELD_WIDTH 6050 //* PIX_PER_MM
+#define FIELD_HEIGHT 4050 //* PIX_PER_MM
 
 #define FIELD_CENTER_X FIELD_WIDTH/2 + BORDER
 #define FIELD_CENTER_Y FIELD_HEIGHT/2 + BORDER

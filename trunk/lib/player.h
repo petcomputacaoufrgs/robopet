@@ -19,6 +19,8 @@ class Player: public MovingObject
     inline double getFutureAngle() const { return _future_angle; }
     inline double getDeltaAngle() const { return _delta_angle; }
 
+    inline double getAngle() const { return getCurrentAngle(); }
+
     inline Role getRole() const { return _role; }
 
     inline double getDisplacementWithBall() const { return  _displacement_with_ball; }

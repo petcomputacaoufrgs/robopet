@@ -29,6 +29,12 @@ class MovingObject
     void setCurrentPositionX(double x);
     void setCurrentPositionY(double y);
 
+    inline void setX(double x) { setCurrentPositionX(x); }
+    inline void setY(double y) { setCurrentPositionY(y); }
+
+    inline double getX() { return getCurrentPosition().getX(); }
+    inline double getY() { return getCurrentPosition().getY(); }
+
     void setPastPosition(Point newPastPosition);
     void setPastPosition(double x, double y);
     void setPastPositionX(double x);
@@ -39,7 +45,7 @@ class MovingObject
     void setFuturePositionX(double x);
     void setFuturePositionY(double y);
 
-	void setDisplacement(double displacement);
+    void setDisplacement(double displacement);
     //----- Others -----
     Vector calcDisplacementVector();
     void calculateDisplacement();
