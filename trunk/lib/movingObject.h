@@ -21,9 +21,9 @@ class MovingObject
     inline const Point& getPastPosition() const { return _past_position; }
     inline const Point& getFuturePosition() const { return _future_position; }
 
-	inline double getDisplacement() { return _displacement; }
+    inline double getDisplacement() const { return _displacement; }
 
-	inline const Point& getPosition() const { return getCurrentPosition(); }
+    inline const Point& getPosition() const { return getCurrentPosition(); }
 
     //----- Setters -----
     void setCurrentPosition(Point newCurrentPosition);
