@@ -48,6 +48,12 @@ class Pathplan
 		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
 		void runPathplan(int pathplanIndex);
 		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
+
+		void printEnv();
+
+		//stupid pathplanners
+		void setInitialPos(Point pos);
+		void setFinalPos(Point pos);
 };
 
 

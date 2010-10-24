@@ -1,9 +1,6 @@
 #ifndef __ROBOPET_CONSTANTS_H__
 #define __ROBOPET_CONSTANTS_H__
 
-#define MAX_X 54 //dimensões da matriz que abstrai o ambiente
-#define MAX_Y 54 //dimensões da matriz que abstrai o ambiente
-
 //---- MEASURES ----
 //FIXME I commented those, but maybe it has something to do with the vision
 //TODO ask the guys if it's alright
@@ -20,6 +17,9 @@
 //TODO ask the guys if it's alright
 #define FIELD_WIDTH 6050 //* PIX_PER_MM
 #define FIELD_HEIGHT 4050 //* PIX_PER_MM
+
+#define MAX_X 33  //dimensões da matriz que abstrai o ambiente
+#define MAX_Y 22 //dimensões da matriz que abstrai o ambiente
 
 #define FIELD_CENTER_X FIELD_WIDTH/2 + BORDER
 #define FIELD_CENTER_Y FIELD_HEIGHT/2 + BORDER
@@ -47,8 +47,8 @@ enum{
 };
 
 // PATHPLANNING MEASURES
-#define CELLS_PER_MM  MAX_X / ARENA_WIDTH_MM //MAX_X and MAX_Y are dimensions from the matrix on rrt.h
-#define MM_PER_CELLS  ARENA_WIDTH_MM / MAX_X
+#define CELLS_PER_MM  MAX_X / (float) ARENA_WIDTH_MM //MAX_X and MAX_Y are dimensions from the matrix on rrt.h
+#define MM_PER_CELLS  ARENA_WIDTH_MM / (float) MAX_X
 
 #define MM_TO_CELLS(x) x * CELLS_PER_MM
 

@@ -5,6 +5,12 @@
 #define toDegrees(x) ((x) * 180 / (float) PI)
 #define EPS 1e-3
 
+std::ostream& operator<<(std::ostream& out, Vector v)
+{
+	out << "<" << v.getX() << "," << v.getY() << ">";
+	return out;
+}
+
 Vector::Vector(): Point(0.0,0.0) {}
 
 Vector::Vector(double xv, double yv): Point(xv,yv) {}

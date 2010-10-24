@@ -1,6 +1,13 @@
 #include "point.h"
 
-#include <stdio.h>
+
+std::ostream& operator<<(std::ostream& out, Point p)
+{
+	out << "(" << p.getX() << "," << p.getY() << ")";
+	return out;
+}
+
+
 void Point::setX(double newX)
 {
       /*if(newX < 0)

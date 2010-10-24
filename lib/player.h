@@ -52,6 +52,9 @@ class Player: public MovingObject
     inline bool isDribling() { return _dribler > 0; }
     inline bool isKicking() { return _kicker > 0; }
 
+	//stays in place
+	inline void stay() { setFuturePosition(getCurrentPosition()); }
+
     Player& operator=(const Player& other);
 
   private:
