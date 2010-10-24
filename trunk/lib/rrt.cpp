@@ -15,9 +15,9 @@
 using namespace std;
 
 
-std::ostream& operator<<(std::ostream &stream,state param) {
-     return stream << "[" << param.getX() << "," << param.getY() << "] ";
-}
+//std::ostream& operator<<(std::ostream &stream,state param) {
+//     return stream << "[" << param.getX() << "," << param.getY() << "] ";
+//}
 
 
 /******************************************************************************************

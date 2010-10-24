@@ -77,6 +77,8 @@ void Pathplan::runAStar()
 	}
 
 	state path(astar.nextNode(envAStar, initial, goal, costAStar));
+	path.setX( CELLS_TO_MM(path.getX() ) );
+    path.setY( CELLS_TO_MM( path.getY() ) );	
 	pathFinal.push_front(path);
 
 	Point p = pathFinal.front();
@@ -91,12 +93,14 @@ void Pathplan::runAStar()
 			//cout <<	a->getX() << "," << a->getY() << endl;
 		}
 	}
+
+	astar.printAStar();
 }
 
 
 void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
 {
-	const int lado = 2; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
+	const int lado = safetyCells; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
 	//printf("%i\n",lado);
 		
 	for(int i=0; i<lado; i++)
@@ -107,11 +111,31 @@ void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
 		}
 }
 
+char toChar(int cost)
+{
+	if (cost == 1000)
+		return 'x';
+	else
+		return 'o';
+}
+
+void Pathplan::printEnv()
+{
+	for (unsigned int i = 0; i < MAX_Y; i += 1)
+	{
+		for (unsigned int j = 0; j < MAX_X; j += 1)
+		{
+			cout << toChar(costAStar[j][i]) << " ";
+		}
+		cout << endl;
+	}
+
+}
 
 void Pathplan::fillEnv(vector<Point> playersPositions)
 {
 	int centerx, centery;
-	int nSafetyCells = 0;
+	int nSafetyCells = 1;
 
 	for (int x = 0; x < MAX_X; x++)
 			for (int y = 0; y < MAX_Y; y++)
@@ -123,20 +147,32 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 	vector<Point>::iterator it;
 	for(it=playersPositions.begin(); it<playersPositions.end(); it++)
 	{
-		centerx = (int)MM_TO_CELLS((*it).getX());
-		centery = (int)MM_TO_CELLS((*it).getY());
+		centerx = round( MM_TO_CELLS((*it).getX()) );
+		centery = round( MM_TO_CELLS((*it).getY()) );
 		fillEnv_playerBox(centerx,centery,nSafetyCells);
 	}
 
+	//printEnv();
 }
 
 Point Pathplan::getPathNode(int nodeIndex)
 {
 	list<state>::iterator it;
+
 	for( it=pathFinal.begin(); nodeIndex>0; it++ )
 		nodeIndex--;
 
 	return *it;
+}
+
+void Pathplan::setInitialPos(Point pos)
+{
+	initialpos = Point( MM_TO_CELLS( pos.getX() ), MM_TO_CELLS( pos.getY() ) );
+}
+
+void Pathplan::setFinalPos(Point pos)
+{
+	finalpos = Point( MM_TO_CELLS( pos.getX() ), MM_TO_CELLS( pos.getY() ) );
 }
 
 #endif

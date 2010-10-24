@@ -4,6 +4,8 @@
 #include "robopet.h"
 #define square(x) ((x)*(x))
 
+#include <iostream>
+
 using RP::Point;
 
 class Point
@@ -45,6 +47,7 @@ class Point
         Point operator-(const Point &p) const;
 		Point operator-() const;
 
+		friend std::ostream& operator<<(std::ostream& out, Point p);
 
 	protected:
         double _x;

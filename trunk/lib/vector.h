@@ -7,6 +7,9 @@
 using RP::Vector;
 using RP::Point;
 
+#include <iostream>
+
+
 class Vector : public Point
 {
 
@@ -80,6 +83,9 @@ class Vector : public Point
 		Vector operator-(const Vector &v) const;
 		Vector operator-() const;
 		Vector operator*(double e) const;
+
+		friend std::ostream& operator<<(std::ostream& out, Vector v);
+
 };
 
 		Vector operator*(double e, const Vector &v);
