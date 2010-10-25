@@ -47,12 +47,12 @@ enum{
 };
 
 // PATHPLANNING MEASURES
-#define CELLS_PER_MM  MAX_X / (float) ARENA_WIDTH_MM //MAX_X and MAX_Y are dimensions from the matrix on rrt.h
-#define MM_PER_CELLS  ARENA_WIDTH_MM / (float) MAX_X
+#define CELLS_PER_MM  MAX_X / (float) FIELD_WIDTH //MAX_X and MAX_Y are dimensions from the matrix on rrt.h
+#define MM_PER_CELLS  FIELD_WIDTH / (float) MAX_X
 
-#define MM_TO_CELLS(x) x * CELLS_PER_MM
+#define MM_TO_CELLS(x) ((x) * (CELLS_PER_MM))
 
-#define CELLS_TO_MM(x) x * MM_PER_CELLS
+#define CELLS_TO_MM(x) ((x) * (MM_PER_CELLS))
 
 
 // TRANSFORMATIONS
