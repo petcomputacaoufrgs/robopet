@@ -19,7 +19,7 @@
 #define FIELD_HEIGHT 4050 //* PIX_PER_MM
 
 #define MAX_X 33  //dimensões da matriz que abstrai o ambiente
-#define MAX_Y 22 //dimensões da matriz que abstrai o ambiente
+#define MAX_Y 33 //dimensões da matriz que abstrai o ambiente
 
 #define FIELD_CENTER_X FIELD_WIDTH/2 + BORDER
 #define FIELD_CENTER_Y FIELD_HEIGHT/2 + BORDER

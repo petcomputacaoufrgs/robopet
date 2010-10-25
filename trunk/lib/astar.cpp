@@ -147,6 +147,7 @@ bool AStar::aStarPlan(Grid env[MAX_X][MAX_Y], RP::Point start, RP::Point goal, i
 //Runs the AStar algorithm and returns the next point in the field to visit to reach the goal
 Point AStar::nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y])
 {
+		cout << "Next node" << endl;
 		if (start == goal)
 			return goal;		
 

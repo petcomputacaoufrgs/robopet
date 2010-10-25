@@ -66,16 +66,6 @@ void Pathplan::runAStar()
 	state initial = initialpos;
 	state goal    = finalpos;
 
-	if(initial.getX() == goal.getX() && initial.getY() == goal.getY()) {
-		pathFinal.push_front(initial);
-		pathFinal.push_front(goal);
-		cout << "Trague-o: " << initial.getX() << "," << initial.getY() << " | " << goal.getX() << "," << goal.getY() << endl;
-		return;
-	}
-
-	//cout << initial.getX() << " " << initial.getY() << endl;
-	//cout << goal.getX() << " " << goal.getY() << endl;
-
 	AStar astar;
 	//state path(astar.nextNode(envAStar, initial, goal, costAStar));
 	if (INDEX(initial) < 0 || initial.getX() > (MAX_X-1) || initial.getY() > (MAX_Y-1) || INDEX(goal) < 0 || goal.getX() > (MAX_X-1) || goal.getY() > (MAX_Y-1))
@@ -102,7 +92,7 @@ void Pathplan::runAStar()
 		}
 	}
 
-	//astar.printAStar();
+	astar.printAStar();
 }
 
 
@@ -167,10 +157,11 @@ Point Pathplan::getPathNode(int nodeIndex)
 {
 	list<state>::iterator it;
 
-	for( it=pathFinal.begin(); nodeIndex>0; it++ )
+	for( it=pathFull.begin(); nodeIndex>0; it++ )
 		nodeIndex--;
 
 	state node = *it;
+cout << "Huevos: " << node.getX() << "," << node.getY() << endl;
 	node.setX(CELLS_TO_MM(node.getX()));
 	node.setY(CELLS_TO_MM(node.getY()));
 	cout << "Huevos: " << node.getX() << "," << node.getY() << endl;
