@@ -62,8 +62,16 @@ void Pathplan::runRRT()
 void Pathplan::runAStar()
 {
 	//me explica esses MM_to_cells cristiano (by joão gross)
-	state initial = state( (int) MM_TO_CELLS( initialpos.getX() ), (int) MM_TO_CELLS( initialpos.getY() ));
-	state goal    = state( (int) MM_TO_CELLS( finalpos.getX() ), (int) MM_TO_CELLS( finalpos.getY() )) ;
+	cout << "Peitos: " << initialpos.getX() << "," << initialpos.getY() << " | " << finalpos.getX() << "," << finalpos.getY() << endl;
+	state initial = initialpos;
+	state goal    = finalpos;
+
+	if(initial.getX() == goal.getX() && initial.getY() == goal.getY()) {
+		pathFinal.push_front(initial);
+		pathFinal.push_front(goal);
+		cout << "Trague-o: " << initial.getX() << "," << initial.getY() << " | " << goal.getX() << "," << goal.getY() << endl;
+		return;
+	}
 
 	//cout << initial.getX() << " " << initial.getY() << endl;
 	//cout << goal.getX() << " " << goal.getY() << endl;
@@ -77,8 +85,8 @@ void Pathplan::runAStar()
 	}
 
 	state path(astar.nextNode(envAStar, initial, goal, costAStar));
-	path.setX( CELLS_TO_MM(path.getX() ) );
-    path.setY( CELLS_TO_MM( path.getY() ) );	
+	//path.setX( CELLS_TO_MM(path.getX() ) );
+    	//path.setY( CELLS_TO_MM( path.getY() ) );	
 	pathFinal.push_front(path);
 
 	Point p = pathFinal.front();
@@ -94,7 +102,7 @@ void Pathplan::runAStar()
 		}
 	}
 
-	astar.printAStar();
+	//astar.printAStar();
 }
 
 
@@ -152,7 +160,7 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 		fillEnv_playerBox(centerx,centery,nSafetyCells);
 	}
 
-	//printEnv();
+	printEnv();
 }
 
 Point Pathplan::getPathNode(int nodeIndex)
@@ -162,17 +170,21 @@ Point Pathplan::getPathNode(int nodeIndex)
 	for( it=pathFinal.begin(); nodeIndex>0; it++ )
 		nodeIndex--;
 
-	return *it;
+	state node = *it;
+	node.setX(CELLS_TO_MM(node.getX()));
+	node.setY(CELLS_TO_MM(node.getY()));
+	cout << "Huevos: " << node.getX() << "," << node.getY() << endl;
+	return node;
 }
 
 void Pathplan::setInitialPos(Point pos)
 {
-	initialpos = Point( MM_TO_CELLS( pos.getX() ), MM_TO_CELLS( pos.getY() ) );
+	initialpos = Point( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
 }
 
 void Pathplan::setFinalPos(Point pos)
 {
-	finalpos = Point( MM_TO_CELLS( pos.getX() ), MM_TO_CELLS( pos.getY() ) );
+	finalpos = Point( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
 }
 
 #endif
