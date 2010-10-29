@@ -7,7 +7,7 @@ else
 	echo "commit $1 ..."
 	if test $1 != "robopet"
 	then
-		cd robopet-$1
+		cd $1
 	fi
 	svn commit . -m "$2" --username $3 --no-auth-cache
 	if test $1 != "robopet"
