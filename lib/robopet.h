@@ -21,7 +21,7 @@ namespace RP {
 		class Point;
 		class MovingObject;
 
-};
+}
 
 #endif
 
