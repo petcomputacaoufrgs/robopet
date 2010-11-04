@@ -11,7 +11,6 @@ OBJECTS= 	movingObject.o \
 			vector.o \
 			line.o \
 			rrt.o \
-			astar.o \
 			fieldInfo.o \
 			physicsRobot.o \
 			pathplan.o
@@ -20,10 +19,7 @@ OBJECTS= 	movingObject.o \
 
 CPPTOLUA_FOLDER = CppToLua_0.1
 
-all: robopet.a $(USERDATA_OBJECTS) astar_pet
-
-astar_pet: main.cpp $(OBJECTS)
-	$(CC) $^ -o $@ $(CFLAGS) -g
+all: robopet.a $(USERDATA_OBJECTS)
 
 cpptolua:
 	wget http://github.com/downloads/kssilveira/CppToLua/$(CPPTOLUA_FOLDER).zip
@@ -56,9 +52,6 @@ line.o: vector.o line.cpp line.h
 	$(CC) -c -o $@ -c line.cpp $(CFLAGS)
 
 rrt.o: rrt.cpp rrt.h point.o
-	$(CC) -c -o $@ $< $(FLAGS)
-
-astar.o: astar.cpp astar.h point.o
 	$(CC) -c -o $@ $< $(FLAGS)
 
 fieldInfo.o: fieldInfo.cpp fieldInfo.h
