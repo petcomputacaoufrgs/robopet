@@ -15,19 +15,36 @@
 using namespace std;
 
 
-//std::ostream& operator<<(std::ostream &stream,state param) {
+//std::ostream& operator<<(std::ostream &stream,Point param) {
 //     return stream << "[" << param.getX() << "," << param.getY() << "] ";
 //}
 
+/******************************************************************************************
+ Pathplan Interface
+ ******************************************************************************************/
+
+void Rrt::run()
+{
+	Point initial = Point( MM_TO_CELLS( initialpos.getX() ), MM_TO_CELLS( initialpos.getY() ));
+	Point goal = Point( MM_TO_CELLS( finalpos.getX() ), MM_TO_CELLS( finalpos.getY() )) ;
+
+    RRTTree *solutionTree;
+	solutionTree = RRTPlan(env,initial,goal);
+
+    this->pathFull = solutionTree->treeToList();
+	this->pathFinal = solutionTree->findSolucao(goal);
+	
+	//print(solutionTree,initial,goal,pathFinal,env); //print result in console
+}
 
 /******************************************************************************************
  Código do ETDP dos CMDragons de 2009
  ******************************************************************************************/
 
-RRTTree* RRTPlan(int env[][MAX_Y], state initial, state goal) {
+RRTTree* RRTPlan(envType env[][MAX_Y], Point initial, Point goal) {
     int printCont=0;
 	RRTTree *nearest;
-	state extended,target;
+	Point extended,target;
 	RRTTree *tree;
 
     // dá pra fazer melhor
@@ -46,7 +63,7 @@ RRTTree* RRTPlan(int env[][MAX_Y], state initial, state goal) {
 
         if(STEP_BY_STEP){ //impressão passo a passo p/ debug
             if(printCont==STEPS_DELAY){
-               list<state> null;
+               list<Point> null;
                print(tree,initial,goal,null,env);
                printCont=0;
                //getchar();
@@ -70,7 +87,7 @@ RRTTree* RRTPlan(int env[][MAX_Y], state initial, state goal) {
 	return tree;
 }
 
-state ChooseTarget(state goal) {
+Point ChooseTarget(Point goal) {
 	float p;
 	p = (rand() % 100 + 1) / 100.0;
 
@@ -80,7 +97,7 @@ state ChooseTarget(state goal) {
 		return RandomState();
 }
 
-RRTTree* Nearest(RRTTree *tree, state target) {
+RRTTree* Nearest(RRTTree *tree, Point target) {
 	RRTTree *nearest = tree;
 
     nearestState(tree,target,&nearest); //calcula nodo mais próximo de target
@@ -92,11 +109,11 @@ RRTTree* Nearest(RRTTree *tree, state target) {
  Código deduzido do ETDP dos CMDragons de 2009
  ******************************************************************************************/
 
-void nearestState(RRTTree *tree,state target,RRTTree **nearest) {
+void nearestState(RRTTree *tree,Point target,RRTTree **nearest) {
 
     if (tree->nodo != EMPTY_STATE){
 
-       state actual = tree->nodo;
+       Point actual = tree->nodo;
 
        //cout << "actual:" << actual << endl;
        //cout << "nearest->nodo:" << nearest->nodo << endl;
@@ -110,21 +127,21 @@ void nearestState(RRTTree *tree,state target,RRTTree **nearest) {
     }
 }
 
-float Distance(state a, state b) {
+float Distance(Point a, Point b) {
 	return fabs( sqrt(  (float)(  SQR(a.getX() - b.getX()) + SQR(a.getY() - b.getY())  )  ));
 }
 
-state Extend(int env[][MAX_Y], state nearest, state target) {
+Point Extend(envType env[][MAX_Y], Point nearest, Point target) {
 
     int step = rand()%MAX_STEPSIZE + 1;
 
     int directions[8][2] = {{-step, -step}, {-step, 0}, {-step, step}, {0, -step}, {0, 0}, {step, -step}, {step, 0}, {step, step}};
     int res = rand() % DIRECTIONS_TO_LOOK, i, resIndex[8], tmp, j, min;
     float distances[8], temp;
-    state extended;
+    Point extended;
 
     for(i = 0; i < 8; i++) {
-        distances[i] = Distance(  state (nearest.getX() + directions[i][0],
+        distances[i] = Distance(  Point (nearest.getX() + directions[i][0],
                                          nearest.getY() + directions[i][1]),
                                 target);
         resIndex[i] = i;
@@ -147,7 +164,7 @@ state Extend(int env[][MAX_Y], state nearest, state target) {
         }
     }
 
-    extended =    state(nearest.getX() + directions[resIndex[res]][0],
+    extended =    Point(nearest.getX() + directions[resIndex[res]][0],
                         nearest.getY() + directions[resIndex[res]][1]);
 
 
@@ -157,8 +174,8 @@ state Extend(int env[][MAX_Y], state nearest, state target) {
     else return EMPTY_STATE;
 }
 
-state RandomState() {
-    state randomState;
+Point RandomState() {
+    Point randomState;
 
     randomState.setX( rand() % MAX_X );
     randomState.setY( rand() % MAX_Y );
@@ -167,7 +184,7 @@ state RandomState() {
 }
 
 
- int bresenham1(int env[][MAX_Y], state stat1, state stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
+ int bresenham(envType env[][MAX_Y], Point stat1, Point stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
        int x1 = stat1.getX();
        int x2 = stat2.getX();
        int y1 = stat1.getY();
@@ -177,17 +194,17 @@ state RandomState() {
        int dx, dy, incE, incNE, d, x, y;
        // Onde inverte a linha x1 > x2
        if (x1 > x2){
-           return bresenham1(env, stat2, stat1);
+           return bresenham(env, stat2, stat1);
        }
 
        if(x1 == x2){ //reta é paralela com eixo y
             if(y1 < y2)
                 for(y = y1; y <= y2; y++)
-                    if (env[x1][y] == OBSTACULO) //(x,y) é um ponto da linha ajustado à matriz
+                    if (env[x1][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz
                         return 1;
             else
                 for(y = y2; y <= y1; y++)
-                    if (env[x1][y] == OBSTACULO) //(x,y) é um ponto da linha ajustado à matriz
+                    if (env[x1][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz
                         return 1;
             return 0;
        }
@@ -208,7 +225,7 @@ state RandomState() {
                d = 2 * dy - dx;
                y = y1;
                for (x = x1; x <= x2; x++){
-                   if (env[x][y] == OBSTACULO) //(x,y) é um ponto da linha ajustado à matriz
+                   if (env[x][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz
                       return 1;
 
                    if (d <= 0){
@@ -223,18 +240,18 @@ state RandomState() {
                return 0;
        }
  }
-int Collision(int env[][MAX_Y], state nearest, state extended) {
+int Collision(envType env[][MAX_Y], Point nearest, Point extended) {
     if(extended.getX() >= 0 && extended.getX() < MAX_X &&
        extended.getY() >= 0 && extended.getY() < MAX_Y)
 
-        return bresenham1(env, nearest, extended);
+        return bresenham(env, nearest, extended);
         //return env[extended.getX()][extended.getY()] == OBSTACULO;
     else
         return 1;
 }
 
 
-void AddNode(RRTTree *nearest, state extended) {
+void AddNode(RRTTree *nearest, Point extended) {
 
     //cout << "AddNode " << extended << "at " << nearest->nodo << endl;
 
@@ -249,7 +266,7 @@ void AddNode(RRTTree *nearest, state extended) {
 
 
 
-void encontraFim(RRTTree *tree,state goal,RRTTree **fim)
+void encontraFim(RRTTree *tree,Point goal,RRTTree **fim)
 {
     if (tree->nodo != EMPTY_STATE){
 
@@ -263,8 +280,8 @@ void encontraFim(RRTTree *tree,state goal,RRTTree **fim)
     }
 }
 
-std::list<state> RRTTree::findSolucao(state goal) {
-    std::list<state> caminho;
+std::list<Point> RRTTree::findSolucao(Point goal) {
+    std::list<Point> caminho;
 
     RRTTree *aux;
     encontraFim(this,goal,&aux);
@@ -277,7 +294,7 @@ std::list<state> RRTTree::findSolucao(state goal) {
     return caminho;
 }
 
-void RRTTree::treeToList_recursive(RRTTree *tree,list<state>*caminho)
+void RRTTree::treeToList_recursive(RRTTree *tree,list<Point>*caminho)
 {
     if (tree->nodo != EMPTY_STATE){
 
@@ -288,9 +305,9 @@ void RRTTree::treeToList_recursive(RRTTree *tree,list<state>*caminho)
     }
 }
 
-list<state> RRTTree::treeToList()
+list<Point> RRTTree::treeToList()
 {
-	std::list<state> caminho;
+	std::list<Point> caminho;
 
 	treeToList_recursive(this,&caminho);
 
@@ -308,13 +325,13 @@ void printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y])
 {
     if (tree->nodo != EMPTY_STATE){
 
-        matrizPrint[(int)tree->nodo.getX()][(int)tree->nodo.getY()] = NODO;
+        matrizPrint[(int)tree->nodo.getX()][(int)tree->nodo.getY()] = NODE;
 
         for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i)
             printVarreTree(&(*i),matrizPrint);
     }
 }
-void print(RRTTree *tree,state initial,state goal,std::list<state> caminho,int env[][MAX_Y])
+void print(RRTTree *tree,Point initial,Point goal,list<Point> caminho,envType env[][MAX_Y])
 {
     system("cls");
 
@@ -329,30 +346,30 @@ void print(RRTTree *tree,state initial,state goal,std::list<state> caminho,int e
     printVarreTree(tree,matrizPrint);
 
     //marca caminho-solução
-    for(std::list<state>::iterator i=caminho.begin(); i != caminho.end(); ++i)
-        matrizPrint[(int)i->getX()][(int)i->getY()] = CAMINHO;
+    for(std::list<Point>::iterator i=caminho.begin(); i != caminho.end(); ++i)
+        matrizPrint[(int)i->getX()][(int)i->getY()] = PATH;
 
     //marcadores de ponto inicial e ponto final
-    matrizPrint[(int)initial.getX()][(int)initial.getY()] = MARCADOR;
-    matrizPrint[(int)goal.getX()][(int)goal.getY()] = MARCADOR;
+    matrizPrint[(int)initial.getX()][(int)initial.getY()] = MARKER;
+    matrizPrint[(int)goal.getX()][(int)goal.getY()] = MARKER;
 
     //imprime!
     for(int i=MAX_Y-1;i>=0;i--){
         for(int k=0;k<MAX_X;k++)
             switch (matrizPrint[k][i]){
-                case LIVRE:
+                case FREE:
                     cout << " ";
                     break;
-                case MARCADOR:
+                case MARKER:
                     cout << "X";
                     break;
-                case OBSTACULO:
+                case OBSTACLE:
                     cout << "#";
                     break;
-                case NODO:
+                case NODE:
                     cout << ".";
                     break;
-                case CAMINHO:
+                case PATH:
                     cout << "o";
                     break;
             }

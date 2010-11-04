@@ -2,111 +2,36 @@
 #define _PATHPLAN_CPP_
 
 #include <iostream>
-#include "pathplan.h"
 
+#include "pathplan.h"
+#include "point.h"
+
+using RP::Point;
 using namespace std;
 
 Pathplan::Pathplan(Point initial, Point final)
 {
 	this->initialpos = initial;
 	this->finalpos = final;
-	for (int x = 0; x < MAX_X; x++)
-			for (int y = 0; y < MAX_Y; y++)
-				costAStar[x][y] = 0;
 }
 
 Pathplan::Pathplan()
 {
-	Point initial(0.0, 0.0);
-	Point final(0.0, 0.0);
-	this->initialpos = initial;
-	this->finalpos = final;
-	for (int x = 0; x < MAX_X; x++)
-			for (int y = 0; y < MAX_Y; y++)
-				costAStar[x][y] = 0;
+	this->initialpos = Point(0.0, 0.0);
+	this->finalpos = Point(0.0, 0.0);
 }
 
 Pathplan::~Pathplan()
 {
 }
 
-void Pathplan::runPathplan( int pathplanIndex )
-{
-	switch(pathplanIndex)
-	{
-		case PATHPLAN_RRT:
-			runRRT();
-			break;
-
-		case PATHPLAN_ASTAR:
-			runAStar();
-			break;
-	}
-}
-
-void Pathplan::runRRT()
-/* interface for Cristiano's RRT implementation */
-{
-	state initial = state( MM_TO_CELLS( initialpos.getX() ), MM_TO_CELLS( initialpos.getY() ));
-	state goal = state( MM_TO_CELLS( finalpos.getX() ), MM_TO_CELLS( finalpos.getY() )) ;
-
-    RRTTree *solutionTree;
-	solutionTree = RRTPlan(envRRT,initial,goal);
-
-    this->pathFull = solutionTree->treeToList();
-	this->pathFinal = solutionTree->findSolucao(goal);
-	//print(solutionTree,initial,goal,caminhoSolucao,env); //imprime resultado no console
-}
-
-
-void Pathplan::runAStar()
-{
-	//me explica esses MM_to_cells cristiano (by joão gross)
-	cout << "Peitos: " << initialpos.getX() << "," << initialpos.getY() << " | " << finalpos.getX() << "," << finalpos.getY() << endl;
-	state initial = initialpos;
-	state goal    = finalpos;
-
-	AStar astar;
-	//state path(astar.nextNode(envAStar, initial, goal, costAStar));
-	if (INDEX(initial) < 0 || initial.getX() > (MAX_X-1) || initial.getY() > (MAX_Y-1) || INDEX(goal) < 0 || goal.getX() > (MAX_X-1) || goal.getY() > (MAX_Y-1))
-	{
-		cout << "Points out of range!" << endl;
-		return;		
-	}
-
-	state path(astar.nextNode(envAStar, initial, goal, costAStar));
-	//path.setX( CELLS_TO_MM(path.getX() ) );
-    	//path.setY( CELLS_TO_MM( path.getY() ) );	
-	pathFinal.push_front(path);
-
-	Point p = pathFinal.front();
-	if (INDEX(p))
-	{
-		//cout << "Next Point: " << p.getX() << ", " << p.getY() << endl;
-		//cout << "Full path: " << endl;
-		for (list<Point>::iterator a = astar.pathFullAStarBegin(); 
-			 a != astar.pathFullAStarEnd(); a++)
-		{
-			pathFull.push_back(*a);
-			//cout <<	a->getX() << "," << a->getY() << endl;
-		}
-	}
-
-	astar.printAStar();
-}
-
-
 void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
 {
-	const int lado = safetyCells; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
-	//printf("%i\n",lado);
-		
-	for(int i=0; i<lado; i++)
-		for(int k=0; k<lado; k++)
-		{
-			envRRT[x+i][y+k] = OBSTACULO;
-			costAStar[x+i][y+k] = 1000;
-		}
+	const int side = safetyCells; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
+			
+	for(int i=0; i<side; i++)
+		for(int k=0; k<side; k++)
+			env[x+i][y+k] = OBSTACLE;
 }
 
 char toChar(int cost)
@@ -123,10 +48,16 @@ void Pathplan::printEnv()
 	{
 		for (unsigned int j = 0; j < MAX_X; j += 1)
 		{
-			cout << toChar(costAStar[j][i]) << " ";
+            switch (env[i][j]){
+                case FREE: cout << " "; break;
+                case MARKER: cout << "X"; break;
+                case OBSTACLE: cout << "#"; break;
+                case NODE: cout << "."; break;
+                case PATH: cout << "o"; break;
+			}
+			cout << endl;
 		}
-		cout << endl;
-	}
+    }	
 
 }
 
@@ -137,10 +68,7 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 
 	for (int x = 0; x < MAX_X; x++)
 			for (int y = 0; y < MAX_Y; y++)
-		{
-			envRRT[x][y] = LIVRE;
-			costAStar[x][y] = LIVRE;
-		}
+			env[x][y] = FREE;
 
 	vector<Point>::iterator it;
 	for(it=playersPositions.begin(); it<playersPositions.end(); it++)
@@ -149,22 +77,20 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 		centery = round( MM_TO_CELLS((*it).getY()) );
 		fillEnv_playerBox(centerx,centery,nSafetyCells);
 	}
-
-	printEnv();
 }
 
 Point Pathplan::getPathNode(int nodeIndex)
 {
-	list<state>::iterator it;
+	list<Point>::iterator it;
 
 	for( it=pathFull.begin(); nodeIndex>0; it++ )
 		nodeIndex--;
 
-	state node = *it;
-cout << "Huevos: " << node.getX() << "," << node.getY() << endl;
+	Point node = *it;
+	
 	node.setX(CELLS_TO_MM(node.getX()));
 	node.setY(CELLS_TO_MM(node.getY()));
-	cout << "Huevos: " << node.getX() << "," << node.getY() << endl;
+	
 	return node;
 }
 

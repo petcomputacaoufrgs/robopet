@@ -1,44 +1,48 @@
 #ifndef _PATHPLAN_H_
 #define _PATHPLAN_H_
 
-#include <vector>
-#include "constants.h"
-#include "astar.h"
-#include "rrt.h"
-#include <iostream>
 #include <set>
 #include <cmath>
 #include <cstdio>
-#include "player.h"
+#include <vector>
+#include <iostream>
+#include <list>
 
+#include "constants.h"
+#include "player.h"
+#include "point.h"
+
+using RP::Point;
 using namespace std;
+
+
+enum pathplanType
+{
+	RRT, ASTAR
+};
+
+enum envType
+{
+	FREE, OBSTACLE,	MARKER, NODE, PATH
+};
+
 
 class Pathplan
 {
 	protected:
 
-		//---- For RRT ----
-		list<state> pathFull;  //full solution, showing possible partial branches
-		list<state> pathFinal; //final solution, for path execution purposes (next point to visit)
-		int envRRT[MAX_X][MAX_Y]; //environment matrix for RRT
+		//---- Position on the field (in grid coordinates) ----
+		Point initialpos;
+		Point finalpos;
 
-		//---- For AStar ----
-		Grid envAStar[MAX_X][MAX_Y]; //environment matrix for AStar
-		int costAStar[MAX_X][MAX_Y];
-
-		//----- Pathplans -----
-		void runRRT(); //driver for RRT
-		void runAStar(); //driver for AStar
+		list<Point> pathFull;  //full solution, showing possible partial branches
+		list<Point> pathFinal; //final solution, for path execution purposes (next point to visit)
+		envType env[MAX_X][MAX_Y]; //generic environment matrix
 
 		//---- Functions ----
 		void fillEnv_playerBox(int centerx, int centery, int safetyCells);
 
 	public:
-
-		//---- Position on the field (in millimeters) ----
-		Point initialpos;
-		Point finalpos;
-
 		//---- Constructor and Destructor ----
 		Pathplan(Point initialpos, Point finalpos);
 		Pathplan();
@@ -46,12 +50,15 @@ class Pathplan
 
 		//----- Functions -----
 		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
-		void runPathplan(int pathplanIndex);
 		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
 
+		/* For debuging purposes. 
+		 * Prints the actual environment
+		 */
 		void printEnv();
+		
+		virtual void run() {};
 
-		//stupid pathplanners
 		void setInitialPos(Point pos);
 		void setFinalPos(Point pos);
 };

@@ -40,12 +40,6 @@
 
 //MM_PER_CELLS retorna MAX_X * (MAX_X / 7400)
 
-// PATHPLANNIG
-enum{
-	PATHPLAN_RRT    = 0,
-	PATHPLAN_ASTAR  = 1
-};
-
 // PATHPLANNING MEASURES
 #define CELLS_PER_MM  MAX_X / (float) FIELD_WIDTH //MAX_X and MAX_Y are dimensions from the matrix on rrt.h
 #define MM_PER_CELLS  FIELD_WIDTH / (float) MAX_X
