@@ -1,0 +1,81 @@
+#labels guide
+This is a quick guide to building all the software modules of the RoboPET architecture as well as downloading and installing the dependencies. I'm gonna assume you're on Linux, bonus points if you're using a Debian based distro (we're ubuntu people here). Also you should have some basic stuff (g++, make, etc...). If you're o ubuntu the package `build-essentials` will do the trick for you.
+
+= Getting the source =
+
+* checkout the code from [here|http://code.google.com/p/robopet/source/checkout]
+* read [here|http://code.google.com/p/robopet/wiki/SVN] on how to download the code for all the modules
+
+=== Note ===
+
+We don't have a binary realease as of now. So you'll be downloading unstable and freshly commited code of our SVN. Exercise caution!
+
+= Building everything =
+
+=== Note ===
+
+I'll also assume you've checked out the code and you're inside the root directory of the project. That means:
+
+{{{
+  $ svn checkout http://robopet.googlecode.com/svn/trunk/ robopet 
+  $ cd robopet
+}}}
+After checking out all the modules you should have folders named: ai,radio,communication, gui, simulator, lib and tracker
+
+== RoboPET lib == 
+
+{{{
+    $ cd lib
+    $ make 
+}}}
+== communication ==
+
+    Depends on: protobuf-c-compiler, libprotobuf-dev
+{{{
+    $ cd communication
+    $ make
+}}}
+== ai ==
+
+{{{
+   # will soon depend on Lua
+   $ cd ai
+   $ make
+}}}
+== radio ==
+
+   Depends on: libusb-1.0-0-dev
+{{{
+   $ cd radio
+   $ make
+}}}
+=== Joystick control ===
+
+   Depends on: glut (on ubuntu try freeglut3)
+{{{
+   $ cd radio/joy
+   $ make
+}}}
+== gui ==
+
+   Depends on: opengl, gtkgl-ext, gtk #somebody help me with the package names
+{{{
+   $ cd gui
+   $ make
+}}}
+== simulator ==
+
+   Depends on: Box2D 2.1.2, as it may not be available as a package in your ubuntu version we have an installer script in the project root named 'get_box2d.sh'
+
+{{{
+   $ cd simulator
+   $ make
+}}}
+== tracker ==
+
+   Depends on: qtCore, pthreads
+{{{
+   $ cd tracker
+   $ make
+}}}
+ 
