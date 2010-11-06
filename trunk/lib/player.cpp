@@ -1,4 +1,5 @@
 #include "player.h"
+#include "constants.h"
 
 void Player::setCurrentAngle( double newCurrentAngle )
 { _current_angle = newCurrentAngle; }
@@ -49,3 +50,40 @@ Player& Player::operator=(const Player& other)
     return *this;
 }
 
+void Player::kick() {
+	this->setKickerIntensity(999);
+	//this.setFuturePosition( _ball.getPosition() );
+}
+
+void Player::pointTo( Point p )
+{
+	RP::Vector playerToPVector(this->getPosition(),p);
+	int angle = playerToPVector.angleDegrees(Vector(1,0));
+	
+	if(playerToPVector.getY() > 0)
+		angle = 360 - angle;
+	
+	this->setFutureAngle( angle );
+}
+
+bool Player::isPointingTo( Point p)
+{
+	int treshold = 0.1; //percentage of error
+	
+	//ball_vec is the vector from the bot center to the ball center
+	RP::Vector desiredDirection(this->getPosition(), p);
+	desiredDirection.normalizeMe();
+
+	//bot_vec indicates where the bot is pointing
+	RP::Vector actualDirection( cos(this->getCurrentAngle())*ROBOT_RADIUS_MM,
+								sin(this->getCurrentAngle())*ROBOT_RADIUS_MM);
+	actualDirection.normalizeMe();
+	
+	//desiredDirection (dot_product) actualDirection = |desiredDirection| * |actualDirection| * cos(theta)
+	//|desiredDirection| == |actualDirection| == 1, because both are normalized
+	//if theta ~ 0, the bot points to the ball
+	if(1-treshold <= desiredDirection.dotProduct(actualDirection))
+		return true;
+	else
+		return false;
+}
