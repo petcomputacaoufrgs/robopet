@@ -20,7 +20,7 @@ namespace RP {
 		class Line;
 		class Point;
 		class MovingObject;
-
+		typedef MovingObject Ball;
 }
 
 #endif

@@ -12,8 +12,8 @@ using RP::MovingObject;
 class MovingObject
 {
   public:
-    MovingObject() : _current_position(0, 0), _past_position(0, 0), _future_position(0, 0) {}
-    MovingObject(const MovingObject& other);
+    MovingObject(double stX = 0, double stY = 0) : _current_position(stX, stY), _past_position(0, 0), _future_position(0, 0) {}
+	MovingObject(const MovingObject& other);
     ~MovingObject() {}
 
     //----- Getters -----
