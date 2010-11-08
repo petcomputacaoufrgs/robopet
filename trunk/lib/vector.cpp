@@ -158,34 +158,21 @@ double Vector::angleDegrees(Vector v) const
 Função especial pra giraAntes()
 angulo [0-360) com a vertical
 ******************************************************/
-#define PI 3.1415
+//#define PI 3.1415
 #define debug_float(x) printf(#x ": %lf\n", (double) x)
 double Vector::angleClockwise() const
 {
-    //debug_float(_x);
-    //debug_float(_y);
-
     Vector v(_x, _y);
-    //debug_float(v.getX());
-    //debug_float(v.getY());
+
     v.normalizeMe();
-    //debug_float(v.getX());
-    //debug_float(v.getY());
 
     double angulo = acos(v.getX());
     double sen = asin(v.getY());
 
-    //debug_float(angulo);
-    //debug_float(sen);
-
     if(sen < 0)
         angulo = (2*PI - angulo);
 
-    //debug_float(angulo);
-
     angulo = /*360 -*/ (angulo * 180 / PI);
-
-    //debug_float(angulo);
 
     return angulo;
 }

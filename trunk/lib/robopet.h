@@ -13,7 +13,7 @@
 
 namespace RP {
 
-		static const double PI = acos((double)-1);
+		static const double PI = M_PI;
 
 		class Player;
 		class Vector;
