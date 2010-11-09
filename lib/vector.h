@@ -64,7 +64,33 @@ class Vector : public Point
 		******************************************************/
 		double angleDegrees(Vector v) const;
 
-		double angleClockwise() const;
+		/******************************************************
+		Função que calcula o angulo no sentido horário
+		entre dois vetores.
+		v: outro vetor
+		******************************************************/
+		double angleCW(Vector v) const;
+		
+		/******************************************************
+		Função que calcula o angulo no sentido horário
+		entre dois vetores em graus.
+		v: outro vetor
+		******************************************************/
+		double angleCWDegrees(Vector v) const;
+		
+		/******************************************************
+		Função que calcula o angulo no sentido antihorário
+		entre dois vetores.
+		v: outro vetor
+		******************************************************/
+		double angleCCW(Vector v) const;
+		
+		/******************************************************
+		Função que calcula o angulo no sentido antihorário
+		entre dois vetores em graus.
+		v: outro vetor
+		******************************************************/
+		double angleCCWDegrees(Vector v) const;
 
 		/******************************************************
 		Determina se dois vetores são perpendiculares

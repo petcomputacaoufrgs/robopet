@@ -155,11 +155,41 @@ double Vector::angleDegrees(Vector v) const
 }
 
 /******************************************************
-Função especial pra giraAntes()
-angulo [0-360) com a vertical
+Função que calcula o angulo no sentido horário
+entre dois vetores.
+v: outro vetor
 ******************************************************/
-//#define PI 3.1415
-#define debug_float(x) printf(#x ": %lf\n", (double) x)
+double angleCW(Vector v) const {
+	
+}
+
+/******************************************************
+Função que calcula o angulo no sentido horário
+entre dois vetores em graus.
+v: outro vetor
+******************************************************/
+double angleCWDegrees(Vector v) const {
+	return toDegrees(angleCW(v));
+}
+
+/******************************************************
+Função que calcula o angulo no sentido antihorário
+entre dois vetores.
+v: outro vetor
+******************************************************/
+double angleCCW(Vector v) const {
+	
+}
+
+/******************************************************
+Função que calcula o angulo no sentido antihorário
+entre dois vetores em graus.
+v: outro vetor
+******************************************************/
+double angleCCWDegrees(Vector v) const {
+	return toDegrees(angleCCW(v));
+}
+
 double Vector::angleClockwise() const
 {
     Vector v(_x, _y);
