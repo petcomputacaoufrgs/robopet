@@ -10,7 +10,7 @@ void Player::setFutureAngle( double newFutureAngle )
 void Player::setDeltaAngle( double newDeltaAngle )
 { _delta_angle = newDeltaAngle; }
 
-void Player::setRole( Role newRole ) { _role = newRole; }
+void Player::setRole( int newRole ) { _role = newRole; }
 
 void Player::setDisplacementWithBall( double newDisplacementWithBall )
 { _displacement_with_ball = newDisplacementWithBall; }
