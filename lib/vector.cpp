@@ -2,7 +2,7 @@
 #include <cassert>
 #include <math.h>
 
-#define toDegrees(x) ((x) * 180 / (float) PI)
+#define toDegrees(x) ((x) * 180 / (float) M_PI)
 #define EPS 1e-3
 
 std::ostream& operator<<(std::ostream& out, Vector v)
@@ -146,7 +146,7 @@ double Vector::angle(Vector v) const
 
 /******************************************************
 Função que calcula o menor angulo positivo entre dois vetores
-em radianos.
+em graus.
 v: outro vetor
 ******************************************************/
 double Vector::angleDegrees(Vector v) const
@@ -159,8 +159,14 @@ Função que calcula o angulo no sentido horário
 entre dois vetores.
 v: outro vetor
 ******************************************************/
-double angleCW(Vector v) const {
-	
+double Vector::angleCW(Vector v) const {
+	double alpha = myAngle();
+	double beta = v.myAngle();
+
+	if(alpha < beta)
+		return 2*M_PI - (beta-alpha);
+	else
+		return beta-alpha;
 }
 
 /******************************************************
@@ -168,7 +174,7 @@ Função que calcula o angulo no sentido horário
 entre dois vetores em graus.
 v: outro vetor
 ******************************************************/
-double angleCWDegrees(Vector v) const {
+double Vector::angleCWDegrees(Vector v) const {
 	return toDegrees(angleCW(v));
 }
 
@@ -177,8 +183,8 @@ Função que calcula o angulo no sentido antihorário
 entre dois vetores.
 v: outro vetor
 ******************************************************/
-double angleCCW(Vector v) const {
-	
+double Vector::angleCCW(Vector v) const {
+	return v.angleCW(*this);	//cw(a,b) = ccw(b,a)
 }
 
 /******************************************************
@@ -186,26 +192,35 @@ Função que calcula o angulo no sentido antihorário
 entre dois vetores em graus.
 v: outro vetor
 ******************************************************/
-double angleCCWDegrees(Vector v) const {
+double Vector::angleCCWDegrees(Vector v) const {
 	return toDegrees(angleCCW(v));
 }
 
-double Vector::angleClockwise() const
+/******************************************************
+Calcula o angulo do vetor com o eixo x, ie angulo no
+círculo trigonométrico.
+v: outro vetor
+******************************************************/
+double Vector::myAngle() const
 {
-    Vector v(_x, _y);
+	double angle = this->angle( Vector(1,0) );
 
-    v.normalizeMe();
+	if(this->getY()<0)
+		angle = M_PI - angle;	
 
-    double angulo = acos(v.getX());
-    double sen = asin(v.getY());
-
-    if(sen < 0)
-        angulo = (2*PI - angulo);
-
-    angulo = /*360 -*/ (angulo * 180 / PI);
-
-    return angulo;
+	return angle;
 }
+
+/******************************************************
+Calcula o angulo do vetor com o eixo x, ie angulo no
+círculo trigonométrico em graus.
+v: outro vetor
+******************************************************/
+double Vector::myAngleDegrees() const
+{
+	return toDegrees(myAngle());
+}
+
 
 /******************************************************
 Determina se dois vetores são perpendiculares
@@ -232,47 +247,47 @@ Vector Vector::projection(const Vector &v) const
 }
 
 /******************************************************
-Operador de adição de vetores
-v: outro vetor
-******************************************************/
+ * Operador de adição de vetores
+ * v: outro vetor
+ * ******************************************************/
 Vector Vector::operator+(const Vector &v) const
 {
-	return Vector(Point(*this) + Point(v));
+		        return Vector(Point(*this) + Point(v));
 }
 
 /******************************************************
-Operador de subtração de vetores
-v: outro vetor
-******************************************************/
+ * Operador de subtração de vetores
+ * v: outro vetor
+ * ******************************************************/
 Vector Vector::operator-(const Vector &v) const
 {
-	return Vector(Point(*this) - Point(v));
+		        return Vector(Point(*this) - Point(v));
 }
 
 /******************************************************
-Operador de inversão de sinal
-******************************************************/
+ * Operador de inversão de sinal
+ * ******************************************************/
 Vector Vector::operator-() const
 {
-	return Vector(-Point(*this));
+		        return Vector(-Point(*this));
 }
 
 /******************************************************
-Operador para multiplicação por escalar
-e: escalar
-******************************************************/
+ * Operador para multiplicação por escalar
+ * e: escalar
+ * ******************************************************/
 Vector Vector::operator*(double e) const
 {
-	return Vector(getX()*e, getY()*e);
+		        return Vector(getX()*e, getY()*e);
 }
 
 /******************************************************
-Operador para multiplicação por escalar
-e: escalar
-v: vetor
-******************************************************/
+ * Operador para multiplicação por escalar
+ * e: escalar
+ * v: vetor
+ * ******************************************************/
 Vector operator*(double e, const Vector &v)
 {
-	return Vector(v.getX() * e, v.getY() * e);
+		        return Vector(v.getX() * e, v.getY() * e);
 }
 

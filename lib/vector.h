@@ -93,6 +93,20 @@ class Vector : public Point
 		double angleCCWDegrees(Vector v) const;
 
 		/******************************************************
+		Calcula o angulo do vetor com o eixo x, ie angulo no
+		círculo trigonométrico.
+		v: outro vetor
+		******************************************************/
+		double myAngle() const;
+
+		/******************************************************
+		Calcula o angulo do vetor com o eixo x, ie angulo no
+		círculo trigonométrico em graus.
+		v: outro vetor
+		******************************************************/
+		double myAngleDegrees() const;
+
+		/******************************************************
 		Determina se dois vetores são perpendiculares
 		v: outro vetor
 		******************************************************/
