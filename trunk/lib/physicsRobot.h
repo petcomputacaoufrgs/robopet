@@ -13,7 +13,7 @@ private:
 public:
 
 	/* rotation sense */
-	enum Sense {
+	enum {
 		CW = 1,
 		CCW = -1
 	};
@@ -25,7 +25,7 @@ public:
    * possibly rotating (rotate) in sense 's' (CW, CCW) durint time 't',
    * and puts in vector 'offset' the corresponding offset
    */
-  PhysicsRobot fakeMove(float t, bool rotate, Sense s, int ang, Vector &offset) const;
+  PhysicsRobot fakeMove(float t, bool rotate, int s, int ang, Vector &offset) const;
 
   /* moves in the direction of 'offset' vector with a potency
    * proportional to its norm (100 -> 100%)
@@ -38,7 +38,7 @@ public:
   /* moves in the direction of vector 'offset' with a potency
    * proportional to its norm (100 -> 100%) rotating in sense 's' (CW, CCW)
    */
-  void move(Sense s, Vector offset);
+  void move(int s, Vector offset);
 
   /* stops */
   void stop();

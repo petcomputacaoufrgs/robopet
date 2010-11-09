@@ -27,8 +27,8 @@ cpptolua:
 	cd $(CPPTOLUA_FOLDER); make
 	cp $(CPPTOLUA_FOLDER)/cpptolua .
 
-#userdata/%.o: %_userdata.cpp
-#	$(CC) -c -o $@ $^ $(LUA)
+userdata/%.o: %_userdata.cpp
+	$(CC) -c -o $@ $^ $(LUA)
 
 #userdata/%.cpp: userdata/%.h
 #	$(CC2L) -i $< -o $@ -n $*.h
