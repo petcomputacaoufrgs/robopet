@@ -5,7 +5,7 @@ PhysicsRobot::PhysicsRobot(int angle) {
 	_angle = angle;
 }
 
-PhysicsRobot PhysicsRobot::fakeMove(float t, bool rotate, Sense s, int ang, Vector &offset) const {
+PhysicsRobot PhysicsRobot::fakeMove(float t, bool rotate,int s, int ang, Vector &offset) const {
 
 	offset.setXY(1,0);
 	offset.rotate(_angle + ang);
@@ -22,7 +22,7 @@ void PhysicsRobot::rotate(int ang) {
 
 }
 
-void PhysicsRobot::move(Sense s, Vector offset) {
+void PhysicsRobot::move(int s, Vector offset) {
 
 }
 

@@ -21,7 +21,7 @@ class Player: public MovingObject
 
     inline double 	getAngle() const { return getCurrentAngle(); }
 
-    inline Role		getRole() const { return _role; }
+    inline int getRole() const { return _role; }
 
     inline double 	getDisplacementWithBall() const { return  _displacement_with_ball; }
 
@@ -37,8 +37,7 @@ class Player: public MovingObject
 
     inline void setAngle(double a) { setCurrentAngle(a); } 
     
-    void 		setRole( Role newRole );
-
+    void setRole( int newRole );
     void 		setDisplacementWithBall( double newDisplacementWithBall ) ;
 
     void 		setDriblerIntensity(int intensity);
@@ -63,7 +62,7 @@ class Player: public MovingObject
 
   private:
     double _current_angle, _future_angle, _delta_angle;
-    Role _role;
+    int _role;
 
     int _kicker, _dribler, _id;
 
