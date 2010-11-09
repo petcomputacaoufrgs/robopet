@@ -166,7 +166,7 @@ double Vector::angleCW(Vector v) const {
 	if(alpha < beta)
 		return 2*M_PI - (beta-alpha);
 	else
-		return beta-alpha;
+		return 2*M_PI - (alpha-beta);
 }
 
 /******************************************************
