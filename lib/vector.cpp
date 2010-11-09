@@ -1,6 +1,8 @@
 #include "vector.h"
 #include <cassert>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define toDegrees(x) ((x) * 180 / (float) M_PI)
 #define EPS 1e-3
@@ -164,9 +166,9 @@ double Vector::angleCW(Vector v) const {
 	double beta = v.myAngle();
 
 	if(alpha < beta)
-		return 2*M_PI - (beta-alpha);
+		return abs( 2*M_PI - (beta-alpha) );
 	else
-		return 2*M_PI - (alpha-beta);
+		return abs( beta-alpha );
 }
 
 /******************************************************
@@ -206,7 +208,7 @@ double Vector::myAngle() const
 	double angle = this->angle( Vector(1,0) );
 
 	if(this->getY()<0)
-		angle = M_PI - angle;	
+		angle = 2*M_PI - angle;	
 
 	return angle;
 }
