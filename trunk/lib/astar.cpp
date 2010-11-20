@@ -1,223 +1,175 @@
-#ifndef _ASTAR_CPP_
-#define _ASTAR_CPP_
-
-#include <cstdlib>
-#include <cmath>
-#include <cstring>
-#include <list>
 #include "astar.h"
-#include <cstdio>
 
-using namespace std;
-
-/*
-Info:
-	h_score: heuristics (a guess about the distance from a square to the goal) - this heuristics calculates the distance between two squares (points) on the environment matrix using euclidean distance [sqrt((x-x0)²+(y-y0)²)]
-	g_score: cost to go from a parent square to a son square
-	f_score: h_score + g_score
-*/
-
-bool Par::operator<(const Par& other) const
-{
-    return cost < other.cost;
+AStar::AStar(node start, node goal) : Pathplan(start, goal){
+	//itializing came_from matrix
+	for(int i=0; i<MAX_X; i++) {
+		for(int j=0; j<MAX_Y; j++) {
+			came_from[i][j].setX(-1);
+			came_from[i][j].setY(-1);
+		}
+	}
 }
 
-//Constructor
-AStar::AStar()
-{
-		//x: linhas, y: colunas
-		for (int x = 0; x < MAX_X; x++)
-			for (int y = 0; y < MAX_Y; y++)
-			{
-				g_score[x][y] = 0;
-				h_score[x][y] = 0;
-				f_score[x][y] = 0;
-				//cost[i][j] = 0; já é inicializado no aStarPlan
-				backpointer[INDEX(x,y)] = -1;
-			}
+AStar::~AStar() {
 }
 
-//Destructor
-AStar::~AStar()
-{
+//int AStar::grid [MAX_X][MAX_Y] = {	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//									1, 1, O, O, O, O, O, O, O, O,
+//									1, 1, O, 1, O, 1, 1, 1, 1, 1,
+//									1, 1, O, O, O, 1, 1, 1, 1, 1,
+//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+
+bool AStar::inLimits(node y) {
+
+	if(	(y.getX() >=0 && y.getY() >= 0) &&
+		(y.getX() < MAX_X && y.getY() < MAX_Y)) {
+
+		return true;
+	} else {
+		return false;
+	}
 }
 
-//Runs the AStar algorithm
-bool AStar::aStarPlan(Grid env[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y])
-{
-		using RP::Point;
 
-		//---- Closed and Open are ASet variables from class astar ----
-		Open.clear();
-		Closed.clear();
-		Open.insert(Par(start,0));	
+float AStar::distance(node a, node b) {
 
-		for (int x = 0; x < MAX_X; x++)
-			for (int y = 0; y < MAX_Y; y++)
-				cost[x][y] = costAStar[x][y];
+	return sqrt(pow(a.getX() - b.getX(),2) + pow(a.getY() - b.getY(),2));
+}
 
-		//cost[6][6] = 1000;
 
-		int x = (int)start.getX();
-		int y = (int)start.getY();
-		g_score[x][y] = 0;
-		h_score[x][y] = start.getDistance(goal);
-		f_score[x][y] = g_score[x][y] + h_score[x][y];
+float AStar::calcG(node x) {
 
-		//Sets the distance from each square of environment matriz to the goal square
-		for (int x = 0; x < MAX_X; x++)
-			for (int y = 0; y < MAX_Y; y++)
-			{
-				Point aux(x,y);
-				h_score[x][y] = aux.getDistance(goal);
-				//cout << INDEX(x,y) << " - " << h_score[x][y] << endl;
-			}
+	node current = x;
+	float g = 0;
 
-		//RIGHT, LEFT, DOWN, UP, RIGHT_DOWN, LEFT_UP, RIGHT_UP, LEFT_DOWN
-		Point corners[] = { Point(1,0), Point(-1,0), Point(0,1),
-							Point(0,-1), Point(1,1), Point(-1,-1),
-							Point(1,-1), Point(-1,1) };
+	while(current != initialpos) {
+		//our cost to go from one node to another is always 1
+		//here we're doing a generic implementation of the algorithm
+		//maybe can be optimized later
+		g += env[(int)current.getX()][(int)current.getY()];
+		current = came_from[(int)current.getX()][(int)current.getY()];
+	}
+	return g;
+}
 
-		while(!Open.empty())
-		{
-		    set<Par>::iterator a = Open.begin(); //the iterator points to the first item in the set 'Open'
-			Point p = a->getPoint(); //the point p now has the first element of the pair pointed by the a iterator
-			if( p == goal)
-				 return true; //the goal has been reached, finishes AStar algorithm
+float AStar::calcH(node x) {
 
-			//---- p is set as closed, because we already visited him ----
-			env[(int)p.getX()][(int)p.getY()].setClosed();
-			Closed.insert(*a);
-			Open.erase(*a);
+	return distance(x, finalpos);
+}
 
-			for(int i = 0; i < 8; i++) //8 == number of neighbors
-			{
-				Point neighbor = p + corners[i];
-				if((IS_BOTTOM_BORDER(p) && (i == DOWN || i == LEFT_DOWN || i == RIGHT_DOWN)) ||
-				   (IS_UPPER_BORDER(p) && (i == UP || i == LEFT_UP || i == RIGHT_UP)) ||
-				   (IS_RIGHT_BORDER(p) && (i == RIGHT || i == RIGHT_UP || i == RIGHT_DOWN)) ||
-				   (IS_LEFT_BORDER(p) && (i == LEFT || i == LEFT_UP || i == LEFT_DOWN)) )
-				  continue;
+float AStar::calcF(node x) {
 
-			   	bool podePassar = true;
-		       	for(int j = 0; j < 4; j++)
-					{
-						Point coords = p + corners[j];
-		               	if(cost[(int)coords.getX()][(int)coords.getY()] == 1000)
-		               	{
-		                	podePassar = false;
-		                   	break;
-		               	}
+	return calcG(x) + calcH(x);
+}
+
+node AStar::lowestF() {
+
+	float lowest_F_value = calcF(*(open_set.begin()));
+	node lowest_F_node = *(open_set.begin());
+
+	set<node>::iterator current = open_set.begin();
+	current++;	//start iterating from second element of open_set
+
+	float current_f_value = 0;
+
+	while(current != open_set.end()) {
+		current_f_value = calcF(*current);
+		if (current_f_value < lowest_F_value) {
+			lowest_F_value = current_f_value;
+			lowest_F_node = *current;
+		}
+		current++;
+	}
+	return lowest_F_node;
+}
+
+node AStar::neighbor(node x, int i, int j) {
+
+	return Point( (x.getX())+i, (x.getY())+j );
+}
+
+//given a source and a goal node, runs A* algorithm
+void AStar::run() {
+
+	bool tentative_is_better;
+	float tentative_g;
+
+	//INITIALIZE WITH THE INITIAL NODE
+	open_set.insert(initialpos);
+
+	//the distance from the current node to the start node is 0
+	g[(int)initialpos.getX()][(int)initialpos.getY()] = 0;
+	h[(int)initialpos.getX()][(int)initialpos.getY()] = calcH(finalpos);
+	f[(int)initialpos.getX()][(int)initialpos.getY()] =
+			g[(int)initialpos.getX()][(int)initialpos.getY()] +
+			h[(int)initialpos.getX()][(int)initialpos.getY()];
+
+	while(!(open_set.empty())) {
+
+		//x = the node in openset having the lowest f value
+		node x = lowestF();
+
+		//if x is the goal node
+		if(x == finalpos) {
+			printf("ending AStar\n");
+			reconstructPath();
+		}
+
+		open_set.erase(x);
+		closed_set.insert(x);
+
+		//foreach neighbor of the node x
+		for(short int i=-1; i<=1; i++) {
+			for(short int j=-1; j<=1; j++) {
+
+				node y = neighbor(x,i,j);
+
+				if(inLimits(y) && !(i == 0 && j ==0)) {
+
+					//if y belongs to closed_set
+					if (closed_set.find(y) != closed_set.end()) {
+						continue;
 					}
 
-		       	if(!podePassar)
-		          	continue; //termina a iteração vigente do for e começa outra
+					tentative_g = calcG(x) + distance(x, y);
 
-				if(env[(int)neighbor.getX()][(int)neighbor.getY()].isClosed())
-				  	continue; //goes to another iteration in the loop 'for'
+					//if y doesn't belongs to open_set
+					if(open_set.find(y) == open_set.end()) {
+						open_set.insert(y);
+						tentative_is_better = true;
+					} else if(tentative_g < calcG(y)) {
+						tentative_is_better = true;
+					} else {
+						tentative_is_better = false;
+					}
 
-			   	double tentative_g_score = 	g_score[(int)p.getX()][(int)p.getY()] +
-										   	p.getDistance(neighbor);
-
-			   	bool tentative_is_better = false;
-			   	if(env[(int)neighbor.getX()][(int)neighbor.getY()].isNew())
-			   	{
-				   env[(int)neighbor.getX()][(int)neighbor.getY()].setOpen();
-				   tentative_is_better = true;
-			   	}
-			   	else if(tentative_g_score < g_score[(int)neighbor.getX()][(int)neighbor.getY()])
-				   tentative_is_better = true;
-
-			   	if(tentative_is_better) //se a posição for a melhor, então ela é armazenada
-			   	{   					   //no vetor backpointer
-				   setBackpointer(INDEX(neighbor), INDEX(p));
-				   int x = (int)neighbor.getX();
-				   int y = (int)neighbor.getY();
-				   g_score[x][y] = tentative_g_score;
-				   f_score[x][y] = g_score[x][y] + h_score[x][y] + cost[x][y];
-				   Open.insert( Par(neighbor,f_score[x][y]) );
-			   	}
-
+					if (tentative_is_better) {
+						came_from[(int)y.getX()][(int)y.getY()] = x;
+						g[(int)y.getX()][(int)y.getY()] 		= tentative_g;
+						h[(int)y.getX()][(int)y.getY()] 		= distance(y, finalpos);
+						f[(int)y.getX()][(int)y.getY()] 		=
+									g[(int)y.getX()][(int)y.getY()] +
+									h[(int)y.getX()][(int)y.getY()];
+					}
+				}
 			}
 		}
-
-		return false;
+	}
 }
 
-//Runs the AStar algorithm and returns the next point in the field to visit to reach the goal
-Point AStar::nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y])
-{
-		cout << "Next node" << endl;
-		if (start == goal)
-			return goal;		
+void AStar::reconstructPath() {
 
-		if (aStarPlan(envAStar,start,goal,costAStar))
-		{
-			int i, j;
-			i = INDEX(goal);
-			Point p(REVERSE_INDEX_X(i),REVERSE_INDEX_Y(i));
-			pathFullAStar.push_front(p);
+	node current = finalpos;
 
-			while(i != INDEX(start))
-			{
-				j = i;
-				i = getBackpointer(i); //pega o próximo nodo do caminho de goal até start
-				p.setXY(REVERSE_INDEX_Y(i),REVERSE_INDEX_X(i));
-				//cout << p.getX() << "," << p.getY() << endl;
-				pathFullAStar.push_front(p);
-			}
-			p.setXY(REVERSE_INDEX_X(j),REVERSE_INDEX_Y(j));
-			//printAStar(); //comment this
-			return p;
-		}
-		else
-		{
-			cout << "Can't reach destination" << endl;
-			Point q(0.0, 0.0);
-			return q;
-		}
+	while(current != initialpos) {
+		pathFinal.push_front(current);
+		//goto previous node
+		current = came_from[(int)current.getX()][(int)current.getY()];
+	}
+	pathFinal.push_front(initialpos);
 }
-
-
-//prints the results of the AStar algorithm
-void AStar::printAStar()
-{
-	    //backpointer é um vetor com o tamanho do campo
-		cout << "===============================" << endl;
-		char mask[] = "RLDU3791";
-		Point corners[] = { Point(1,0), Point(-1,0), Point(0,1),
-							Point(0,-1), Point(1,1), Point(-1,-1),
-							Point(1,-1), Point(-1,1) };
-        for(int i=0; i<MAX_X; i++)
-            cout << i%10 << " ";
-        cout << endl << endl;
-		for(int j = 0; j < MAX_Y; j++)
-		{
-		   for(int i = 0; i < MAX_X; i++)
-		   {
-			  Point pos = Point(i,j);
-			  for(int k = 0; k < 8; k++)
-			  {
-				  if(cost[(int)pos.getX()][(int)pos.getY()] == 1000)
-				  {
-					  cout << "#" << " ";
-					  break;
-				  }
-				  Point test = pos + corners[k];
-				  if(backpointer[INDEX(pos)] == -1)
-				  {
-					  cout << "_" << " ";
-					  break;
-				  }
-				  else if(INDEX(test) == backpointer[INDEX(pos)])
-				  {
-					  cout << mask[k] << " ";
-				  }
-			  }
-		   }
-		   cout << endl;
-		}
-		cout << endl << "===================" << endl;
-}
-
-#endif

@@ -1,96 +1,67 @@
-#ifndef _ASTAR_H_
-#define _ASTAR_H_
+#ifndef __ASTAR_H
+#define __ASTAR_H
 
-#include <iostream>
+#include <cstdio>
+#include <utility>
+#include <cmath>
 #include <set>
-#include <list>
-#include "point.h"
-#include "grid.h"
-#include "constants.h"
+#include <vector>
+#include "pathplan.h"
 
-//RLDU3791
+typedef RP::Point node;
 
 using namespace std;
 
-enum
-{
-	RIGHT, //0
-	LEFT,  //1
-	DOWN,  //2
-	UP,    //3
-	RIGHT_DOWN, //4
-	LEFT_UP,//5
-	RIGHT_UP, //6
-	LEFT_DOWN, //7
-	NUM_NEIGHBORS //8
-};
+class AStar : Pathplan {
 
-inline int INDEX(Point p) { return p.getX() + (p.getY() * MAX_X); }
-inline int INDEX(int x, int y) { return x + (y * MAX_X); } //y: colums, x: lines
-inline bool IS_BOTTOM_BORDER(Point p) { return ( INDEX(p) / MAX_Y == (MAX_Y - 1)) ? true : false; }
-inline bool IS_UPPER_BORDER(Point p) { return ( INDEX(p) / MAX_Y == 0) ? true : false; }
-inline bool IS_RIGHT_BORDER(Point p) { return ( INDEX(p) % MAX_X == (MAX_X - 1)) ? true : false; }
-inline bool IS_LEFT_BORDER(Point p) { return ( INDEX(p) % MAX_X == 0) ? true : false; }
-
-inline int REVERSE_INDEX_X(int num) { return ((int) num / MAX_X); }
-inline int REVERSE_INDEX_Y(int num) { return ((int) num - (num / MAX_X)*MAX_X ); }
-
-double DISTANCE(int num1, int num2);
-
-//typedef set< pair<double,RP::Point> > ASet; //ASet is set of pairs of values. Each pair has pair of coordinates (x,y), representing the position of the squares from the environment matriz and the other is a
-
-class Par
-{
 	private:
-      RP::Point p;
-      double cost;
 
-	public:
-	  Par() {  }
-	  Par(RP::Point element, double c = 0) { p = element; cost = c; }
-	  ~Par() { }
+		//The set of nodes already evaluated
+		set<node> closed_set;
 
-	  bool operator<(const Par& other) const;
-	  inline Point getPoint() const { return p; }
-	  inline double getCost() const { return cost; }
-};
+		//The set of tentative nodes to be evaluated
+		set<node> open_set;
 
-class AStar
-{
-	protected:
+		//The map of navigated nodes
+		node came_from[MAX_X][MAX_Y];
 
-		//---- Matrixes ----
-		double g_score[MAX_X][MAX_Y];
-		double h_score[MAX_X][MAX_Y];
-		double f_score[MAX_X][MAX_Y];
-		int cost[MAX_X][MAX_Y];
-		int backpointer[MAX_X * MAX_Y]; //stores the path from the goal to the start
+		//g equals to the distance from the
+		//source node to the current evaluated node,
+		//through an optimal path
+		float g[MAX_X][MAX_Y];
 
-		//---- Total path ----
-		list<Point> pathFullAStar;
+		//h equals to the estimative distance from the
+		//current evaluated node to the goal node (the minimum distance)
+		float h[MAX_X][MAX_Y];
 
-		//----- Sets -----
-		set<Par> Closed;
-		set<Par> Open;
-
-		//---- Functions ----
-		
-		bool aStarPlan(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y]); //executes the Astar algorithm
+		//f = g + h
+		float f[MAX_X][MAX_Y];
 
 	public:
 
-		//---- Constructor and Destructor ----
-		AStar();
+		AStar(node start, node goal);
+
 		~AStar();
-		void printAStar();
-		//---- Functions ----
-		Point nextNode(Grid envAStar[MAX_X][MAX_Y], RP::Point start, RP::Point goal, int costAStar[MAX_X][MAX_Y]);
-		list<Point>::iterator pathFullAStarBegin() { return pathFullAStar.begin(); }
-		list<Point>::iterator pathFullAStarEnd() { return pathFullAStar.end(); }
 
-		//---- Inline Functions ----
-		inline void setBackpointer(int index, int value) { backpointer[index] = value; }
-		inline int getBackpointer(int index) { return backpointer[index]; }
+		bool inLimits(node y);
+
+		float distance(node a, node b);
+
+		float calcG(node x);
+
+		float calcH(node x);
+
+		float calcF(node x);
+
+		//returns the node in openset having the lowest f value
+		node lowestF();
+
+		node neighbor(node x, int i, int j);
+
+		void run();
+
+		void reconstructPath();
+
 };
 
 #endif

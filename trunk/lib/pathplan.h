@@ -7,6 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <list>
+#include <climits>
 
 #include "constants.h"
 #include "player.h"
@@ -31,7 +32,7 @@ enum pathplanType
 
 enum envType
 {
-	FREE, OBSTACLE,	MARKER, NODE, PATH
+	FREE = 1 , MARKER, NODE, PATH, OBSTACLE = INT_MAX
 };
 
 
@@ -60,11 +61,11 @@ class Pathplan
 		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
 		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
 
-		/* For debuging purposes. 
+		/* For debuging purposes.
 		 * Prints the actual environment
 		 */
 		void printEnv();
-		
+
 		virtual void run() {};
 
 		void setInitialPos(Point pos);
