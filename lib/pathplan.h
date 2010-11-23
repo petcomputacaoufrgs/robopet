@@ -38,11 +38,6 @@ enum envType
 
 class Pathplan
 {
-	protected:
-
-		//---- Functions ----
-		void fillEnv_playerBox(int centerx, int centery, int safetyCells);
-
 	public:
 		//---- Constructor and Destructor ----
 		Pathplan(Point initialpos, Point finalpos);
@@ -70,6 +65,11 @@ class Pathplan
 
 		void setInitialPos(Point pos);
 		void setFinalPos(Point pos);
+	
+	
+	protected:
+		//---- Functions ----
+		void fillEnv_playerBox(int centerx, int centery, int radius);	
 };
 
 

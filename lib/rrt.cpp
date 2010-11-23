@@ -25,8 +25,8 @@ using namespace std;
 
 void Rrt::run()
 {
-	Point initial = Point( MM_TO_CELLS( initialpos.getX() ), MM_TO_CELLS( initialpos.getY() ));
-	Point goal = Point( MM_TO_CELLS( finalpos.getX() ), MM_TO_CELLS( finalpos.getY() )) ;
+	Point initial = Point( initialpos.getX(), initialpos.getY() );
+	Point goal = Point( finalpos.getX(), finalpos.getY() );
 
     RRTTree *solutionTree;
 	solutionTree = RRTPlan(env,initial,goal);
