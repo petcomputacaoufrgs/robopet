@@ -25,13 +25,22 @@ Pathplan::~Pathplan()
 {
 }
 
-void Pathplan::fillEnv_playerBox(int x, int y, int safetyCells)
+void Pathplan::fillEnv_playerBox(int x, int y, int radius)
 {
-	const int side = safetyCells; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
+	const int side = 2*radius; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
 			
 	for(int i=0; i<side; i++)
 		for(int k=0; k<side; k++)
-			env[x+i][y+k] = OBSTACLE;
+		{
+			int newx = x+i-side/2,
+				newy = y+k-side/2;
+				
+			if( Point(x,y).getDistance(Point(newx,newy)) < radius &&
+				newx>0 && newx<MAX_X-1 &&
+				newy>0 && newy<MAX_Y-1 )
+				
+				env[newx][newy] = OBSTACLE;
+		}
 }
 
 char toChar(int cost)
@@ -64,7 +73,7 @@ void Pathplan::printEnv()
 void Pathplan::fillEnv(vector<Point> playersPositions)
 {
 	int centerx, centery;
-	int nSafetyCells = 2;
+	int radius = 5;
 
 	for (int x = 0; x < MAX_X; x++)
 		for (int y = 0; y < MAX_Y; y++)
@@ -75,7 +84,7 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 	{
 		centerx = round( MM_TO_CELLS((*it).getX()) );
 		centery = round( MM_TO_CELLS((*it).getY()) );
-		fillEnv_playerBox(centerx,centery,nSafetyCells);
+		fillEnv_playerBox(centerx,centery,radius);
 	}
 }
 
