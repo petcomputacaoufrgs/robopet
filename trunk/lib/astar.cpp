@@ -1,6 +1,14 @@
 #include "astar.h"
 
+AStar::AStar() {
+	initialize();
+}
+
 AStar::AStar(node start, node goal) : Pathplan(start, goal){
+	initialize();
+}
+
+void AStar::initialize() {
 	//itializing came_from matrix
 	for(int i=0; i<MAX_X; i++) {
 		for(int j=0; j<MAX_Y; j++) {
@@ -35,6 +43,14 @@ bool AStar::inLimits(node y) {
 	}
 }
 
+bool AStar::validPosition(node n) {
+
+	return (!(n.getX() == 0 && n.getY() ==0) 	&& //if it's a neighbor
+			inLimits(n) 		&&
+			env[(int)n.getX()][(int)n.getY()] != OBSTACLE
+			);
+}
+
 
 float AStar::distance(node a, node b) {
 
@@ -51,7 +67,9 @@ float AStar::calcG(node x) {
 		//our cost to go from one node to another is always 1
 		//here we're doing a generic implementation of the algorithm
 		//maybe can be optimized later
-		g += env[(int)current.getX()][(int)current.getY()];
+
+		//env[(int)current.getX()][(int)current.getY()];
+		g++;
 		current = came_from[(int)current.getX()][(int)current.getY()];
 	}
 	return g;
@@ -129,7 +147,7 @@ void AStar::run() {
 
 				node y = neighbor(x,i,j);
 
-				if(inLimits(y) && !(i == 0 && j ==0)) {
+				if(validPosition(y)) {
 
 					//if y belongs to closed_set
 					if (closed_set.find(y) != closed_set.end()) {
