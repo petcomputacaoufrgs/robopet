@@ -12,7 +12,7 @@ typedef RP::Point node;
 
 using namespace std;
 
-class AStar : Pathplan {
+class AStar : public Pathplan {
 
 	private:
 
@@ -37,13 +37,18 @@ class AStar : Pathplan {
 		//f = g + h
 		float f[MAX_X][MAX_Y];
 
+		void initialize();
+
 	public:
+		AStar();
 
 		AStar(node start, node goal);
 
 		~AStar();
 
 		bool inLimits(node y);
+
+		bool validPosition(node y);
 
 		float distance(node a, node b);
 

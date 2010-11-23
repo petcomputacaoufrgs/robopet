@@ -64,10 +64,10 @@ void Pathplan::printEnv()
 void Pathplan::fillEnv(vector<Point> playersPositions)
 {
 	int centerx, centery;
-	int nSafetyCells = 1;
+	int nSafetyCells = 2;
 
 	for (int x = 0; x < MAX_X; x++)
-			for (int y = 0; y < MAX_Y; y++)
+		for (int y = 0; y < MAX_Y; y++)
 			env[x][y] = FREE;
 
 	vector<Point>::iterator it;

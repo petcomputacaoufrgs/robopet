@@ -32,7 +32,7 @@ enum pathplanType
 
 enum envType
 {
-	FREE = 1 , MARKER, NODE, PATH, OBSTACLE = INT_MAX
+	FREE, MARKER, NODE, PATH, OBSTACLE
 };
 
 
