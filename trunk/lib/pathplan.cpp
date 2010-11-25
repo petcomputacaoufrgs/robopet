@@ -13,21 +13,24 @@ Pathplan::Pathplan(Point initial, Point final)
 {
 	this->initialpos = initial;
 	this->finalpos = final;
+	this->radius = INITIAL_RADIUS;
 }
 
 Pathplan::Pathplan()
 {
 	this->initialpos = Point(0.0, 0.0);
 	this->finalpos = Point(0.0, 0.0);
+	this->radius = INITIAL_RADIUS;
 }
 
 Pathplan::~Pathplan()
 {
 }
 
-void Pathplan::fillEnv_playerBox(int x, int y, int radius)
+void Pathplan::fillEnv_playerBox(int x, int y)
 {
-	const int side = 2*radius; //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
+	
+	const int side = 2*(this->getRadius()); //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
 			
 	for(int i=0; i<side; i++)
 		for(int k=0; k<side; k++)
@@ -35,12 +38,22 @@ void Pathplan::fillEnv_playerBox(int x, int y, int radius)
 			int newx = x+i-side/2,
 				newy = y+k-side/2;
 				
-			if( Point(x,y).getDistance(Point(newx,newy)) < radius &&
+			if( Point(x,y).getDistance(Point(newx,newy)) < this->getRadius() &&
 				newx>0 && newx<MAX_X-1 &&
 				newy>0 && newy<MAX_Y-1 )
 				
 				env[newx][newy] = OBSTACLE;
 		}
+}
+
+int Pathplan::getRadius()
+{
+	return radius;
+}
+
+void Pathplan::setRadius(int radius)
+{
+	this->radius = radius;
 }
 
 char toChar(int cost)
@@ -73,7 +86,6 @@ void Pathplan::printEnv()
 void Pathplan::fillEnv(vector<Point> playersPositions)
 {
 	int centerx, centery;
-	int radius = 5;
 
 	for (int x = 0; x < MAX_X; x++)
 		for (int y = 0; y < MAX_Y; y++)
@@ -84,7 +96,7 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 	{
 		centerx = round( MM_TO_CELLS((*it).getX()) );
 		centery = round( MM_TO_CELLS((*it).getY()) );
-		fillEnv_playerBox(centerx,centery,radius);
+		fillEnv_playerBox(centerx,centery);
 	}
 }
 
