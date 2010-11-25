@@ -24,6 +24,8 @@ using namespace std;
 
 #define CELLS_TO_MM(x) ((x) * (MM_PER_CELLS))
 
+#define INITIAL_RADIUS 5
+
 
 enum pathplanType
 {
@@ -55,7 +57,9 @@ class Pathplan
 		//----- Functions -----
 		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
 		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
-
+		int  getRadius();
+		void setRadius(int radius);
+		
 		/* For debuging purposes.
 		 * Prints the actual environment
 		 */
@@ -67,9 +71,12 @@ class Pathplan
 		void setFinalPos(Point pos);
 	
 	
+	private:
+		int radius;
+		
 	protected:
 		//---- Functions ----
-		void fillEnv_playerBox(int centerx, int centery, int radius);	
+		void fillEnv_playerBox(int centerx, int centery);	
 };
 
 

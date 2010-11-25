@@ -122,7 +122,7 @@ void AStar::run() {
 
 	//the distance from the current node to the start node is 0
 	g[(int)initialpos.getX()][(int)initialpos.getY()] = 0;
-	h[(int)initialpos.getX()][(int)initialpos.getY()] = calcH(finalpos);
+	h[(int)initialpos.getX()][(int)initialpos.getY()] = calcH(initialpos);
 	f[(int)initialpos.getX()][(int)initialpos.getY()] =
 			g[(int)initialpos.getX()][(int)initialpos.getY()] +
 			h[(int)initialpos.getX()][(int)initialpos.getY()];
