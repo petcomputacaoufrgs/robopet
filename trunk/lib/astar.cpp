@@ -1,21 +1,21 @@
 #include "astar.h"
 
 AStar::AStar() {
-	//initialize();
+	initialize();
 }
 
 AStar::AStar(Node start, Node goal) : Pathplan(start, goal){
-	//initialize();
+	initialize();
 }
 
 void AStar::initialize() {
-	//itializing came_from matrix
-//	for(int i=0; i<MAX_X; i++) {
-//		for(int j=0; j<MAX_Y; j++) {
-//			came_from[i][j].setX(-1);
-//			came_from[i][j].setY(-1);
-//		}
-//	}
+//	initializing came_from matrix
+	for(int i=0; i<MAX_X; i++) {
+		for(int j=0; j<MAX_Y; j++) {
+			open[i][j] = false;
+			closed[i][j] = false;
+		}
+	}
 }
 
 AStar::~AStar() {
@@ -43,13 +43,17 @@ bool AStar::validPosition(Node n) {
 
 float AStar::distance(Node a, Node b) {
 
-	return sqrt(pow(a.x - b.x,2) + pow(a.y - b.y,2));
+	//return sqrt( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) );
+	float d = sqrt( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) );
+	
+	// diagonals are expensive!
+	return d; //* (a.x != b.x && b.y != a.y) ? 1.5 : 1; 
+	//return (a.x )
 }
 
 
-float AStar::calcG(const Node &x) {
+float AStar::calcG(const Node &current) {
 
-	Node current = x;
 	Node from = came_from[current.x][current.y];
 	
 	float g_value = g[from.x][from.y];
@@ -78,22 +82,24 @@ float AStar::calcF(Node x) {
 
 Node AStar::lowestF() {
 
-	float lowest_F_value = calcF(*(open_set.begin()));
+	
 	Node lowest_F_node = *(open_set.begin());
-
-	set<Node>::iterator current = open_set.begin();
+	float lowest_F_value = calcF(lowest_F_node);
+	
+	NodeList::iterator current = open_set.begin();
 	current++;	//start iterating from second element of open_set
 
 	float current_f_value = 0;
 
 	while(current != open_set.end()) {
+		printf("oh yah\n");
 		current_f_value = calcF(*current);
 		if (current_f_value < lowest_F_value) {
 			lowest_F_value = current_f_value;
 			lowest_F_node = *current;
 		}
-		current++;
 	}
+	
 	return lowest_F_node;
 }
 
@@ -110,7 +116,8 @@ void AStar::run() {
 
 	//INITIALIZE WITH THE INITIAL NODE
 	open_set.insert(initialpos);
-
+	closed[initialpos.x][initialpos.y] = true;
+	
 	//the distance from the current Node to the start Node is 0
 	g[initialpos.x][initialpos.y] = 0;
 	h[initialpos.x][initialpos.y] = calcH(initialpos);
@@ -130,8 +137,11 @@ void AStar::run() {
 		}
 
 		open_set.erase(x);
+		open[x.x][x.y] = false;
+		
 		closed_set.insert(x);
-
+		closed[x.x][x.y] = true;
+		
 		//foreach neighbor of the Node x
 		for(short int i=-1; i<=1; i++) {
 			for(short int j=-1; j<=1; j++) {
@@ -141,15 +151,19 @@ void AStar::run() {
 				if(validPosition(y)) {
 
 					//if y belongs to closed_set
-					if (closed_set.find(y) != closed_set.end()) {
+					//if (closed_set.find(y) != closed_set.end()) {
+					if (closed[y.x][y.y]) {
 						continue;
 					}
 
 					tentative_g = calcG(x) + distance(x, y);
 
 					//if y doesn't belongs to open_set
-					if(open_set.find(y) == open_set.end()) {
+					//if(open_set.find(y) == open_set.end()) {
+					if (!open[y.x][y.y]) {
 						open_set.insert(y);
+						open[y.x][y.y] = true;
+						
 						tentative_is_better = true;
 					} else if(tentative_g < calcG(y)) {
 						tentative_is_better = true;

@@ -10,19 +10,24 @@
 
 using namespace std;
 
+typedef set<Node> NodeList;
+
 class AStar : public Pathplan {
 
 	private:
 
 		//The set of nodes already evaluated
-		set<Node> closed_set;
+		NodeList closed_set;
 
 		//The set of tentative nodes to be evaluated
-		set<Node> open_set;
+		NodeList open_set;
 
 		//The map of navigated nodes
 		Node came_from[MAX_X][MAX_Y];
 
+		bool closed[MAX_X][MAX_Y];
+		bool open[MAX_X][MAX_Y];
+		
 		//g equals to the distance from the
 		//source Node to the current evaluated node,
 		//through an optimal path
