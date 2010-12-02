@@ -39,7 +39,7 @@ cpptolua:
 #	$(CC2L) -i $< -o $@ -H -N ../$*.h
 
 %.o: %.cpp %.h 
-	$(CC) -c $< -o  $@ $(CFLAGS)
+	$(CC) -c $< -o  $@ $(CFLAGS) -pg
 
 robopet.a: $(OBJECTS)
 	$(AA) $(AFLAGS) $@ $^

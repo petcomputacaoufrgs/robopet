@@ -8,8 +8,6 @@
 #include <vector>
 #include "pathplan.h"
 
-typedef RP::Point node;
-
 using namespace std;
 
 class AStar : public Pathplan {
@@ -17,21 +15,21 @@ class AStar : public Pathplan {
 	private:
 
 		//The set of nodes already evaluated
-		set<node> closed_set;
+		set<Node> closed_set;
 
 		//The set of tentative nodes to be evaluated
-		set<node> open_set;
+		set<Node> open_set;
 
 		//The map of navigated nodes
-		node came_from[MAX_X][MAX_Y];
+		Node came_from[MAX_X][MAX_Y];
 
 		//g equals to the distance from the
-		//source node to the current evaluated node,
+		//source Node to the current evaluated node,
 		//through an optimal path
 		float g[MAX_X][MAX_Y];
 
 		//h equals to the estimative distance from the
-		//current evaluated node to the goal node (the minimum distance)
+		//current evaluated Node to the goal Node (the minimum distance)
 		float h[MAX_X][MAX_Y];
 
 		//f = g + h
@@ -42,26 +40,26 @@ class AStar : public Pathplan {
 	public:
 		AStar();
 
-		AStar(node start, node goal);
+		AStar(Node start, Node goal);
 
 		~AStar();
 
-		bool inLimits(node y);
+		bool inLimits(Node y);
 
-		bool validPosition(node y);
+		bool validPosition(Node y);
 
-		float distance(node a, node b);
+		float distance(Node a, Node b);
 
-		float calcG(node x);
+		float calcG(const Node &x);
 
-		float calcH(node x);
+		float calcH(Node x);
 
-		float calcF(node x);
+		float calcF(Node x);
 
-		//returns the node in openset having the lowest f value
-		node lowestF();
+		//returns the Node in openset having the lowest f value
+		Node lowestF();
 
-		node neighbor(node x, int i, int j);
+		Node neighbor(Node x, int i, int j);
 
 		void run();
 

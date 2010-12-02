@@ -9,7 +9,7 @@
 using RP::Point;
 using namespace std;
 
-Pathplan::Pathplan(Point initial, Point final)
+Pathplan::Pathplan(Node initial, Node final)
 {
 	this->initialpos = initial;
 	this->finalpos = final;
@@ -18,8 +18,8 @@ Pathplan::Pathplan(Point initial, Point final)
 
 Pathplan::Pathplan()
 {
-	this->initialpos = Point(0.0, 0.0);
-	this->finalpos = Point(0.0, 0.0);
+	this->initialpos = Node(0.0, 0.0);
+	this->finalpos = Node(0.0, 0.0);
 	this->radius = INITIAL_RADIUS;
 }
 
@@ -102,27 +102,37 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 
 Point Pathplan::getPathNode(int nodeIndex)
 {
-	list<Point>::iterator it;
+	list<Node>::iterator it;
 
 	for( it=pathFull.begin(); nodeIndex>0; it++ )
 		nodeIndex--;
 
-	Point node = *it;
+	Node node = *it;
 	
 	node.setX(CELLS_TO_MM(node.getX()));
 	node.setY(CELLS_TO_MM(node.getY()));
 	
-	return node;
+	return Point(node.getX(), node.getY());
+}
+
+void Pathplan::setInitialPos(Node pos)
+{
+	initialpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
+}
+
+void Pathplan::setFinalPos(Node pos)
+{
+	finalpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
 }
 
 void Pathplan::setInitialPos(Point pos)
 {
-	initialpos = Point( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
+	initialpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
 }
 
 void Pathplan::setFinalPos(Point pos)
 {
-	finalpos = Point( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
+	finalpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
 }
 
 #endif

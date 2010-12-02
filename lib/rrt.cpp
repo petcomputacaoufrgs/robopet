@@ -15,7 +15,7 @@
 using namespace std;
 
 
-//std::ostream& operator<<(std::ostream &stream,Point param) {
+//std::ostream& operator<<(std::ostream &stream,Node param) {
 //     return stream << "[" << param.getX() << "," << param.getY() << "] ";
 //}
 
@@ -25,8 +25,8 @@ using namespace std;
 
 void Rrt::run()
 {
-	Point initial = Point( initialpos.getX(), initialpos.getY() );
-	Point goal = Point( finalpos.getX(), finalpos.getY() );
+	Node initial = initialpos;
+	Node goal = finalpos;
 
     RRTTree *solutionTree;
 	solutionTree = RRTPlan(env,initial,goal);
@@ -41,10 +41,10 @@ void Rrt::run()
  Código do ETDP dos CMDragons de 2009
  ******************************************************************************************/
 
-RRTTree* RRTPlan(envType env[][MAX_Y], Point initial, Point goal) {
+RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
     int printCont=0;
 	RRTTree *nearest;
-	Point extended,target;
+	Node extended,target;
 	RRTTree *tree;
 
     // dá pra fazer melhor
@@ -87,7 +87,7 @@ RRTTree* RRTPlan(envType env[][MAX_Y], Point initial, Point goal) {
 	return tree;
 }
 
-Point ChooseTarget(Point goal) {
+Node ChooseTarget(Node goal) {
 	float p;
 	p = (rand() % 100 + 1) / 100.0;
 
@@ -97,7 +97,7 @@ Point ChooseTarget(Point goal) {
 		return RandomState();
 }
 
-RRTTree* Nearest(RRTTree *tree, Point target) {
+RRTTree* Nearest(RRTTree *tree, Node target) {
 	RRTTree *nearest = tree;
 
     nearestState(tree,target,&nearest); //calcula nodo mais próximo de target
@@ -109,11 +109,11 @@ RRTTree* Nearest(RRTTree *tree, Point target) {
  Código deduzido do ETDP dos CMDragons de 2009
  ******************************************************************************************/
 
-void nearestState(RRTTree *tree,Point target,RRTTree **nearest) {
+void nearestState(RRTTree *tree,Node target,RRTTree **nearest) {
 
     if (tree->nodo != EMPTY_STATE){
 
-       Point actual = tree->nodo;
+       Node actual = tree->nodo;
 
        //cout << "actual:" << actual << endl;
        //cout << "nearest->nodo:" << nearest->nodo << endl;
@@ -127,21 +127,21 @@ void nearestState(RRTTree *tree,Point target,RRTTree **nearest) {
     }
 }
 
-float Distance(Point a, Point b) {
+float Distance(Node a, Node b) {
 	return fabs( sqrt(  (float)(  SQR(a.getX() - b.getX()) + SQR(a.getY() - b.getY())  )  ));
 }
 
-Point Extend(envType env[][MAX_Y], Point nearest, Point target) {
+Node Extend(envType env[][MAX_Y], Node nearest, Node target) {
 
     int step = rand()%MAX_STEPSIZE + 1;
 
     int directions[8][2] = {{-step, -step}, {-step, 0}, {-step, step}, {0, -step}, {0, 0}, {step, -step}, {step, 0}, {step, step}};
     int res = rand() % DIRECTIONS_TO_LOOK, i, resIndex[8], tmp, j, min;
     float distances[8], temp;
-    Point extended;
+    Node extended;
 
     for(i = 0; i < 8; i++) {
-        distances[i] = Distance(  Point (nearest.getX() + directions[i][0],
+        distances[i] = Distance(  Node (nearest.getX() + directions[i][0],
                                          nearest.getY() + directions[i][1]),
                                 target);
         resIndex[i] = i;
@@ -164,7 +164,7 @@ Point Extend(envType env[][MAX_Y], Point nearest, Point target) {
         }
     }
 
-    extended =    Point(nearest.getX() + directions[resIndex[res]][0],
+    extended =    Node(nearest.getX() + directions[resIndex[res]][0],
                         nearest.getY() + directions[resIndex[res]][1]);
 
 
@@ -174,8 +174,8 @@ Point Extend(envType env[][MAX_Y], Point nearest, Point target) {
     else return EMPTY_STATE;
 }
 
-Point RandomState() {
-    Point randomState;
+Node RandomState() {
+    Node randomState;
 
     randomState.setX( rand() % MAX_X );
     randomState.setY( rand() % MAX_Y );
@@ -184,7 +184,7 @@ Point RandomState() {
 }
 
 
- int bresenham(envType env[][MAX_Y], Point stat1, Point stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
+ int bresenham(envType env[][MAX_Y], Node stat1, Node stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
        int x1 = stat1.getX();
        int x2 = stat2.getX();
        int y1 = stat1.getY();
@@ -240,7 +240,7 @@ Point RandomState() {
                return 0;
        }
  }
-int Collision(envType env[][MAX_Y], Point nearest, Point extended) {
+int Collision(envType env[][MAX_Y], Node nearest, Node extended) {
     if(extended.getX() >= 0 && extended.getX() < MAX_X &&
        extended.getY() >= 0 && extended.getY() < MAX_Y)
 
@@ -251,7 +251,7 @@ int Collision(envType env[][MAX_Y], Point nearest, Point extended) {
 }
 
 
-void AddNode(RRTTree *nearest, Point extended) {
+void AddNode(RRTTree *nearest, Node extended) {
 
     //cout << "AddNode " << extended << "at " << nearest->nodo << endl;
 
@@ -266,7 +266,7 @@ void AddNode(RRTTree *nearest, Point extended) {
 
 
 
-void encontraFim(RRTTree *tree,Point goal,RRTTree **fim)
+void encontraFim(RRTTree *tree,Node goal,RRTTree **fim)
 {
     if (tree->nodo != EMPTY_STATE){
 
@@ -280,8 +280,8 @@ void encontraFim(RRTTree *tree,Point goal,RRTTree **fim)
     }
 }
 
-std::list<Point> RRTTree::findSolucao(Point goal) {
-    std::list<Point> caminho;
+std::list<Node> RRTTree::findSolucao(Node goal) {
+    std::list<Node> caminho;
 
     RRTTree *aux;
     encontraFim(this,goal,&aux);
@@ -294,7 +294,7 @@ std::list<Point> RRTTree::findSolucao(Point goal) {
     return caminho;
 }
 
-void RRTTree::treeToList_recursive(RRTTree *tree,list<Point>*caminho)
+void RRTTree::treeToList_recursive(RRTTree *tree,list<Node>*caminho)
 {
     if (tree->nodo != EMPTY_STATE){
 
@@ -305,9 +305,9 @@ void RRTTree::treeToList_recursive(RRTTree *tree,list<Point>*caminho)
     }
 }
 
-list<Point> RRTTree::treeToList()
+list<Node> RRTTree::treeToList()
 {
-	std::list<Point> caminho;
+	std::list<Node> caminho;
 
 	treeToList_recursive(this,&caminho);
 
@@ -331,7 +331,7 @@ void printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y])
             printVarreTree(&(*i),matrizPrint);
     }
 }
-void print(RRTTree *tree,Point initial,Point goal,list<Point> caminho,envType env[][MAX_Y])
+void print(RRTTree *tree,Node initial,Node goal,list<Point> caminho,envType env[][MAX_Y])
 {
     system("cls");
 
