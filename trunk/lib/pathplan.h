@@ -37,25 +37,65 @@ enum envType
 	FREE, MARKER, NODE, PATH, OBSTACLE
 };
 
+class Node {
+	
+	public:
+		int x;
+		int y;
+
+		Node() {}
+
+		Node(int x, int y) {
+			this->x = x;
+			this->y = y;
+		}
+
+		bool operator==(const Node &other) const {
+			return ((other.x == x) && (other.y == y));
+		}
+		
+		bool operator==(const Point &other) const {
+			return ((other.getX() == x) && (other.getY() == y));
+		}
+		
+		bool operator!=(const Node &other) const {
+			return ((other.x != x) || (other.y != y));
+		}
+		
+		bool operator<(const Node &other) const {
+			return ((this->x < other.x) || 
+					((this->x == other.x) && (this->y < other.y)));
+		}
+		
+		int getX() { return x; }
+		
+		int getY() { return y; }
+		
+		void setX(int x) { this->x = x; }
+
+		void setY(int y) { this->y = y;}
+
+};
+
 
 class Pathplan
 {
 	public:
 		//---- Constructor and Destructor ----
-		Pathplan(Point initialpos, Point finalpos);
+		Pathplan(Node initialpos, Node finalpos);
 		Pathplan();
 		~Pathplan();
 
 		//---- Position on the field (in grid coordinates) ----
-		Point initialpos;
-		Point finalpos;
+		Node initialpos;
+		Node finalpos;
 
-		list<Point> pathFull;  //full solution, showing possible partial branches
-		list<Point> pathFinal; //final solution, for path execution purposes (next point to visit)
+		list<Node> pathFull;  //full solution, showing possible partial branches
+		list<Node> pathFinal; //final solution, for path execution purposes (next point to visit)
 		envType env[MAX_X][MAX_Y]; //generic environment matrix
 
 		//----- Functions -----
-		Point getPathNode(int nodeIndex); //returns a specific node on pathFinal (initialState is 0)
+		Point getPathNode(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0)
 		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
 		int  getRadius();
 		void setRadius(int radius);
@@ -67,9 +107,11 @@ class Pathplan
 
 		virtual void run() {};
 
+		void setInitialPos(Node pos);
+		void setFinalPos(Node pos);
+
 		void setInitialPos(Point pos);
 		void setFinalPos(Point pos);
-	
 	
 	private:
 		int radius;

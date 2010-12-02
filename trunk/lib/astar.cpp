@@ -1,41 +1,30 @@
 #include "astar.h"
 
 AStar::AStar() {
-	initialize();
+	//initialize();
 }
 
-AStar::AStar(node start, node goal) : Pathplan(start, goal){
-	initialize();
+AStar::AStar(Node start, Node goal) : Pathplan(start, goal){
+	//initialize();
 }
 
 void AStar::initialize() {
 	//itializing came_from matrix
-	for(int i=0; i<MAX_X; i++) {
-		for(int j=0; j<MAX_Y; j++) {
-			came_from[i][j].setX(-1);
-			came_from[i][j].setY(-1);
-		}
-	}
+//	for(int i=0; i<MAX_X; i++) {
+//		for(int j=0; j<MAX_Y; j++) {
+//			came_from[i][j].setX(-1);
+//			came_from[i][j].setY(-1);
+//		}
+//	}
 }
 
 AStar::~AStar() {
 }
 
-//int AStar::grid [MAX_X][MAX_Y] = {	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//									1, 1, O, O, O, O, O, O, O, O,
-//									1, 1, O, 1, O, 1, 1, 1, 1, 1,
-//									1, 1, O, O, O, 1, 1, 1, 1, 1,
-//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//									1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+bool AStar::inLimits(Node y) {
 
-bool AStar::inLimits(node y) {
-
-	if(	(y.getX() >=0 && y.getY() >= 0) &&
-		(y.getX() < MAX_X && y.getY() < MAX_Y)) {
+	if(	(y.x >=0 && y.y >= 0) &&
+		(y.x < MAX_X && y.y < MAX_Y)) {
 
 		return true;
 	} else {
@@ -43,54 +32,56 @@ bool AStar::inLimits(node y) {
 	}
 }
 
-bool AStar::validPosition(node n) {
+bool AStar::validPosition(Node n) {
 
-	return (!(n.getX() == 0 && n.getY() ==0) 	&& //if it's a neighbor
+	return (!(n.x == 0 && n.y ==0) 	&& //if it's a neighbor
 			inLimits(n) 		&&
-			env[(int)n.getX()][(int)n.getY()] != OBSTACLE
+			env[n.x][n.y] != OBSTACLE
 			);
 }
 
 
-float AStar::distance(node a, node b) {
+float AStar::distance(Node a, Node b) {
 
-	return sqrt(pow(a.getX() - b.getX(),2) + pow(a.getY() - b.getY(),2));
+	return sqrt(pow(a.x - b.x,2) + pow(a.y - b.y,2));
 }
 
 
-float AStar::calcG(node x) {
+float AStar::calcG(const Node &x) {
 
-	node current = x;
-	float g = 0;
+	Node current = x;
+	Node from = came_from[current.x][current.y];
+	
+	float g_value = g[from.x][from.y];
 
-	while(current != initialpos) {
-		//our cost to go from one node to another is always 1
-		//here we're doing a generic implementation of the algorithm
-		//maybe can be optimized later
+//	while(current != initialpos) {
+//		//our cost to go from one Node to another is always 1
+//		//here we're doing a generic implementation of the algorithm
+//		//maybe can be optimized later
 
-		//env[(int)current.getX()][(int)current.getY()];
-		g++;
-		current = came_from[(int)current.getX()][(int)current.getY()];
-	}
-	return g;
+//		//env[current.x][current.y];
+//		g++;
+//		current = came_from[current.x][current.y];
+//	}
+	return g_value;
 }
 
-float AStar::calcH(node x) {
+float AStar::calcH(Node x) {
 
 	return distance(x, finalpos);
 }
 
-float AStar::calcF(node x) {
+float AStar::calcF(Node x) {
 
 	return calcG(x) + calcH(x);
 }
 
-node AStar::lowestF() {
+Node AStar::lowestF() {
 
 	float lowest_F_value = calcF(*(open_set.begin()));
-	node lowest_F_node = *(open_set.begin());
+	Node lowest_F_node = *(open_set.begin());
 
-	set<node>::iterator current = open_set.begin();
+	set<Node>::iterator current = open_set.begin();
 	current++;	//start iterating from second element of open_set
 
 	float current_f_value = 0;
@@ -106,9 +97,9 @@ node AStar::lowestF() {
 	return lowest_F_node;
 }
 
-node AStar::neighbor(node x, int i, int j) {
+Node AStar::neighbor(Node x, int i, int j) {
 
-	return Point( (x.getX())+i, (x.getY())+j );
+	return Node( (x.x)+i, (x.y)+j );
 }
 
 //given a source and a goal node, runs A* algorithm
@@ -120,17 +111,17 @@ void AStar::run() {
 	//INITIALIZE WITH THE INITIAL NODE
 	open_set.insert(initialpos);
 
-	//the distance from the current node to the start node is 0
-	g[(int)initialpos.getX()][(int)initialpos.getY()] = 0;
-	h[(int)initialpos.getX()][(int)initialpos.getY()] = calcH(initialpos);
-	f[(int)initialpos.getX()][(int)initialpos.getY()] =
-			g[(int)initialpos.getX()][(int)initialpos.getY()] +
-			h[(int)initialpos.getX()][(int)initialpos.getY()];
+	//the distance from the current Node to the start Node is 0
+	g[initialpos.x][initialpos.y] = 0;
+	h[initialpos.x][initialpos.y] = calcH(initialpos);
+	f[initialpos.x][initialpos.y] =
+			g[initialpos.x][initialpos.y] +
+			h[initialpos.x][initialpos.y];
 
 	while(!(open_set.empty())) {
 
-		//x = the node in openset having the lowest f value
-		node x = lowestF();
+		//x = the Node in openset having the lowest f value
+		Node x = lowestF();
 
 		//if x is the goal node
 		if(x == finalpos) {
@@ -141,11 +132,11 @@ void AStar::run() {
 		open_set.erase(x);
 		closed_set.insert(x);
 
-		//foreach neighbor of the node x
+		//foreach neighbor of the Node x
 		for(short int i=-1; i<=1; i++) {
 			for(short int j=-1; j<=1; j++) {
 
-				node y = neighbor(x,i,j);
+				Node y = neighbor(x,i,j);
 
 				if(validPosition(y)) {
 
@@ -167,12 +158,12 @@ void AStar::run() {
 					}
 
 					if (tentative_is_better) {
-						came_from[(int)y.getX()][(int)y.getY()] = x;
-						g[(int)y.getX()][(int)y.getY()] 		= tentative_g;
-						h[(int)y.getX()][(int)y.getY()] 		= distance(y, finalpos);
-						f[(int)y.getX()][(int)y.getY()] 		=
-									g[(int)y.getX()][(int)y.getY()] +
-									h[(int)y.getX()][(int)y.getY()];
+						came_from[y.x][y.y] = x;
+						g[y.x][y.y] 		= tentative_g;
+						h[y.x][y.y] 		= distance(y, finalpos);
+						f[y.x][y.y] 		=
+									g[y.x][y.y] +
+									h[y.x][y.y];
 					}
 				}
 			}
@@ -182,12 +173,12 @@ void AStar::run() {
 
 void AStar::reconstructPath() {
 
-	node current = finalpos;
+	Node current = finalpos;
 
 	while(current != initialpos) {
 		pathFinal.push_front(current);
 		//goto previous node
-		current = came_from[(int)current.getX()][(int)current.getY()];
+		current = came_from[current.x][current.y];
 	}
 	pathFinal.push_front(initialpos);
 }
