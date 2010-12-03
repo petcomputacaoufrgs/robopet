@@ -43,7 +43,13 @@ bool AStar::validPosition(Node n) {
 
 float AStar::distance(Node a, Node b) {
 
-	return sqrt(pow(a.x - b.x,2) + pow(a.y - b.y,2));
+	//return sqrt( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) );
+    float d = (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) ;
+
+    // diagonals are expensive!
+    // but this doesnt make much sense
+    return d; //* (a.x != b.x && b.y != a.y) ? 1 : 1;
+
 }
 
 
@@ -145,7 +151,7 @@ void AStar::run() {
 						continue;
 					}
 
-					tentative_g = calcG(x) + distance(x, y);
+					tentative_g = calcG(x) + (x.x != y.x && x.y != y.y) ? 1.4 : 1;
 
 					//if y doesn't belongs to open_set
 					if(open_set.find(y) == open_set.end()) {

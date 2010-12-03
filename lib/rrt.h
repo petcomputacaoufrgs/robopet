@@ -25,20 +25,20 @@ using namespace std;
 #define EMPTY_STATE (Node(-10, -10))
 #define SQR(x) ((x) * (x)) //para Distance
 
-
 typedef list<Point> Solucao;
 
 
 class Rrt: public Pathplan
 {
+
 	private:
-	
+
 	public:
-		Rrt() {}
+		Rrt() { }
 		~Rrt() {}
-			
+
 		void run();
-	
+
 };
 
 class RRTTree
@@ -46,6 +46,7 @@ class RRTTree
     private:
 
 		void treeToList_recursive(RRTTree *tree,list<Node>*caminho);
+
 
     public:
 
