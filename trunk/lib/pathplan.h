@@ -38,7 +38,7 @@ enum envType
 };
 
 class Node {
-	
+
 	public:
 		int x;
 		int y;
@@ -53,24 +53,24 @@ class Node {
 		bool operator==(const Node &other) const {
 			return ((other.x == x) && (other.y == y));
 		}
-		
+
 		bool operator==(const Point &other) const {
 			return ((other.getX() == x) && (other.getY() == y));
 		}
-		
+
 		bool operator!=(const Node &other) const {
 			return ((other.x != x) || (other.y != y));
 		}
-		
+
 		bool operator<(const Node &other) const {
-			return ((this->x < other.x) || 
+			return ((this->x < other.x) ||
 					((this->x == other.x) && (this->y < other.y)));
 		}
-		
+
 		int getX() { return x; }
-		
+
 		int getY() { return y; }
-		
+
 		void setX(int x) { this->x = x; }
 
 		void setY(int y) { this->y = y;}
@@ -99,7 +99,7 @@ class Pathplan
 		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
 		int  getRadius();
 		void setRadius(int radius);
-		
+
 		/* For debuging purposes.
 		 * Prints the actual environment
 		 */
@@ -112,13 +112,13 @@ class Pathplan
 
 		void setInitialPos(Point pos);
 		void setFinalPos(Point pos);
-	
+
 	private:
 		int radius;
-		
+
 	protected:
 		//---- Functions ----
-		void fillEnv_playerBox(int centerx, int centery);	
+		void fillEnv_playerBox(int centerx, int centery);
 };
 
 
