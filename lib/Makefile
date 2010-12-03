@@ -38,7 +38,7 @@ cpptolua:
 #userdata/%.h: %.h
 #	$(CC2L) -i $< -o $@ -H -N ../$*.h
 
-%.o: %.cpp %.h 
+%.o: %.cpp %.h
 	$(CC) -c $< -o  $@ $(CFLAGS)
 
 robopet.a: $(OBJECTS)
