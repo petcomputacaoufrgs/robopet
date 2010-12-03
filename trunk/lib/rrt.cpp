@@ -25,6 +25,7 @@ using namespace std;
 
 void Rrt::run()
 {
+
 	Node initial = initialpos;
 	Node goal = finalpos;
 
@@ -33,7 +34,7 @@ void Rrt::run()
 
     this->pathFull = solutionTree->treeToList();
 	this->pathFinal = solutionTree->findSolucao(goal);
-	
+
 	//print(solutionTree,initial,goal,pathFinal,env); //print result in console
 }
 
@@ -42,6 +43,10 @@ void Rrt::run()
  ******************************************************************************************/
 
 RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
+
+    time_t _timeStarted = time(0);
+	int _limit = 1;
+
     int printCont=0;
 	RRTTree *nearest;
 	Node extended,target;
@@ -60,6 +65,24 @@ RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 	tree = nodoInicial;
 
 	while( Distance(nearest->nodo, goal) > THRESHOLD ){
+
+		// the situation when it can't find a way
+		// we must tell him to go home
+		printf("%lu\n",time(0) - _timeStarted);
+		if ( ( time(0) - _timeStarted ) > _limit ) {
+
+
+			printf("Can't find a path\n");
+//			pathFinal.clear();
+//			pathFinal.push_back(initialpos);
+			free(nodoInicial);
+
+			return new RRTTree;
+
+		} else {
+
+			printf("ainda executando\n");
+		}
 
         if(STEP_BY_STEP){ //impressão passo a passo p/ debug
             if(printCont==STEPS_DELAY){
@@ -379,4 +402,3 @@ void print(RRTTree *tree,Node initial,Node goal,list<Point> caminho,envType env[
 
 
 #endif
-

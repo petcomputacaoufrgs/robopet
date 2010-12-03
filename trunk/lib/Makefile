@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall
+CFLAGS = -Wall -pg
 CC2L = ./cpptolua
 
 AA = ar
