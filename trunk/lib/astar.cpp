@@ -55,7 +55,7 @@ float AStar::distance(Node a, Node b) {
 float AStar::calcG(const Node &current) {
 
 	Node from = came_from[current.x][current.y];
-	
+
 	float g_value = g[from.x][from.y];
 
 //	while(current != initialpos) {
