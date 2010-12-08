@@ -17,14 +17,21 @@ using RP::Point;
 using namespace std;
 
 
-#define CELLS_PER_MM  MAX_X / (float) FIELD_WIDTH //MAX_X and MAX_Y are dimensions from the matrix on rrt.h
-#define MM_PER_CELLS  FIELD_WIDTH / (float) MAX_X
+#define CELLS_PER_MM_X  MAX_X / (float) FIELD_WIDTH
+#define CELLS_PER_MM_Y  MAX_Y / (float) FIELD_HEIGHT
+#define MM_PER_CELLS_X  FIELD_WIDTH / (float) MAX_X
+#define MM_PER_CELLS_Y  FIELD_HEIGHT / (float) MAX_Y
 
-#define MM_TO_CELLS(x) ((x) * (CELLS_PER_MM))
+#define MM_TO_CELLS_X(x) ((x) * (CELLS_PER_MM_X))
+#define MM_TO_CELLS_Y(y) ((y) * (CELLS_PER_MM_Y))
 
-#define CELLS_TO_MM(x) ((x) * (MM_PER_CELLS))
+#define CELLS_TO_MM_X(x) ((x) * (MM_PER_CELLS_X))
+#define CELLS_TO_MM_Y(y) ((y) * (MM_PER_CELLS_Y))
 
-#define INITIAL_RADIUS 5
+#define OBSTACULE_RADIUS 5
+
+#define MAX_X 100  //dimensões da matriz que abstrai o ambiente
+#define MAX_Y (int)(MAX_X * (FIELD_HEIGHT/FIELD_WIDTH) + 1) //dimensões da matriz que abstrai o ambiente
 
 
 enum pathplanType
@@ -96,7 +103,7 @@ class Pathplan
 
 		//----- Functions -----
 		Point getPathNode(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0)
-		void fillEnv(vector<RP::Point> playersPositions); //fills the enviroment with positions of the obstacles (currently, only for players)
+		void fillEnv(vector<RP::Point> positions); //fills the enviroment with positions of the obstacles (currently, only for players)
 		int  getRadius();
 		void setRadius(int radius);
 

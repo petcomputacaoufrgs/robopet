@@ -13,14 +13,14 @@ Pathplan::Pathplan(Node initial, Node final)
 {
 	this->initialpos = initial;
 	this->finalpos = final;
-	this->radius = INITIAL_RADIUS;
+	this->radius = OBSTACULE_RADIUS;
 }
 
 Pathplan::Pathplan()
 {
 	this->initialpos = Node(0.0, 0.0);
 	this->finalpos = Node(0.0, 0.0);
-	this->radius = INITIAL_RADIUS;
+	this->radius = OBSTACULE_RADIUS;
 }
 
 Pathplan::~Pathplan()
@@ -39,8 +39,8 @@ void Pathplan::fillEnv_playerBox(int x, int y)
 				newy = y+k-side/2;
 				
 			if( Point(x,y).getDistance(Point(newx,newy)) < this->getRadius() &&
-				newx>0 && newx<MAX_X-1 &&
-				newy>0 && newy<MAX_Y-1 )
+				newx>=0 && newx<MAX_X &&
+				newy>=0 && newy<MAX_Y )
 				
 				env[newx][newy] = OBSTACLE;
 		}
@@ -83,7 +83,7 @@ void Pathplan::printEnv()
 
 }
 
-void Pathplan::fillEnv(vector<Point> playersPositions)
+void Pathplan::fillEnv(vector<Point> positions)
 {
 	int centerx, centery;
 
@@ -92,10 +92,10 @@ void Pathplan::fillEnv(vector<Point> playersPositions)
 			env[x][y] = FREE;
 
 	vector<Point>::iterator it;
-	for(it=playersPositions.begin(); it<playersPositions.end(); it++)
+	for(it=positions.begin(); it<positions.end(); it++)
 	{
-		centerx = round( MM_TO_CELLS((*it).getX()) );
-		centery = round( MM_TO_CELLS((*it).getY()) );
+		centerx = round( MM_TO_CELLS_X((*it).getX()) );
+		centery = round( MM_TO_CELLS_Y((*it).getY()) );
 		fillEnv_playerBox(centerx,centery);
 	}
 }
@@ -109,30 +109,30 @@ Point Pathplan::getPathNode(int nodeIndex)
 
 	Node node = *it;
 	
-	node.setX(CELLS_TO_MM(node.getX()));
-	node.setY(CELLS_TO_MM(node.getY()));
+	node.setX(CELLS_TO_MM_X(node.getX()));
+	node.setY(CELLS_TO_MM_Y(node.getY()));
 	
 	return Point(node.getX(), node.getY());
 }
 
 void Pathplan::setInitialPos(Node pos)
 {
-	initialpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
+	initialpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
 }
 
 void Pathplan::setFinalPos(Node pos)
 {
-	finalpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
+	finalpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
 }
 
 void Pathplan::setInitialPos(Point pos)
 {
-	initialpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
+	initialpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
 }
 
 void Pathplan::setFinalPos(Point pos)
 {
-	finalpos = Node( round(MM_TO_CELLS( pos.getX() )), round(MM_TO_CELLS( pos.getY() )) );
+	finalpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
 }
 
 #endif
