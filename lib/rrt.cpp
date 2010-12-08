@@ -68,7 +68,7 @@ RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 
 		// the situation when it can't find a way
 		// we must tell him to go home
-		printf("%lu\n",time(0) - _timeStarted);
+		//printf("%lu\n",time(0) - _timeStarted);
 		if ( ( time(0) - _timeStarted ) > _limit ) {
 
 
@@ -80,8 +80,7 @@ RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 			return new RRTTree;
 
 		} else {
-
-			printf("ainda executando\n");
+			//printf("ainda executando\n");
 		}
 
         if(STEP_BY_STEP){ //impressão passo a passo p/ debug

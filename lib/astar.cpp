@@ -48,7 +48,7 @@ float AStar::distance(Node a, Node b) {
 
     // diagonals are expensive!
     // but this doesnt make much sense
-    return d; //* (a.x != b.x && b.y != a.y) ? 1 : 1;
+    return d* (a.x != b.x && b.y != a.y) ? 1.4 : 1;
 
 }
 
