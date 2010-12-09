@@ -27,7 +27,7 @@ class AStar : public Pathplan {
 
 		bool closed[MAX_X][MAX_Y];
 		bool open[MAX_X][MAX_Y];
-		
+
 		//g equals to the distance from the
 		//source Node to the current evaluated node,
 		//through an optimal path
@@ -55,7 +55,7 @@ class AStar : public Pathplan {
 
 		float distance(Node a, Node b);
 
-		float calcG(const Node &x);
+		float calcG(Node x);
 
 		float calcH(Node x);
 
