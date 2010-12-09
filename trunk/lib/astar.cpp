@@ -43,22 +43,34 @@ bool AStar::validPosition(Node n) {
 
 float AStar::distance(Node a, Node b) {
 
+	float delta_x = a.x - b.x;
+	float delta_y = a.y - b.y;
+
+	//if the nodes are in the same column
+	if (delta_x == 0)
+		return delta_y;
+	//else, if the nodes are in the same row
+	else if (delta_y == 0)
+		return delta_x;
+	//otherwise
+	else
+		return sqrt(delta_x*delta_x + delta_y*delta_y);
+
 	//return sqrt( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) );
-    float d = (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) ;
+    //float d = (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) ;
 
     // diagonals are expensive!
     // but this doesnt make much sense
-    return d* (a.x != b.x && b.y != a.y) ? 1.4 : 1;
+    //return d* (a.x != b.x && b.y != a.y) ? 1.4 : 1;
 
 }
 
 
-float AStar::calcG(const Node &x) {
+float AStar::calcG(Node n) {
 
-	Node current = x;
-	Node from = came_from[current.x][current.y];
+	Node from = came_from[n.x][n.y];
 
-	float g_value = g[from.x][from.y];
+	return g[from.x][from.y];
 
 //	while(current != initialpos) {
 //		//our cost to go from one Node to another is always 1
@@ -69,7 +81,7 @@ float AStar::calcG(const Node &x) {
 //		g++;
 //		current = came_from[current.x][current.y];
 //	}
-	return g_value;
+//	return g_value;
 }
 
 float AStar::calcH(Node x) {
@@ -103,9 +115,9 @@ Node AStar::lowestF() {
 	return lowest_F_node;
 }
 
-Node AStar::neighbor(Node x, int i, int j) {
+Node AStar::neighbor(Node n, int i, int j) {
 
-	return Node( (x.x)+i, (x.y)+j );
+	return Node( (n.x)+i, (n.y)+j );
 }
 
 //given a source and a goal node, runs A* algorithm
@@ -126,50 +138,53 @@ void AStar::run() {
 
 	while(!(open_set.empty())) {
 
-		//x = the Node in openset having the lowest f value
-		Node x = lowestF();
+		//current_node = the Node in openset having the lowest f value
+		Node current_node = lowestF();
 
-		//if x is the goal node
-		if(x == finalpos) {
+		//if current_node is the goal node
+		if(current_node == finalpos) {
 			printf("ending AStar\n");
 			reconstructPath();
 		}
 
-		open_set.erase(x);
-		closed_set.insert(x);
+		open_set.erase(current_node);
+		closed_set.insert(current_node);
 
-		//foreach neighbor of the Node x
+		//foreach neighbor of the Node current_node
 		for(short int i=-1; i<=1; i++) {
 			for(short int j=-1; j<=1; j++) {
 
-				Node y = neighbor(x,i,j);
+				Node current_neighbor = neighbor(current_node,i,j);
 
-				if(validPosition(y)) {
+				if(validPosition(current_neighbor)) {
 
-					//if y belongs to closed_set
-					if (closed_set.find(y) != closed_set.end()) {
+					//if current_neighbor belongs to closed_set
+					if (closed_set.find(current_neighbor) != closed_set.end()) {
 						continue;
 					}
 
-					tentative_g = calcG(x) + (x.x != y.x && x.y != y.y) ? 1.4 : 1;
+					tentative_g = calcG(current_node) +
+								//if the nodes are in diagonal, we sum 1.4. Otherwise, 1.
+								(	current_node.x != current_neighbor.x &&
+									current_node.y != current_neighbor.y) ? 1.4 : 1;
 
-					//if y doesn't belongs to open_set
-					if(open_set.find(y) == open_set.end()) {
-						open_set.insert(y);
+					//if current_neighbor doesn't belongs to open_set
+					if(open_set.find(current_neighbor) == open_set.end()) {
+						open_set.insert(current_neighbor);
 						tentative_is_better = true;
-					} else if(tentative_g < calcG(y)) {
+					} else if(tentative_g < calcG(current_neighbor)) {
 						tentative_is_better = true;
 					} else {
 						tentative_is_better = false;
 					}
 
 					if (tentative_is_better) {
-						came_from[y.x][y.y] = x;
-						g[y.x][y.y] 		= tentative_g;
-						h[y.x][y.y] 		= distance(y, finalpos);
-						f[y.x][y.y] 		=
-									g[y.x][y.y] +
-									h[y.x][y.y];
+						came_from[current_neighbor.x][current_neighbor.y] 	= current_node;
+						g[current_neighbor.x][current_neighbor.y]			= tentative_g;
+						h[current_neighbor.x][current_neighbor.y] 			= distance(current_neighbor, finalpos);
+						f[current_neighbor.x][current_neighbor.y] 			=
+																		g[current_neighbor.x][current_neighbor.y] +
+																		h[current_neighbor.x][current_neighbor.y];
 					}
 				}
 			}
