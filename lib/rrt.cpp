@@ -66,46 +66,35 @@ RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 
 	while( Distance(nearest->nodo, goal) > THRESHOLD ){
 
-		// the situation when it can't find a way
-		// we must tell him to go home
-		//printf("%lu\n",time(0) - _timeStarted);
+		// the situation when it can't find a way we must tell him to go home
 		if ( ( time(0) - _timeStarted ) > _limit ) {
+			return tree;
 
-
-			printf("Can't find a path\n");
-//			pathFinal.clear();
-//			pathFinal.push_back(initialpos);
-			free(nodoInicial);
-
-			return new RRTTree;
-
-		} else {
-			//printf("ainda executando\n");
 		}
+		else {
+			if(STEP_BY_STEP){ //impressão passo a passo p/ debug
+				if(printCont==STEPS_DELAY){
+				   list<Point> null;
+				   print(tree,initial,goal,null,env);
+				   printCont=0;
+				   //getchar();
+				}
+				else
+					printCont++;
+			}
 
-        if(STEP_BY_STEP){ //impressão passo a passo p/ debug
-            if(printCont==STEPS_DELAY){
-               list<Point> null;
-               print(tree,initial,goal,null,env);
-               printCont=0;
-               //getchar();
-            }
-            else
-                printCont++;
-        }
+			target = ChooseTarget(goal);
+			nearest = Nearest(tree, target);
+			extended = Extend(env, nearest->nodo, target);
 
-
-		target = ChooseTarget(goal);
-		nearest = Nearest(tree, target);
-		extended = Extend(env, nearest->nodo, target);
-
-		if (extended != EMPTY_STATE)
-			AddNode(nearest, extended);
+			if (extended != EMPTY_STATE)
+				AddNode(nearest, extended);
+		}
 	}
 
+
 	AddNode(nearest, goal);
-
-
+	
 	return tree;
 }
 
@@ -291,7 +280,6 @@ void AddNode(RRTTree *nearest, Node extended) {
 void encontraFim(RRTTree *tree,Node goal,RRTTree **fim)
 {
     if (tree->nodo != EMPTY_STATE){
-
         //cout << tree->nodo << " == " << goal << " = " << (tree->nodo == goal) << endl;
 
         if(tree->nodo == goal)
@@ -305,7 +293,7 @@ void encontraFim(RRTTree *tree,Node goal,RRTTree **fim)
 std::list<Node> RRTTree::findSolucao(Node goal) {
     std::list<Node> caminho;
 
-    RRTTree *aux;
+    RRTTree *aux = NULL;
     encontraFim(this,goal,&aux);
 
     while( aux != NULL ){
@@ -318,12 +306,11 @@ std::list<Node> RRTTree::findSolucao(Node goal) {
 
 void RRTTree::treeToList_recursive(RRTTree *tree,list<Node>*caminho)
 {
-    if (tree->nodo != EMPTY_STATE){
-
+    if( tree->nodo != EMPTY_STATE ){
         caminho->push_back(tree->nodo);
 
         for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i)
-            treeToList_recursive(&(*i),caminho);
+			treeToList_recursive(&(*i),caminho);
     }
 }
 
@@ -333,7 +320,7 @@ list<Node> RRTTree::treeToList()
 
 	treeToList_recursive(this,&caminho);
 
-   return caminho;
+	return caminho;
 }
 
 
