@@ -33,7 +33,7 @@ void Rrt::run()
 	solutionTree = RRTPlan(env,initial,goal);
 
     this->pathFull = solutionTree->treeToList();
-	this->pathFinal = solutionTree->findSolucao(goal);
+	this->pathFinal = findSolucao(goal,solutionTree);
 
 	//print(solutionTree,initial,goal,pathFinal,env); //print result in console
 }
@@ -42,7 +42,7 @@ void Rrt::run()
  Código do ETDP dos CMDragons de 2009
  ******************************************************************************************/
 
-RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
+RRTTree* Rrt::RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 
     time_t _timeStarted = time(0);
 	int _limit = 1;
@@ -94,11 +94,11 @@ RRTTree* RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 
 
 	AddNode(nearest, goal);
-	
+
 	return tree;
 }
 
-Node ChooseTarget(Node goal) {
+Node Rrt::ChooseTarget(Node goal) {
 	float p;
 	p = (rand() % 100 + 1) / 100.0;
 
@@ -108,7 +108,7 @@ Node ChooseTarget(Node goal) {
 		return RandomState();
 }
 
-RRTTree* Nearest(RRTTree *tree, Node target) {
+RRTTree* Rrt::Nearest(RRTTree *tree, Node target) {
 	RRTTree *nearest = tree;
 
     nearestState(tree,target,&nearest); //calcula nodo mais próximo de target
@@ -120,7 +120,7 @@ RRTTree* Nearest(RRTTree *tree, Node target) {
  Código deduzido do ETDP dos CMDragons de 2009
  ******************************************************************************************/
 
-void nearestState(RRTTree *tree,Node target,RRTTree **nearest) {
+void Rrt::nearestState(RRTTree *tree,Node target,RRTTree **nearest) {
 
     if (tree->nodo != EMPTY_STATE){
 
@@ -138,11 +138,11 @@ void nearestState(RRTTree *tree,Node target,RRTTree **nearest) {
     }
 }
 
-float Distance(Node a, Node b) {
+float Rrt::Distance(Node a, Node b) {
 	return fabs( sqrt(  (float)(  SQR(a.getX() - b.getX()) + SQR(a.getY() - b.getY())  )  ));
 }
 
-Node Extend(envType env[][MAX_Y], Node nearest, Node target) {
+Node Rrt::Extend(envType env[][MAX_Y], Node nearest, Node target) {
 
     int step = rand()%MAX_STEPSIZE + 1;
 
@@ -185,7 +185,7 @@ Node Extend(envType env[][MAX_Y], Node nearest, Node target) {
     else return EMPTY_STATE;
 }
 
-Node RandomState() {
+Node Rrt::RandomState() {
     Node randomState;
 
     randomState.setX( rand() % MAX_X );
@@ -195,7 +195,7 @@ Node RandomState() {
 }
 
 
- int bresenham(envType env[][MAX_Y], Node stat1, Node stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
+int Rrt::bresenham(envType env[][MAX_Y], Node stat1, Node stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
        int x1 = stat1.getX();
        int x2 = stat2.getX();
        int y1 = stat1.getY();
@@ -209,10 +209,11 @@ Node RandomState() {
        }
 
        if(x1 == x2){ //reta é paralela com eixo y
-            if(y1 < y2)
+            if(y1 < y2) {
                 for(y = y1; y <= y2; y++)
                     if (env[x1][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz
                         return 1;
+			}
             else
                 for(y = y2; y <= y1; y++)
                     if (env[x1][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz
@@ -251,7 +252,7 @@ Node RandomState() {
                return 0;
        }
  }
-int Collision(envType env[][MAX_Y], Node nearest, Node extended) {
+int Rrt::Collision(envType env[][MAX_Y], Node nearest, Node extended) {
     if(extended.getX() >= 0 && extended.getX() < MAX_X &&
        extended.getY() >= 0 && extended.getY() < MAX_Y)
 
@@ -262,7 +263,7 @@ int Collision(envType env[][MAX_Y], Node nearest, Node extended) {
 }
 
 
-void AddNode(RRTTree *nearest, Node extended) {
+void Rrt::AddNode(RRTTree *nearest, Node extended) {
 
     //cout << "AddNode " << extended << "at " << nearest->nodo << endl;
 
@@ -277,7 +278,7 @@ void AddNode(RRTTree *nearest, Node extended) {
 
 
 
-void encontraFim(RRTTree *tree,Node goal,RRTTree **fim)
+void Rrt::encontraFim(RRTTree *tree,Node goal,RRTTree **fim)
 {
     if (tree->nodo != EMPTY_STATE){
         //cout << tree->nodo << " == " << goal << " = " << (tree->nodo == goal) << endl;
@@ -290,11 +291,11 @@ void encontraFim(RRTTree *tree,Node goal,RRTTree **fim)
     }
 }
 
-std::list<Node> RRTTree::findSolucao(Node goal) {
+std::list<Node> Rrt::findSolucao(Node goal, RRTTree *tree) {
     std::list<Node> caminho;
 
     RRTTree *aux = NULL;
-    encontraFim(this,goal,&aux);
+    encontraFim(tree,goal,&aux);
 
     while( aux != NULL ){
         caminho.push_back(aux->nodo);
@@ -330,7 +331,7 @@ list<Node> RRTTree::treeToList()
  Código para testes
  ******************************************************************************************/
 
-void printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y])
+void Rrt::printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y])
 {
     if (tree->nodo != EMPTY_STATE){
 
@@ -340,7 +341,7 @@ void printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y])
             printVarreTree(&(*i),matrizPrint);
     }
 }
-void print(RRTTree *tree,Node initial,Node goal,list<Point> caminho,envType env[][MAX_Y])
+void Rrt::print(RRTTree *tree,Node initial,Node goal,list<Point> caminho,envType env[][MAX_Y])
 {
     system("cls");
 
