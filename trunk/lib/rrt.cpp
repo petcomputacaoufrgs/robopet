@@ -30,7 +30,7 @@ void Rrt::run()
 	Node goal = finalpos;
 
     RRTTree *solutionTree;
-	solutionTree = RRTPlan(env,initial,goal);
+	solutionTree = rrtPlan(initial,goal);
 
     this->pathFull = solutionTree->treeToList();
 	this->pathFinal = findSolucao(goal,solutionTree);
@@ -42,14 +42,13 @@ void Rrt::run()
  Código do ETDP dos CMDragons de 2009
  ******************************************************************************************/
 
-RRTTree* Rrt::RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
+RRTTree* Rrt::rrtPlan(Node initial, Node goal) {
 
     time_t _timeStarted = time(0);
-	int _limit = 1;
 
     int printCont=0;
 	RRTTree *nearest;
-	Node extended,target;
+	Node extended, target;
 	RRTTree *tree;
 
     // dá pra fazer melhor
@@ -64,18 +63,16 @@ RRTTree* Rrt::RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 	nearest = nodoInicial;
 	tree = nodoInicial;
 
-	while( Distance(nearest->nodo, goal) > THRESHOLD ){
-
+	while( distance(nearest->nodo, goal) > stepsize )
+	{
 		// the situation when it can't find a way we must tell him to go home
-		if ( ( time(0) - _timeStarted ) > _limit ) {
+		if ( ( time(0) - _timeStarted ) > timeLimit )
 			return tree;
-
-		}
 		else {
 			if(STEP_BY_STEP){ //impressão passo a passo p/ debug
 				if(printCont==STEPS_DELAY){
 				   list<Point> null;
-				   print(tree,initial,goal,null,env);
+				   tree->print(initial,goal,null,env);
 				   printCont=0;
 				   //getchar();
 				}
@@ -83,32 +80,31 @@ RRTTree* Rrt::RRTPlan(envType env[][MAX_Y], Node initial, Node goal) {
 					printCont++;
 			}
 
-			target = ChooseTarget(goal);
-			nearest = Nearest(tree, target);
-			extended = Extend(env, nearest->nodo, target);
+			target = chooseTarget(goal);
+			nearest = findNearest(tree, target);
+			extended = extend(nearest->nodo, target);
 
 			if (extended != EMPTY_STATE)
-				AddNode(nearest, extended);
+				addNode(nearest, extended);
 		}
 	}
 
-
-	AddNode(nearest, goal);
+	addNode(nearest, goal);
 
 	return tree;
 }
 
-Node Rrt::ChooseTarget(Node goal) {
+Node Rrt::chooseTarget(Node goal) {
 	float p;
 	p = (rand() % 100 + 1) / 100.0;
 
-	if (p <= GOAL_PROB)  // 0 <= p <= goalProb
+	if (p <= goalProb)  // 0 <= p <= goalProb
 		return goal;
 	else 				 // goalProb < p <= 1
-		return RandomState();
+		return randomState();
 }
 
-RRTTree* Rrt::Nearest(RRTTree *tree, Node target) {
+RRTTree* Rrt::findNearest(RRTTree *tree, Node target) {
 	RRTTree *nearest = tree;
 
     nearestState(tree,target,&nearest); //calcula nodo mais próximo de target
@@ -130,7 +126,7 @@ void Rrt::nearestState(RRTTree *tree,Node target,RRTTree **nearest) {
        //cout << "nearest->nodo:" << nearest->nodo << endl;
        //cout << Distance(actual,target) << " < " << Distance(nearest->nodo,target) << endl;
 
-       if (Distance(actual,target) < Distance((*nearest)->nodo,target))
+       if (distance(actual,target) < distance((*nearest)->nodo,target))
            *nearest = tree;
 
        for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i)
@@ -138,21 +134,21 @@ void Rrt::nearestState(RRTTree *tree,Node target,RRTTree **nearest) {
     }
 }
 
-float Rrt::Distance(Node a, Node b) {
+float Rrt::distance(Node a, Node b) {
 	return fabs( sqrt(  (float)(  SQR(a.getX() - b.getX()) + SQR(a.getY() - b.getY())  )  ));
 }
 
-Node Rrt::Extend(envType env[][MAX_Y], Node nearest, Node target) {
+Node Rrt::extend(Node nearest, Node target) {
 
-    int step = rand()%MAX_STEPSIZE + 1;
+    int step = rand()%stepsize + 1;
 
     int directions[8][2] = {{-step, -step}, {-step, 0}, {-step, step}, {0, -step}, {0, 0}, {step, -step}, {step, 0}, {step, step}};
-    int res = rand() % DIRECTIONS_TO_LOOK, i, resIndex[8], tmp, j, min;
+    int res = rand() % directionsToLook, i, resIndex[8], tmp, j, min;
     float distances[8], temp;
     Node extended;
 
     for(i = 0; i < 8; i++) {
-        distances[i] = Distance(  Node (nearest.getX() + directions[i][0],
+        distances[i] = distance(  Node (nearest.getX() + directions[i][0],
                                          nearest.getY() + directions[i][1]),
                                 target);
         resIndex[i] = i;
@@ -180,12 +176,12 @@ Node Rrt::Extend(envType env[][MAX_Y], Node nearest, Node target) {
 
 
 
-    if(!Collision(env, nearest, extended))
+    if(!collision(nearest, extended))
         return extended;
     else return EMPTY_STATE;
 }
 
-Node Rrt::RandomState() {
+Node Rrt::randomState() {
     Node randomState;
 
     randomState.setX( rand() % MAX_X );
@@ -195,7 +191,7 @@ Node Rrt::RandomState() {
 }
 
 
-int Rrt::bresenham(envType env[][MAX_Y], Node stat1, Node stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
+int Rrt::bresenham(Node stat1, Node stat2){ //retorna 0 se consegue traçar linha entre os dois pontos
        int x1 = stat1.getX();
        int x2 = stat2.getX();
        int y1 = stat1.getY();
@@ -205,7 +201,7 @@ int Rrt::bresenham(envType env[][MAX_Y], Node stat1, Node stat2){ //retorna 0 se
        int dx, dy, incE, incNE, d, x, y;
        // Onde inverte a linha x1 > x2
        if (x1 > x2){
-           return bresenham(env, stat2, stat1);
+           return bresenham(stat2, stat1);
        }
 
        if(x1 == x2){ //reta é paralela com eixo y
@@ -252,18 +248,18 @@ int Rrt::bresenham(envType env[][MAX_Y], Node stat1, Node stat2){ //retorna 0 se
                return 0;
        }
  }
-int Rrt::Collision(envType env[][MAX_Y], Node nearest, Node extended) {
+int Rrt::collision(Node nearest, Node extended) {
     if(extended.getX() >= 0 && extended.getX() < MAX_X &&
        extended.getY() >= 0 && extended.getY() < MAX_Y)
 
-        return bresenham(env, nearest, extended);
+        return bresenham(nearest, extended);
         //return env[extended.getX()][extended.getY()] == OBSTACULO;
     else
         return 1;
 }
 
 
-void Rrt::AddNode(RRTTree *nearest, Node extended) {
+void Rrt::addNode(RRTTree *nearest, Node extended) {
 
     //cout << "AddNode " << extended << "at " << nearest->nodo << endl;
 
@@ -331,17 +327,17 @@ list<Node> RRTTree::treeToList()
  Código para testes
  ******************************************************************************************/
 
-void Rrt::printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y])
+void RRTTree::printVarreTree(int matrizPrint[][MAX_Y])
 {
-    if (tree->nodo != EMPTY_STATE){
+    if (this->nodo != EMPTY_STATE){
 
-        matrizPrint[(int)tree->nodo.getX()][(int)tree->nodo.getY()] = NODE;
+        matrizPrint[(int)this->nodo.getX()][(int)this->nodo.getY()] = NODE;
 
-        for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i)
-            printVarreTree(&(*i),matrizPrint);
+        for(std::list<RRTTree>::iterator i=this->filhos.begin(); i != this->filhos.end(); ++i)
+            this->printVarreTree(matrizPrint);
     }
 }
-void Rrt::print(RRTTree *tree,Node initial,Node goal,list<Point> caminho,envType env[][MAX_Y])
+void RRTTree::print(Node initial,Node goal,list<Point> caminho,envType env[][MAX_Y])
 {
     system("cls");
 
@@ -353,7 +349,7 @@ void Rrt::print(RRTTree *tree,Node initial,Node goal,list<Point> caminho,envType
             matrizPrint[i][j] = env[i][j];
 
     //preenche matriz com nodos da árvore
-    printVarreTree(tree,matrizPrint);
+    this->printVarreTree(matrizPrint);
 
     //marca caminho-solução
     for(std::list<Point>::iterator i=caminho.begin(); i != caminho.end(); ++i)
