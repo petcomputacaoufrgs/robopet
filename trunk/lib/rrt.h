@@ -27,20 +27,6 @@ using namespace std;
 
 typedef list<Point> Solucao;
 
-
-class Rrt: public Pathplan
-{
-
-	private:
-
-	public:
-		Rrt() { }
-		~Rrt() {}
-
-		void run();
-
-};
-
 class RRTTree
 {
     private:
@@ -59,27 +45,58 @@ class RRTTree
         RRTTree(Node param) { nodo = param; };
 
 		list<Node> treeToList(); //transforma arvore em uma lista de nodos
-		list<Node> findSolucao(Node goal); //cria uma lista de nodos com o caminho-solucao
 
 		RRTTree operator= (Node param) { return nodo=param; };
+
+
+		//--------------------------------------------------------------------------------------------------------------
+};
+
+class Rrt: public Pathplan
+{
+
+	private:
+
+	public:
+		Rrt() {}
+		~Rrt() {}
+
+		void		run();
+
+		RRTTree* 	RRTPlan(envType env[][MAX_Y], Node initial, Node goal); //função principal
+		Node 		ChooseTarget(Node goal);
+		RRTTree* 	Nearest(RRTTree *tree, Node target);
+		float 		Distance(Node a, Node b);
+		Node 		Extend(envType env[][MAX_Y], Node nearest, Node target);
+		void 		AddNode(RRTTree *nearest, Node extended);
+		Node 		RandomState();
+		int 		bresenham(envType env[][MAX_Y], Node stat1, Node stat2);
+		int 		Collision(envType env[][MAX_Y], Node nearest, Node extended); //há colisão numa linha entre os dois pontos?
+		void 		nearestState(RRTTree *tree,Node target,RRTTree **nearest);
+		void 		encontraFim(RRTTree *tree,Node goal,RRTTree **fim);
+		list<Node>	findSolucao(Node goal, RRTTree *tree); //cria uma lista de nodos com o caminho-solucao
+
+		void 		printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y]);
+		void 		print(RRTTree *tree,Node initial,Node goal,std::list<Point> caminho,envType env[][MAX_Y]);
+
 };
 
 
 
-RRTTree* 	RRTPlan(envType env[][MAX_Y], Node initial, Node goal); //função principal
-Node 		ChooseTarget(Node goal);
-RRTTree* 	Nearest(RRTTree *tree, Node target);
-float 		Distance(Node a, Node b);
-Node 		Extend(envType env[][MAX_Y], Node nearest, Node target);
-void 		AddNode(RRTTree *nearest, Node extended);
-Node 		RandomState();
-int 		Collision(envType env[][MAX_Y], Node nearest, Node extended); //há colisão numa linha entre os dois pontos?
-void 		nearestState(RRTTree *tree,Node target,RRTTree **nearest);
+//RRTTree* 	RRTPlan(envType env[][MAX_Y], Node initial, Node goal); //função principal
+//Node 		ChooseTarget(Node goal);
+//RRTTree* 	Nearest(RRTTree *tree, Node target);
+//float 		Distance(Node a, Node b);
+//Node 		Extend(envType env[][MAX_Y], Node nearest, Node target);
+//void 		AddNode(RRTTree *nearest, Node extended);
+//Node 		RandomState();
+//int 		Collision(envType env[][MAX_Y], Node nearest, Node extended); //há colisão numa linha entre os dois pontos?
+//void 		nearestState(RRTTree *tree,Node target,RRTTree **nearest);
 
 
 //funções de teste
-void 		printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y]);
-void 		print(RRTTree *tree,Node initial,Node goal,std::list<Point> caminho,envType env[][MAX_Y]);
+//void 		printVarreTree(RRTTree *tree,int matrizPrint[][MAX_Y]);
+//void 		print(RRTTree *tree,Node initial,Node goal,std::list<Point> caminho,envType env[][MAX_Y]);
 
 
 
