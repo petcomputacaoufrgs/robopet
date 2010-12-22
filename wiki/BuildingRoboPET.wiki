@@ -3,8 +3,8 @@ This is a quick guide to building all the software modules of the RoboPET archit
 
 = Getting the source =
 
-* checkout the code from [here|http://code.google.com/p/robopet/source/checkout]
-* read [here|http://code.google.com/p/robopet/wiki/SVN] on how to download the code for all the modules
+* checkout the code from [http://code.google.com/p/robopet/source/checkout here]
+* read [http://code.google.com/p/robopet/wiki/SVN here] on how to download the code for all the modules
 
 === Note ===
 
@@ -20,62 +20,71 @@ I'll also assume you've checked out the code and you're inside the root director
   $ svn checkout http://robopet.googlecode.com/svn/trunk/ robopet 
   $ cd robopet
 }}}
+
 After checking out all the modules you should have folders named: ai,radio,communication, gui, simulator, lib and tracker
 
 == RoboPET lib == 
 
 {{{
-    $ cd lib
-    $ make 
+  $ cd lib
+  $ make 
 }}}
 == communication ==
 
-    Depends on: protobuf-c-compiler, libprotobuf-dev
+Depends on: protobuf-c-compiler, libprotobuf-dev
+
 {{{
-    $ cd communication
-    $ make
+  $ cd communication
+  $ make
 }}}
 == ai ==
 
 {{{
-   # will soon depend on Lua
-   $ cd ai
-   $ make
+  # will soon depend on Lua
+  $ cd ai
+  $ make
 }}}
 == radio ==
 
-   Depends on: libusb-1.0-0-dev
+Depends on: libusb-1.0-0-dev
+
 {{{
-   $ cd radio
-   $ make
+  $ cd radio
+  $ make
 }}}
+
 === Joystick control ===
 
-   Depends on: glut (on ubuntu try freeglut3)
+Depends on: glut (on ubuntu try freeglut3)
+
 {{{
-   $ cd radio/joy
-   $ make
+  $ cd radio/joy
+  $ make
 }}}
+
 == gui ==
 
-   Depends on: opengl, gtkgl-ext, gtk #somebody help me with the package names
+Depends on: opengl, gtkgl-ext, gtk #somebody help me with the package names
+
 {{{
-   $ cd gui
-   $ make
+  $ cd gui
+  $ make
 }}}
 == simulator ==
 
-   Depends on: Box2D 2.1.2, as it may not be available as a package in your ubuntu version we have an installer script in the project root named 'get_box2d.sh'
+Depends on: Box2D 2.1.2, as it may not be available as a package in your ubuntu version we have an installer script in the project root named 'get_box2d.sh'
 
 {{{
-   $ cd simulator
-   $ make
+  $ cd simulator
+  $ make
 }}}
+
 == tracker ==
 
-   Depends on: qtCore, pthreads
+Depends on: qtCore, pthreads
+
 {{{
-   $ cd tracker
-   $ make
+  $ cd tracker
+  $ make
 }}}
  
