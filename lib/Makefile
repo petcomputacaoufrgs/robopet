@@ -14,7 +14,8 @@ OBJECTS= 	movingObject.o \
 			astar.o \
 			fieldInfo.o \
 			physicsRobot.o \
-			pathplan.o
+			pathplan.o \
+			referee.o
 
 #USERDATA_OBJECTS= $(addprefix userdata/, $(OBJECTS))
 
