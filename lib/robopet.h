@@ -15,13 +15,14 @@ namespace RP {
 
 		static const double PI = M_PI;
 
+		class Referee;
 		class Player;
 		class Vector;
 		class Line;
 		class Point;
 		class MovingObject;
 		typedef MovingObject Ball;
+
 }
 
 #endif
-
