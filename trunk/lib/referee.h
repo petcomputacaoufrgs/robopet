@@ -1,0 +1,111 @@
+#ifndef __ROBOPET_REFEREE__
+#define __ROBOPET_REFEREE__
+
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string>
+
+#define REFEREE_PORT 10001
+#define REFEREE_GROUP "224.5.23.1" // NUM DA PORTA MULTICAST
+#define MSGBUFSIZE 6 // TAMANHO DO PACOTE EM BYTES
+
+using namespace std;
+
+class Referee {
+
+	public:
+
+	Referee() {
+
+		string source_iface;
+
+		if ( ( _socket = (socket(AF_INET, SOCK_DGRAM, 0) ) ) < 0)
+		{
+			perror(__FILE__ "Error opening the socket");
+			//exit(1);
+		}
+
+		u_int yes = 1;
+		if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0)
+		{
+			perror(__FILE__  "Reusing ADDR failed");
+			//exit(1);
+		}
+
+		//PREPARANDO O SOCKET
+		memset(&addr, 0, sizeof(addr));
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(REFEREE_PORT);
+		addr.sin_addr.s_addr = (string(REFEREE_GROUP).empty() ?
+						htonl(INADDR_ANY) :
+						inet_addr(REFEREE_GROUP));
+
+
+		if ( bind(_socket,(struct sockaddr *)&addr, sizeof(addr)) < 0)
+		{
+			perror(__FILE__ " Error binding the socket");
+			//exit(1);
+		}
+
+		struct ip_mreq mreq;
+		mreq.imr_multiaddr.s_addr = inet_addr(REFEREE_GROUP);
+		mreq.imr_interface.s_addr = (source_iface.empty() ? htonl(INADDR_ANY) : inet_addr(source_iface.c_str()));
+
+		if (setsockopt(_socket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0)
+		{
+			perror(__FILE__ " Error in setsockopt");
+			//exit(1);
+		}
+	}
+
+	char receive() {
+		string group(REFEREE_GROUP);
+
+		socklen_t addrlen;
+		int nbytes;
+		char msgbuf[MSGBUFSIZE];
+
+		memset(&msgbuf, 0, MSGBUFSIZE);
+
+		char cmd_tmp;
+
+		//COLOCANDO O PACOTE EM msgbuf
+		addrlen = sizeof(addr);
+		if ((nbytes = recvfrom(_socket, msgbuf, MSGBUFSIZE, 0, (struct sockaddr *)&addr, &addrlen)) < 0)
+		{
+			 perror(__FILE__ " in recvfrom");
+			 //exit(1);
+		}
+
+		//DESEMPACOTANDO msgbuf
+		cmd_tmp = (char)msgbuf[0];
+		//cmd_counter = (int)((unsigned char)msgbuf[1]);
+		//goals_blue = (int)((unsigned char)msgbuf[2]);
+		//goals_yellow = (int)((unsigned char)msgbuf[3]);
+		//time_remaining = ((int)(msgbuf[4]) << 8)  + (int)(msgbuf[5]); //most significant byte
+
+		  //CONDIÇÃO QUANDO O COMANDO CMD ALTERADO PELO ÁRBITRO
+		//	  if (cmd != cmd_tmp){
+		//	     cmd_prev = cmd;
+		//	     cmd = cmd_tmp;
+		//	  }
+
+		//RETORNANDO AS VARIÁVEIS
+		return cmd_tmp;
+
+
+	}
+
+	private:
+
+	int _socket;
+	struct sockaddr_in addr;
+
+};
+
+#endif
