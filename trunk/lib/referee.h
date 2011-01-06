@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <fcntl.h>
 
 #define REFEREE_PORT 10001
 #define REFEREE_GROUP "224.5.23.1" // NUM DA PORTA MULTICAST
@@ -32,4 +33,3 @@ class Referee {
 };
 
 #endif
-

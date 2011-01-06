@@ -26,7 +26,7 @@ USERDATA_OBJECTS = movingObject_userdata.o \
 			physicsRobot_userdata.o \
 			referee_userdata.o
 
-all: robopet_lua.a $(OBJECTS)
+all: robopet.a robopet_lua.a
 
 %_userdata.o: userdata/%_userdata.cpp %.o
 	$(CC) -I. -c -o $@ $^ $(LUA)
@@ -46,4 +46,3 @@ robopet_lua.a: $(OBJECTS) $(USERDATA_OBJECTS)
 clean:
 	rm *.o
 	rm *.a
-

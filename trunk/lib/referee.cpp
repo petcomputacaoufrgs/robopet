@@ -10,10 +10,18 @@ Referee::Referee()
 	}
 
 	u_int yes = 1;
-	if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0)
-	{
-		perror(__FILE__  "Reusing ADDR failed");
-		//exit(1);
+	if ( setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) < 0 ) {
+		perror(__FILE__ "Error reusing addr" );
+	}
+
+	// setting a timeout for receiving
+	// I don't know if it's a good value, but works for now
+	struct timeval tv;
+	tv.tv_sec = 0;
+	tv.tv_usec = 500;
+
+	if ( setsockopt(_socket, SOL_SOCKET, SO_RCVTIMEO , (struct timeval *) &tv , sizeof tv ) < 0 ) {
+		perror(__FILE__ "Error setting timeout" );
 	}
 
 	//PREPARANDO O SOCKET
@@ -34,15 +42,14 @@ Referee::Referee()
 	struct ip_mreq mreq;
 	mreq.imr_multiaddr.s_addr = inet_addr(REFEREE_GROUP);
 
-	// this seemed to be always true, maybe in the future I'll understand
-	//mreq.imr_interface.s_addr = source_iface.empty() ? htonl(INADDR_ANY) : inet_addr(source_iface.c_str()));
-    mreq.imr_interface.s_addr = htonl(INADDR_ANY);
+	mreq.imr_interface.s_addr = htonl(INADDR_ANY);
 
 	if (setsockopt(_socket, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0)
 	{
 		perror(__FILE__ " Error in setsockopt");
 		//exit(1);
 	}
+
 }
 
 char Referee::receive() {
@@ -59,7 +66,7 @@ char Referee::receive() {
 	addrlen = sizeof(addr);
 	if ((nbytes = recvfrom(_socket, msgbuf, MSGBUFSIZE, 0, (struct sockaddr *)&addr, &addrlen)) < 0)
 	{
-		 perror(__FILE__ " in recvfrom");
+		 //perror(__FILE__ " in recvfrom");
 		 //exit(1);
 	}
 
@@ -80,4 +87,3 @@ char Referee::receive() {
 	return cmd_tmp;
 
 }
-
