@@ -1,0 +1,485 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'nokogiri'
+
+class String
+	def wrap marker='%%%'
+		content = yield if block_given?
+
+		self.sub(marker, content)
+	end
+end
+
+module Moonbind
+
+class Method
+
+	attr_accessor :class_name, :name, :parameters , :returns, :visibility
+
+	def initialize n
+
+        @overloads = []
+
+		# spliting the demangled method, this is kinda ugly
+		name, params = n.attr('demangled').split('(')
+		name = name.split('::')
+
+		@parameters = params.split(')')[0]
+		@class_name = name[-2]
+		@name = name[-1]
+
+		# here we separate the parameters or yield an empty list
+		@parameters = @parameters ? @parameters.split(',') : []
+
+		#remove extra spaces from parameter names
+		@parameters = @parameters.map { |p| p.split('::')[-1].split[0].strip }
+
+		@returns = Type.get(n.attr('returns'))
+		@visibility = n.attr('access')
+	end
+
+	def cpp_header
+		"#{returns} #{name}(#{parameters.join(',')});"
+	end
+
+    def generate_header
+        "int #{class_name}_#{name}(lua_State *L);"
+    end
+
+    def void?
+        returns == 'void'
+    end
+
+    def error
+        "\tlua_pushstring(L,\"Incompatible parameters for method #{name}(#{parameters.join(',')})\");
+lua_error(L);"
+    end
+
+    def call
+        ret = "c->#{name}(#{variable_names.join(",")})"
+
+        if not void?
+			if Type.lua_type(returns) == 'userdata'
+				ret = "lua_pushlightuserdata(L,(void*)&#{ret});"
+			else
+				ret = "lua_push#{Type.lua_type returns}(L,#{ret});"
+			end
+		else
+			ret = "#{ret};"
+		end
+
+		ret
+    end
+
+    def checked_if
+
+        checked_types = check_types
+
+        if checked_types.empty?
+            checked_if = '%%%'
+        else
+            checked_if = "if( #{checked_types.join( ' && ' ) }) {\n%%%\n\t} else {\n #{error} \n\t}\n"
+        end
+
+    end
+
+    def pop_parameters
+        checked = check_parameters
+
+        variable_names.each_with_index.map do |var,i|
+		  "	#{parameters[i]} #{var} = #{checked[i]}#{i+2});"
+		end
+    end
+
+    def inner_body
+        checked_if.wrap do
+"
+    #{class_name} *c = (#{class_name}*) lua_touserdata(L,1);
+    #{pop_parameters.join("\n\t")  }
+    #{call}
+    return #{void? ? 0 : 1};
+"
+        end
+    end
+
+	def body header = false
+
+        return generate_header if header
+        "int #{class_name}_#{name}(lua_State *L)\n{\t#{inner_body}\n}\n"
+	end
+
+	def to_s
+		body
+	end
+
+	def check_types
+		parameters.each_with_index.map do |p,i|
+			"lua_is#{Type.lua_type(p)}(L,#{i+2})"
+		end
+	end
+
+	def check_parameters
+		parameters.each.map do |p|
+			par = ''
+
+			# this is ugly and is here because of const values
+			# we need to find a better way
+			if p == "char*"
+				par += "(char*)"
+			end
+
+			dereference = ''
+			if Type.is_userdata? p
+				dereference = "*(#{p}*)"
+			end
+
+			par += "#{dereference} lua_to#{Type.lua_type(p)}(L,"
+		end
+	end
+
+	def variable_names
+	  parameters.each_with_index.map do |p,i|
+      Type.variable_name(p,i)
+    end
+  end
+
+	# adds an overloaded version
+	# but this ain't gonna work baby
+	def overload method
+	    @overloads << method
+	end
+
+end
+
+# this a convenient type table
+class Type
+
+	@types = {}
+	@lua_primitive = {
+		"int" => "number", "float" => "number",
+		"double" => "number", "char" => "number",
+		"bool" => "boolean",
+		"char*" => "string",
+		"const char*" => "string"
+	}
+
+	# adds one type
+	def self.add  id, name
+		#OMG, sometimes tipes may be namespace::name !!
+		splited = name.split("::")[1]
+
+		if splited
+			@types[id] = splited
+		else
+			@types[id] = name
+		end
+
+	end
+
+	def self.add_pointer id, type
+		# pointers are crazy
+		begin
+			@types[id] = get(type) + "*"
+		rescue Exception => e
+			print ''
+		end
+	end
+
+	def self.add_reference id, type
+		# references are crazier
+		type = type.gsub('c','')
+        id = id.gsub('&','')
+
+		begin
+			@types[id] = get(type)
+		rescue Exception => e
+			print ''
+		end
+
+	end
+
+	# retrieves one type, given it's id
+	def self.get id
+		# for reference types
+		id = id.gsub('&','')
+		return @types[id] || raise("Invalid Type: #{id}")
+	end
+
+	# receives all the default type
+	# nodes and registers them
+	def self.read table = {}
+
+		table[:fundamental].each do |type|
+			add type.attr('id'), type.attr('name')
+		end
+
+		table[:pointer].each do |type|
+			add_pointer type.attr('id'), type.attr('type')
+		end
+
+		table[:reference].each do |type|
+			add_reference type.attr('id'), type.attr('type')
+		end
+
+	end
+
+	def self.is_userdata? t
+		not @lua_primitive[t]
+	end
+
+	def self.lua_type t
+		# for references
+		t = t.gsub('&','')
+
+		userdata = is_userdata? t
+
+		if !userdata
+			@lua_primitive[t]
+		else
+			"userdata"
+		end
+	end
+
+	def self.variable_name t, index
+		"just_a_#{t}#{index}".gsub('*','_ptr')
+	end
+
+  def self.all
+    @types.each.to_a.join("\n")
+  end
+
+end
+
+class CClass
+
+	attr_accessor :methods, :name, :type_id
+
+	def initialize node
+		@type_id = node.attr('id')
+		@name = node.attr('name')
+		@methods = {}
+
+		base = node.attr('bases') || ''
+		@super_class_id = base.strip
+	end
+
+	def exports header = false
+		return "" if header
+
+		ret = ''
+		ret += "
+const struct luaL_reg #{name}lib[] = {
+%%%	{NULL,NULL}
+};
+
+".wrap do
+			# For now this table only provides the constructor
+			"	{\"new\", #{name}_new},\n"
+		end
+
+		ret += "
+static const luaL_reg #{name}_meta[] = {
+%%%	{NULL,NULL}
+};
+
+".wrap do
+			methods.map do |mname,m|
+				"	{ \"#{mname}\", #{name}_#{mname} },\n"
+			end.join
+		end
+
+		ret
+	end
+
+	def add_method m
+	    if @methods[m.name]
+	        @methods[m.name].overload m
+		else
+		    @methods[m.name] = m
+		end
+	end
+
+	def open_lib header = false
+
+		ret = "int luaopen_#{name}(lua_State *L)"
+
+		# this is ugly, again
+		begin
+			inheritance = "luaL_getmetatable(L,\"#{Type.get @super_class}\");"
+		rescue Exception => e
+			inheritance = nil
+		end
+
+		if header
+			ret << ";"
+		else
+			ret << "
+{
+	luaL_newmetatable(L, \"#{name}\");
+	#{inheritance}
+	lua_pushstring(L, \"__index\");
+	lua_pushvalue(L, -2);
+	lua_settable(L, -#{3 + (inheritance ? 1 : 0) });
+	luaL_register(L, NULL, #{name}_meta);
+	luaL_register(L, \"#{name}\", #{name}lib);
+	return 1;
+}
+"
+		end
+
+	end
+
+	def constructor header = false
+
+		ret = "int #{name}_new(lua_State* L)"
+
+		if header
+			ret << ";"
+		else
+			ret << "
+{
+	size_t size = sizeof(#{name});
+	#{name} *p = (#{name}*) lua_newuserdata(L, size);
+	new (p) #{name}();
+	luaL_getmetatable(L, \"#{name}\");
+	lua_setmetatable(L, -2);
+	return 1;
+}
+"
+		end
+	end
+
+	def destructor header = false
+
+		ret = "int #{name}_gc(lua_State* L)"
+
+		if header
+			ret << ";"
+		else
+			ret << "
+{
+	#{name} *p = (#{name}*) lua_touserdata(L,1);
+	if (p) delete p;
+		return 0;
+}
+"
+		end
+	end
+
+	def methods_body header = false
+		methods.map do |mname,m|
+			m.body header
+		end.join("\n")
+	end
+
+end
+
+end #moonbind module
+
+def header_h cn
+
+    filename = cn.split(/(?=[A-Z])/)
+    filename[0].downcase!
+    filename = filename.join
+
+"
+#ifndef __MOONBIND_#{cn.upcase}__H__
+#define __MOONBIND_#{cn.upcase}__H__
+
+#include \"#{filename}.h\"
+
+extern \"C\" {
+	#include \"lua.h\"
+	#include \"lauxlib.h\"
+	#include \"lualib.h\"
+}
+
+%%%
+
+#endif // __MOONBIND_#{cn.upcase}__H__
+"
+end
+
+def header_cpp cn
+
+filename = cn.split(/(?=[A-Z])/)
+filename[0].downcase!
+filename = filename.join
+
+"
+#include \"#{filename}_userdata.h\"
+#include <new>
+
+%%%
+"
+end
+
+def choose_header cn, doth
+	if doth
+		header_h cn
+	else
+		header_cpp cn
+	end
+end
+
+def parse filename, make_header
+
+	doc = Nokogiri::XML(IO.read(filename))
+
+	classes = doc.xpath('//Class')
+
+    header_name = filename.split('.')[0]+'.h'
+    # : (
+	current_file = doc.xpath('//File').find { |x| /^(\.\.\/)?#{header_name}$/.match(x.attr('name')) }
+	current_file = current_file.attr('id')
+
+	file_classes = []
+
+	classes.each do |c|
+
+        #puts c.attr('file'), c.attr('name')
+		if c.attr('file') == current_file
+			file_classes << Moonbind::CClass.new(c)
+		end
+
+		Moonbind::Type.add c.attr('id'), c.attr('name')
+
+	end
+
+
+	Moonbind::Type.read :fundamental => doc.xpath('//FundamentalType'),
+                      	:pointer => doc.xpath('//PointerType'),
+                      	:reference => doc.xpath('//ReferenceType')
+
+	output = ''
+
+	file_classes.each do |c|
+
+		output = choose_header(c.name,make_header).wrap do
+
+			buff = ''
+
+			doc.xpath('//Method').each do |m|
+				if c.type_id == m.attr('context') && !m.attr('artificial')
+					c.add_method Moonbind::Method.new(m)
+				end
+			end
+
+			buff << c.methods_body(make_header)
+			buff << c.constructor(make_header) << "\n"
+			buff << c.destructor(make_header) << "\n"
+			buff << c.exports(make_header)
+			buff << c.open_lib(make_header) << "\n"
+
+		end
+	end
+
+
+	output
+end
+
+exit if ARGV.size < 1
+
+puts parse(ARGV[0], ARGV[1] == 'header' )
+

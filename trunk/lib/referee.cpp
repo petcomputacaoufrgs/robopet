@@ -1,7 +1,5 @@
 #include "referee.h"
 
-using RP::Referee;
-
 Referee::Referee()
 {
 
@@ -82,3 +80,4 @@ char Referee::receive() {
 	return cmd_tmp;
 
 }
+

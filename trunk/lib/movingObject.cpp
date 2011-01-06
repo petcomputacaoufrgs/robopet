@@ -53,11 +53,11 @@ void MovingObject::setDisplacement(double displacement)
 Vector MovingObject::calcDisplacementVector()
 { return Vector(getCurrentPosition(), getFuturePosition()); }
 
-//void MovingObject::calculateDisplacement()
-//{ _displacement = calcDisplacementVector().getNorm(); }
+void MovingObject::calculateDisplacement()
+{ _displacement = calcDisplacementVector().getNorm(); }
 
 double MovingObject::getDistance(const MovingObject& other) {
-	
+
 	return _current_position.getDistance(other.getCurrentPosition());
 }
 
@@ -75,3 +75,4 @@ MovingObject& MovingObject::operator=(const MovingObject& other)
 
     return *this;
 }
+
