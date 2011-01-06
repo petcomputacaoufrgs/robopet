@@ -1,0 +1,20 @@
+#!/usr/bin/ruby
+
+files = %w{ referee vector point line movingObject player physicsRobot }
+
+begin
+	alias a system
+	def system cmd
+		puts cmd
+		a cmd
+	end
+end
+
+files.each do |f|
+	puts '-----'
+	system "gccxml ../#{f}.cpp -fxml=#{f}.xml"
+	system "../moonbind #{f}.xml > #{f}_userdata.cpp"
+	system "../moonbind #{f}.xml header > #{f}_userdata.h"
+	system "rm #{f}.xml"
+end
+

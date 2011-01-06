@@ -55,21 +55,25 @@ void Player::kick() {
 	//this.setFuturePosition( _ball.getPosition() );
 }
 
+void Player::keepDistanceToBall(double d) {
+
+}
+
 void Player::pointTo( Point p )
 {
 	RP::Vector playerToPVector(this->getPosition(),p);
 	int angle = playerToPVector.angleDegrees(Vector(1,0));
-	
+
 	if(playerToPVector.getY() > 0)
 		angle = 360 - angle;
-	
+
 	this->setFutureAngle( angle );
 }
 
 bool Player::isPointingTo( Point p)
 {
 	int treshold = 0.1; //percentage of error
-	
+
 	//ball_vec is the vector from the bot center to the ball center
 	RP::Vector desiredDirection(this->getPosition(), p);
 	desiredDirection.normalizeMe();
@@ -78,7 +82,7 @@ bool Player::isPointingTo( Point p)
 	RP::Vector actualDirection( cos(this->getCurrentAngle())*ROBOT_RADIUS_MM,
 								sin(this->getCurrentAngle())*ROBOT_RADIUS_MM);
 	actualDirection.normalizeMe();
-	
+
 	//desiredDirection (dot_product) actualDirection = |desiredDirection| * |actualDirection| * cos(theta)
 	//|desiredDirection| == |actualDirection| == 1, because both are normalized
 	//if theta ~ 0, the bot points to the ball
@@ -87,3 +91,4 @@ bool Player::isPointingTo( Point p)
 	else
 		return false;
 }
+

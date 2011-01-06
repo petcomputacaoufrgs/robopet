@@ -1,9 +1,10 @@
 CC = g++
 CFLAGS = -Wall -pg
-CC2L = ./cpptolua
 
 AA = ar
 AFLAGS = rsv
+
+LUA = -llua -ldl -lm
 
 OBJECTS= 	movingObject.o \
 			player.o \
@@ -17,34 +18,32 @@ OBJECTS= 	movingObject.o \
 			pathplan.o \
 			referee.o
 
-#USERDATA_OBJECTS= $(addprefix userdata/, $(OBJECTS))
+USERDATA_OBJECTS = movingObject_userdata.o \
+			player_userdata.o \
+			point_userdata.o  \
+			vector_userdata.o \
+			line_userdata.o \
+			physicsRobot_userdata.o \
+			referee_userdata.o
 
-CPPTOLUA_FOLDER = CppToLua_0.1
+all: robopet_lua.a $(OBJECTS)
 
-#all: robopet.a $(USERDATA_OBJECTS)
-all: robopet.a $(OBJECTS)
-
-cpptolua:
-	wget http://github.com/downloads/kssilveira/CppToLua/$(CPPTOLUA_FOLDER).zip
-	unzip $(CPPTOLUA_FOLDER).zip
-	cd $(CPPTOLUA_FOLDER); make
-	cp $(CPPTOLUA_FOLDER)/cpptolua .
-
-#userdata/%.o: %_userdata.cpp
-	#$(CC) -c -o $@ $^ $(LUA)
-
-#userdata/%.cpp: userdata/%.h
-#	$(CC2L) -i $< -o $@ -n $*.h
-
-#userdata/%.h: %.h
-#	$(CC2L) -i $< -o $@ -H -N ../$*.h
+%_userdata.o: userdata/%_userdata.cpp %.o
+	$(CC) -I. -c -o $@ $^ $(LUA)
 
 %.o: %.cpp %.h
 	$(CC) -c $< -o  $@ $(CFLAGS)
 
+repl: userdata/interpreter.cpp robopet.a robopet_lua.a
+	$(CC) -I. -o $@ $^ $(LUA)
+
 robopet.a: $(OBJECTS)
+	$(AA) $(AFLAGS) $@ $^
+
+robopet_lua.a: $(OBJECTS) $(USERDATA_OBJECTS)
 	$(AA) $(AFLAGS) $@ $^
 
 clean:
 	rm *.o
 	rm *.a
+

@@ -25,7 +25,7 @@ public:
    * possibly rotating (rotate) in sense 's' (CW, CCW) durint time 't',
    * and puts in vector 'offset' the corresponding offset
    */
-  PhysicsRobot fakeMove(float t, bool rotate, int s, int ang, Vector &offset) const;
+  PhysicsRobot fakeMove(float t, bool rotate, int s, int ang, Vector offset) const;
 
   /* moves in the direction of 'offset' vector with a potency
    * proportional to its norm (100 -> 100%)
@@ -56,3 +56,4 @@ public:
 };
 
 #endif //__ROBOPET_PHYSICS_ROBOT_H__
+

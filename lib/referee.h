@@ -15,7 +15,9 @@
 #define REFEREE_GROUP "224.5.23.1" // NUM DA PORTA MULTICAST
 #define MSGBUFSIZE 6 // TAMANHO DO PACOTE EM BYTES
 
-class RP::Referee {
+using RP::Referee;
+
+class Referee {
 
 	public:
 
@@ -30,3 +32,4 @@ class RP::Referee {
 };
 
 #endif
+
