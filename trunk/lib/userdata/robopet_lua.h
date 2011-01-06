@@ -1,5 +1,7 @@
-/*
-** Here you include all the Robopet libraries
+/**
+* \file
+* \defgroup Lua RoboPET lib Lua Bindings
+* Here you include all the Robopet libraries
 */
 
 #include "point_userdata.h"
