@@ -11,13 +11,22 @@ class String
 	end
 end
 
+
+
 module Moonbind
+
+#class GCCXMLParser
+#	def initialize
+#	end
+
+#	def
+#end
 
 class Method
 
 	attr_accessor :class_name, :name, :parameters , :returns, :visibility
 
-	def initialize n
+	def initialize n #data, parser, commenter
 
         @overloads = []
 
@@ -306,7 +315,7 @@ static const luaL_reg #{name}_meta[] = {
 
 		# this is ugly, again
 		begin
-			inheritance = "luaL_getmetatable(L,\"#{Type.get @super_class}\");"
+			inheritance = "luaL_getmetatable(L,\"#{Type.get @super_class_id}\");"
 		rescue Exception => e
 			inheritance = nil
 		end
@@ -482,4 +491,3 @@ end
 exit if ARGV.size < 1
 
 puts parse(ARGV[0], ARGV[1] == 'header' )
-
