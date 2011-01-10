@@ -28,6 +28,9 @@ USERDATA_OBJECTS = movingObject_userdata.o \
 
 all: robopet.a robopet_lua.a
 
+doc:
+	doxygen robopet
+
 %_userdata.o: userdata/%_userdata.cpp %.o
 	$(CC) -I. -c -o $@ $^ $(LUA)
 
