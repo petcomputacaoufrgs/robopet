@@ -12,6 +12,11 @@ using namespace std;
 
 typedef set<Node> NodeList;
 
+/**
+ * Implementation of the A* Pathplanning algorithm
+ * \ingroup Pathplan
+ */
+
 class AStar : public Pathplan {
 
 	private:

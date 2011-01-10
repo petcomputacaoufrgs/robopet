@@ -33,6 +33,10 @@ using namespace std;
 #define MAX_X 100  //dimensões da matriz que abstrai o ambiente
 #define MAX_Y (int)(MAX_X * (FIELD_HEIGHT/FIELD_WIDTH) + 1) //dimensões da matriz que abstrai o ambiente
 
+/**
+ * \defgroup Pathplan Pathplan
+ * \ingroup Pathplan
+ */
 
 enum pathplanType
 {
@@ -43,6 +47,12 @@ enum envType
 {
 	FREE, MARKER, NODE, PATH, OBSTACLE
 };
+
+/**
+ * Node
+ * Documentation Pending
+ * \ingroup Pathplan
+ */
 
 class Node {
 
@@ -84,6 +94,11 @@ class Node {
 
 };
 
+/**
+ * Abstract class defining a framework for pathplanning code
+ * Further Documentation Pending
+ * \ingroup Pathplan
+ */
 
 class Pathplan
 {
@@ -107,7 +122,7 @@ class Pathplan
 		int  getRadius();
 		void setRadius(int radius);
 
-		/* For debuging purposes.
+		/** Used for debugging purposes.
 		 * Prints the actual environment
 		 */
 		void printEnv();
