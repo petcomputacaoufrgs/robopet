@@ -19,6 +19,7 @@ typedef list<Point> Solucao;
 
 /**
  * Documentation Pending
+ * @ingroup Pathplan
  */
 
 class RRTTree
@@ -44,7 +45,7 @@ class RRTTree
 
 /**
  * Documentation Pending
- * \ingroup Pathplan
+ * @ingroup Pathplan
  */
 
 class Rrt: public Pathplan

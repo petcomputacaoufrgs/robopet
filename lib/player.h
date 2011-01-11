@@ -6,6 +6,11 @@
 using RP::MovingObject;
 using RP::Player;
 
+/**
+ * 
+ * \ingroup RoboPETLib
+ */
+
 class Player: public MovingObject
 {
   public:

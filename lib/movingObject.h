@@ -9,6 +9,10 @@ using RP::Point;
 using RP::Vector;
 using RP::MovingObject;
 
+/**
+ * 
+ * \ingroup RoboPETLib
+ */
 class MovingObject
 {
   public:
