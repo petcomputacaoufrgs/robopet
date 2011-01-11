@@ -26,10 +26,15 @@ USERDATA_OBJECTS = movingObject_userdata.o \
 			physicsRobot_userdata.o \
 			referee_userdata.o
 
+.PHONY : all doc make_userdata
+
 all: robopet.a robopet_lua.a
 
 doc:
 	doxygen robopet.doc
+
+make_userdata:
+	cd userdata ; make
 
 %_userdata.o: userdata/%_userdata.cpp %.o
 	$(CC) -I. -c -o $@ $^ $(LUA)
@@ -43,8 +48,8 @@ repl: userdata/interpreter.cpp robopet.a robopet_lua.a
 robopet.a: $(OBJECTS)
 	$(AA) $(AFLAGS) $@ $^
 
-robopet_lua.a: $(OBJECTS) $(USERDATA_OBJECTS)
-	$(AA) $(AFLAGS) $@ $^
+robopet_lua.a: $(OBJECTS) make_userdata $(USERDATA_OBJECTS)
+	$(AA) $(AFLAGS) $@ $(OBJECTS) $(USERDATA_OBJECTS)
 
 clean:
 	rm *.o
