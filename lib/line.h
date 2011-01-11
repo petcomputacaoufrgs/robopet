@@ -7,11 +7,13 @@
 
 using RP::Line;
 
+/**
+ * Represents a line in the plane
+ * \ingroup RoboPETLib
+ * */
+
 class Line
 {
-	/**********************************************
-	representa uma reta no plano
-	**********************************************/
 
     public:
 
@@ -44,35 +46,39 @@ class Line
 		bool vertical() const;
 		bool horizontal() const;
 
-        /**************************************
-		Método que determina a imagem (y) de um valor na reta
-		x: valor
-        **************************************/
+        /**
+		Determines the image (y) of a value in line
+		
+		x: value
+		*/
 		double image(double x) const;
 
-        /**************************************
-		Método que determina a pré-imagem (x) de uma valor na reta
-		y: valor
-        **************************************/
+        /**
+		Determines the pre-image (x) of a value on the line
+		
+		y: value
+        */
 		double preImage(double y) const;
 
-        /**************************************
-		Método que determina a distância entre um ponto e uma reta
-		p: ponto
-        **************************************/
+        /**
+		Determines the distance between a point and a line
+		
+		p: point
+		*/
 		double distance(const Point &p) const;
 
-        /**************************************
-		Método que determina a distância entre duas retas
-		r: outra reta
-        **************************************/
+        /**
+		Determines the distance between two lines
+		
+		r: another straight
+        */
 		double distance(const Line &r) const;
 
-		/**************************************
-		Operador de == para a classe reta]
-		r: outra reta
-		****************************************/
+		/**
+		 == operator
+		 */
 		bool operator==(const Line &r) const;
+
 
 	private:
 				Vector _vector;

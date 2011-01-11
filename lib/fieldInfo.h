@@ -1,6 +1,11 @@
 #ifndef __FIELD_INFO_H__
 #define __FIELD_INFO_H__
 
+
+/**
+ * Field dimensions and number of enemies and allies
+ * \ingroup RoboPETLib
+ */
 class FieldInfo
 {
 	public:
@@ -13,7 +18,7 @@ class FieldInfo
 		 };
 		~FieldInfo () { };
 
-		char _team_color;
+		//char _team_color;
 		double _field_width, _field_height;
 		int _number_of_enemies, _number_of_allies;
 		

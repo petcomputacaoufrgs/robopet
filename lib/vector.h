@@ -9,6 +9,10 @@ using RP::Point;
 
 #include <iostream>
 
+/**
+ * 
+ * \ingroup RoboPETLib
+ */
 
 class Vector : public Point
 {
@@ -20,102 +24,104 @@ class Vector : public Point
 		  Vector(const Point &p);
 		  Vector(const Point &p1, const Point &p2);
 
-        /******************************************************
-	      Funcao que calcula a norma de um vetor
-	      ******************************************************/
+		  /**
+          Calculates the norm of the vector
+          */
 	      double getNorm() const;
-
-	      /******************************************************
-	      Funcao que dado um vetor calcula o cosseno do angulo deste com o eixo y
-	      retorno: cosseno do angulo (double)
-	      ******************************************************/
+	      
+	      
 	     // double calculaCosseno();
 
-	      /******************************************************
-	      Funcao para normalizar um vetor
-	      retorno: vetor normalizado
-	      ******************************************************/
+	      /**
+	       @return normalized vector 
+	       */
 	      Vector normalize() const;
 
 	      Vector& normalizeMe();
 
-		/******************************************************
-		Função que retorna verdadeiro se os dois vetores são linearmente 				dependentes
-		******************************************************/
+		/**
+		 * @return true if two vectors are linearly dependents
+		 */
 		bool linearlyDependent(const Vector &v) const;
 
-		// Calcula o produto interno (coseno) entre dois vetores normalizados
+		/**
+		 * Calculates the inner product between two normalized vectors
+		 * */
 		double dotProduct(const Vector &v) const;
 
-		//rotaciona o vetor theta GRAUS
+		/**
+		 * Rotate the theta vector (degrees)
+		 */
 		void rotate(double theta);
 
-		/******************************************************
-		Função que calcula o menor angulo positivo entre dois vetores
-		em radianos.
-		v: outro vetor
-		******************************************************/
+		/**
+		 * Calculates the lowest positive angle between two vectors (in radians).
+
+		   v: another vector
+		 * */
 		double angle(Vector v) const;
 
-		/******************************************************
-		Função que calcula o menor angulo positivo entre dois vetores
-		em graus.
-		v: outro vetor
-		******************************************************/
+		/**
+		   Calculates the lowest positive angle between two vectors (in degrees).
+
+		   v: another vector
+		*/
 		double angleDegrees(Vector v) const;
 
-		/******************************************************
-		Função que calcula o angulo no sentido horário
-		entre dois vetores.
-		v: outro vetor
-		******************************************************/
+		/**
+		Function that calculates the angle clockwise between two vectors.
+		
+		v: another vector
+		*/
 		double angleCW(Vector v) const;
 		
-		/******************************************************
-		Função que calcula o angulo no sentido horário
-		entre dois vetores em graus.
-		v: outro vetor
-		******************************************************/
+		/**
+		Function that calculates the angle clockwise between two vectors (degrees)
+		
+		v: another vector
+		*/
 		double angleCWDegrees(Vector v) const;
 		
-		/******************************************************
-		Função que calcula o angulo no sentido antihorário
-		entre dois vetores.
-		v: outro vetor
-		******************************************************/
+		/**
+		Function that calculates the angle counterclockwise between two vectors
+		
+		v: another vector
+		*/
 		double angleCCW(Vector v) const;
 		
-		/******************************************************
-		Função que calcula o angulo no sentido antihorário
-		entre dois vetores em graus.
-		v: outro vetor
-		******************************************************/
+		/**
+		Function that calculates the angle counterclockwise between two vectors (degrees)
+		
+		v: another vector
+		*/
 		double angleCCWDegrees(Vector v) const;
 
-		/******************************************************
-		Calcula o angulo do vetor com o eixo x, ie angulo no
-		círculo trigonométrico.
-		v: outro vetor
-		******************************************************/
+		/**
+		Calculates the angle of the vector with the x-axis, (trigonometric circle)
+
+		v: another vector
+		*/
 		double myAngle() const;
 
-		/******************************************************
-		Calcula o angulo do vetor com o eixo x, ie angulo no
-		círculo trigonométrico em graus.
-		v: outro vetor
-		******************************************************/
+		/**
+		Calculates the angle of the vector with the x-axis, (trigonometric circle)(degrees)
+
+		v: another vector
+		*/
 		double myAngleDegrees() const;
 
-		/******************************************************
-		Determina se dois vetores são perpendiculares
-		v: outro vetor
-		******************************************************/
+		/**
+		Determines whether two vectors are perpendicular
+		
+		v: another vector
+		*/
 		bool perpendicular(const Vector &v) const;
 
-		/******************************************************
-		Calcula a projecao sobre o vetor passado como parametro
-		v: outro vetor
-		******************************************************/
+		/**
+		Calculate the projection of the vector passed as parameter
+		
+		v: another vector
+		*/
 		Vector projection(const Vector &v) const;
 
 		// Operators
