@@ -7,6 +7,9 @@
 #include <iostream>
 
 using RP::Point;
+/**
+ * \ingroup RoboPETLib
+ */ 
 
 class Point
 {
