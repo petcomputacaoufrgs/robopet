@@ -70,7 +70,8 @@ lua_error(L);"
 
         if not void?
 			if Type.lua_type(returns) == 'userdata'
-				ret = "lua_pushlightuserdata(L,(void*)&#{ret});"
+				#ret = "lua_pushlightuserdata(L,(void*)&#{ret});"
+				ret = "#{ret};\n#{returns}_new(L);"
 			else
 				ret = "lua_push#{Type.lua_type returns}(L,#{ret});"
 			end
@@ -417,8 +418,8 @@ filename[0].downcase!
 filename = filename.join
 
 "
-#include \"#{filename}_userdata.h\"
-#include <new>
+#{#include \"#{filename}_userdata.h\"
+}#include \"robopet_lua.h\"
 
 %%%
 "
