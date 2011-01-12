@@ -348,8 +348,14 @@ static int pmain (lua_State *L) {
   if (argv[0] && argv[0][0]) progname = argv[0];
   lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
 
-  luaL_openlibs(L);  /* open libraries */
-  openLibs(L);
+	luaL_openlibs(L);  /* open libraries */
+	luaopen_Point(L);
+	luaopen_Vector(L);
+	luaopen_MovingObject(L);
+	luaopen_Player(L);
+	luaopen_Line(L);
+	luaopen_PhysicsRobot(L);
+	luaopen_Referee(L);
 
   lua_gc(L, LUA_GCRESTART, 0);
   s->status = handle_luainit(L);
