@@ -180,7 +180,7 @@ double Line::distance(const Line &r) const
 }
 
 /**************************************
-Operador de == para a classe Line]
+Operador de == para a classe Line
 r: outra Line
 ****************************************/
 bool Line::operator==(const Line &r) const

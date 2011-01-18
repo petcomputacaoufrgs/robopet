@@ -37,6 +37,9 @@ class Vector : public Point
 	       */
 	      Vector normalize() const;
 
+	      /**
+	       @return normalized vector 
+	       */
 	      Vector& normalizeMe();
 
 		/**

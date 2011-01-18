@@ -52,8 +52,17 @@ class MovingObject
     void setFuturePositionY(double y);
 
     void setDisplacement(double displacement);
+   
     //----- Others -----
+    
+    /**
+     * @return The displacement vector
+    */
     Vector calcDisplacementVector();
+    
+    /**
+     * set the displacement to be the norm of the displacement vector
+    */
     void calculateDisplacement();
     
     double getDistance(const MovingObject& other);

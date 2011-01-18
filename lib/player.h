@@ -26,7 +26,7 @@ class Player: public MovingObject
 
     inline double 	getAngle() const { return getCurrentAngle(); }
 
-    inline int getRole() const { return _role; }
+    inline int 		getRole() const { return _role; }
 
     inline double 	getDisplacementWithBall() const { return  _displacement_with_ball; }
 
@@ -42,35 +42,51 @@ class Player: public MovingObject
 
     inline void setAngle(double a) { setCurrentAngle(a); } 
     
-    void setRole( int newRole );
+    void 		setRole( int newRole );
     void 		setDisplacementWithBall( double newDisplacementWithBall ) ;
 
     void 		setDriblerIntensity(int intensity);
     void 		setKickerIntensity(int intensity);
 
-    void setId(int id);
+    void 		setId(int id);
 
     //----- Others -----
+    
+    /**
+     * @return The smallest angle between the current and the future
+     */
     double 		calcDeltaAngle();
 
     inline bool isDribling() { return _dribler > 0; }
     inline bool isKicking() { return _kicker > 0; }
-
+    
+    /**
+     * Set the future position to be it's current position
+     */
 	inline void stay() { setFuturePosition(getCurrentPosition()); }
-	void 		keepDistanceToBall(double distance);
+	
+	/**
+     * to be done!!!
+     */
+	void keepDistanceToBall(double distance);
+	
+    /**
+     * Sets the kick intensity to 999
+     */
 	void 		kick();
+	
+    /**
+     * set the robot's front to be the point p
+     * @param p destiny point
+     */
 	void 		pointTo( Point p );
 	bool 		isPointingTo( Point p );
-
-
     Player& operator=(const Player& other);
 
   private:
     double _current_angle, _future_angle, _delta_angle;
     int _role;
-
     int _kicker, _dribler, _id;
-
     double _displacement_with_ball;
 };
 
