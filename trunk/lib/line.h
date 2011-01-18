@@ -37,46 +37,58 @@ class Line
 		
 		
 		//----- Others -----
+		/**
+		*Determinate if two lines intersect themselves*/	
 		bool intersects(const Line &r) const;
+		
+		/**
+		*@return The intersection point between two lines*/
 		Point intersection(const Line &r) const;
+		
+		/**
+		*Determines if two lines are parallel*/
 		bool parallel(const Line &r) const;
+		
+		/**
+		*Determines the smallest non-negative angle between two lines (in radians)*/
 		double angle(const Line &r) const;
+		
+		/**
+		*Determines if two lines are perpendicular each other */
 		bool perpendicular(const Line &r) const;
+		
+		/**
+		*Determines if the line contains a point */
 		bool contains(const Point &p) const;
+		
+		/**
+		*Determines if a line is vertical*/
 		bool vertical() const;
+		
+		/**
+		*Determines if a line is horizontal*/
 		bool horizontal() const;
 
         /**
 		Determines the image (y) of a value in line
-		
-		x: value
-		*/
+		@param x value*/
 		double image(double x) const;
 
         /**
 		Determines the pre-image (x) of a value on the line
-		
-		y: value
-        */
+		@param y value*/
 		double preImage(double y) const;
 
         /**
 		Determines the distance between a point and a line
-		
-		p: point
-		*/
+		@param p point*/
 		double distance(const Point &p) const;
 
         /**
 		Determines the distance between two lines
-		
-		r: another straight
-        */
+		@param r another straight*/
 		double distance(const Line &r) const;
 
-		/**
-		 == operator
-		 */
 		bool operator==(const Line &r) const;
 
 

@@ -118,6 +118,10 @@ class Pathplan
 
 		//----- Functions -----
 		Point getPathNode(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0)
+		
+		/** 
+		 * Fills the enviroment with positions of the obstacles (currently, ball and players)
+		*/
 		void fillEnv(vector<RP::Point> positions); //fills the enviroment with positions of the obstacles (currently, only for players)
 		int  getRadius();
 		void setRadius(int radius);
@@ -126,7 +130,10 @@ class Pathplan
 		 * Prints the actual environment
 		 */
 		void printEnv();
-
+		
+		/**
+		 * Creates the path using a given algorithm
+		 */
 		virtual void run() {};
 
 		void setInitialPos(Node pos);
@@ -140,6 +147,9 @@ class Pathplan
 
 	protected:
 		//---- Functions ----
+		/**
+		 * Crates a 'in-field' circle around the position showing whether it's an obstacle or not
+		 */
 		void fillEnv_playerBox(int centerx, int centery);
 };
 

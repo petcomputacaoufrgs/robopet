@@ -101,7 +101,7 @@ class AStar : public Pathplan {
 		Node lowestF();
 		
 		/**
-		 * 
+		 * @return The new node coordinates incremented with i and j, respectively
 		 */
 		Node neighbor(Node x, int i, int j);
 		
