@@ -16,7 +16,7 @@ class Player: public MovingObject
   public:
     enum Role {  };
 
-    Player() {}
+    Player() { setId(-1); }
     ~Player() {}
 
     //----- Getters -----
