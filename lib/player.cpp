@@ -92,3 +92,16 @@ bool Player::isPointingTo( Point p)
 		return false;
 }
 
+void Player::follow(MovingObject m) 
+{
+	setFuturePosition(m.getPosition());
+	double angle = Vector(getPosition(),m.getPosition()).angle(Vector(1,0));
+	setFutureAngle( angle );	
+}
+
+void Player::stay()
+{
+	setFuturePosition(getCurrentPosition());
+	setFutureAngle(getCurrentAngle());
+}
+

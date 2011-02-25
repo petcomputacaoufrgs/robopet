@@ -63,7 +63,9 @@ class Player: public MovingObject
     /**
      * Set the future position to be it's current position
      */
-	inline void stay() { setFuturePosition(getCurrentPosition()); }
+	void stay();
+	
+	void follow(MovingObject);
 	
 	/**
      * to be done!!!
