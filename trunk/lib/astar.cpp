@@ -143,7 +143,7 @@ void AStar::run() {
 
 		//if current_node is the goal node
 		if(current_node == finalpos) {
-			printf("ending AStar\n");
+			//printf("ending AStar\n");
 			reconstructPath();
 		}
 

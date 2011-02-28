@@ -30,7 +30,7 @@ using namespace std;
 
 #define OBSTACULE_RADIUS 5
 
-#define MAX_X 100  //dimensões da matriz que abstrai o ambiente
+#define MAX_X 60  //dimensões da matriz que abstrai o ambiente
 #define MAX_Y (int)(MAX_X * (FIELD_HEIGHT/FIELD_WIDTH) + 1) //dimensões da matriz que abstrai o ambiente
 
 /**
