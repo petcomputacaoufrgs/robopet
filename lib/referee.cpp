@@ -3,7 +3,6 @@
 Referee::Referee()
 {
 
-#if 0
 	if ( ( _socket = (socket(AF_INET, SOCK_DGRAM, 0) ) ) < 0)
 	{
 		perror(__FILE__ "Error opening the socket");
@@ -50,12 +49,9 @@ Referee::Referee()
 		perror(__FILE__ " Error in setsockopt");
 		//exit(1);
 	}
-#endif
 }
 
 char Referee::receive() {
-
-#if 0 
 
 	socklen_t addrlen;
 	int nbytes;
@@ -78,15 +74,7 @@ char Referee::receive() {
 	//cmd_counter = (int)((unsigned char)msgbuf[1]);
 	//goals_blue = (int)((unsigned char)msgbuf[2]);
 	//goals_yellow = (int)((unsigned char)msgbuf[3]);
-	//time_remaining = ((int)(msgbuf[4])     * • Processador AMD Athlon II X2 255 3.1GHz
-    * • Placa Mãe ASUS M4N68T-M LE AM3
-    * • Memória Kingston Value 2GB 1333MHz
-    * • HD Samsung SpinPoint F1 320GB 16MB 7200RPM SATA II
-    * • Gabinete PcTop ATX com Fonte 200w
-    * • Sem drive
-    * • Teclado Genérico Preto USB
-    * • Mouse Óptico Genérico Preto USB
-    * • Software OEM Windows 7 Home Basic 64 bits<< 8)  + (int)(msgbuf[5]); //most significant byte
+	//time_remaining = ((int)(msgbuf[4]) << 8)  + (int)(msgbuf[5]); //most significant byte
 
 	//CONDIÇÃO QUANDO O COMANDO CMD ALTERADO PELO ÁRBITRO
 	//	  if (cmd != cmd_tmp){
@@ -96,5 +84,5 @@ char Referee::receive() {
 
 	//RETORNANDO AS VARIÁVEIS
 	return cmd_tmp;
-#endif
+
 }
