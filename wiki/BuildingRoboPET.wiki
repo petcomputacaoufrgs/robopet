@@ -31,7 +31,7 @@ After checking out all the modules you should have folders named: ai,radio,commu
 }}}
 == communication ==
 
-Depends on: protobuf-c-compiler, libprotobuf-dev
+Depends on: libprotoc-dev
 
 {{{
   $ cd communication
@@ -39,8 +39,8 @@ Depends on: protobuf-c-compiler, libprotobuf-dev
 }}}
 == ai ==
 
+Depends on: Lua (get_lua.sh), Ruby, Ruby Gems, gccxml
 {{{
-  # will soon depend on Lua
   $ cd ai
   $ make
 }}}
@@ -64,7 +64,7 @@ Depends on: glut (on ubuntu try freeglut3)
 
 == gui ==
 
-Depends on: opengl, gtkgl-ext, gtk #somebody help me with the package names
+Depends on: freeglut, libgtk2.0-dev
 
 {{{
   $ cd gui
@@ -72,7 +72,7 @@ Depends on: opengl, gtkgl-ext, gtk #somebody help me with the package names
 }}}
 == simulator ==
 
-Depends on: Box2D 2.1.2, as it may not be available as a package in your ubuntu version we have an installer script in the project root named 'get_box2d.sh'
+Depends on: freeglut, libxi-dev, Box2D (get_box2d.sh)
 
 {{{
   $ cd simulator
@@ -81,7 +81,7 @@ Depends on: Box2D 2.1.2, as it may not be available as a package in your ubuntu 
 
 == tracker ==
 
-Depends on: qtCore, pthreads
+Depends on: libqt4-dev, pthreads
 
 {{{
   $ cd tracker
