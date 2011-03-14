@@ -65,7 +65,16 @@ class Player: public MovingObject
      */
 	void stay();
 	
+	/**
+	 *	Sets the player future position to be that of the object
+	 */
 	void follow(MovingObject);
+	
+	/***
+	 *	Asks the object if it is currently at (or very close to) the point
+	 *  given as argumment.
+	 */
+	bool isAt(Point);
 	
 	/**
      * to be done!!!
