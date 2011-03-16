@@ -1,10 +1,13 @@
 #ifndef __PATHPLAN_PLAYER_H__
 #define __PATHPLAN_PLAYER_H__
 
+#include "player.h"
+#include "pathplan.h"
+
 class PathplanPlayer : public Player
 {
 	public:
-		PathplanPlayer(Pathplan *path) : Player();
+		PathplanPlayer(Pathplan *path) : Player() {};
 		~PathplanPlayer();
 
 		/**
@@ -24,11 +27,18 @@ class PathplanPlayer : public Player
 		 *	Receives an object and inserts it in the pathplann
 		 *  @param m The object
 		 */
-		void fillEnv(const MovingObject &m);
+		void addObstacle(const MovingObject &m);
 
 	private:
-		Pathplan * _pathplanner;
+		Pathplan *_pathplanner;
+		// actually there's no need to store all the positions
+		// again in every robot, maybe we could add some references 
+		// here and there, but meh... let's wait
+		vector<Point> _obstacles;
 		int _node;
+		
+		void runPathplanning(Point from, Point to);
+		Point getNextNode();
 	
 };
 
