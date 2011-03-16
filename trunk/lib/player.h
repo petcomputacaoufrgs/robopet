@@ -72,9 +72,11 @@ class Player: public MovingObject
 	
 	/***
 	 *	Asks the object if it is currently at (or very close to) the point
-	 *  given as argumment.
+	 *  given as argumment. The threshold for close is 30 MM
+	 *  @param p The point to be tested against
+	 *  @param threshold The accepted distance offset
 	 */
-	bool isAt(Point);
+	bool isAt(Point p, int threshold = 30);
 	
 	/**
      * to be done!!!
