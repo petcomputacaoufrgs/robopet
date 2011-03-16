@@ -1,21 +1,22 @@
 #include "astar.h"
+#include "utils.h"
 
 AStar::AStar() {
-	//initialize();
+	initialize();
 }
 
 AStar::AStar(Node start, Node goal) : Pathplan(start, goal){
-	//initialize();
+	initialize();
 }
 
 void AStar::initialize() {
-	//itializing came_from matrix
-//	for(int i=0; i<MAX_X; i++) {
-//		for(int j=0; j<MAX_Y; j++) {
-//			came_from[i][j].setX(-1);
-//			came_from[i][j].setY(-1);
-//		}
-//	}
+	
+	came_from = (Node**) allocMatrix( envMatrixX,envMatrixY,sizeof(Node) );
+	closed = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
+	open = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
+	g = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float) );
+	h = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float) );
+	f = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float) );
 }
 
 AStar::~AStar() {
@@ -24,7 +25,7 @@ AStar::~AStar() {
 bool AStar::inLimits(Node y) {
 
 	if(	(y.x >=0 && y.y >= 0) &&
-		(y.x < MAX_X && y.y < MAX_Y)) {
+		(y.x < envMatrixX && y.y < envMatrixY)) {
 
 		return true;
 	} else {

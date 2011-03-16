@@ -2,6 +2,9 @@
 #define _PATHPLAN_CPP_
 
 #include <iostream>
+#include <stdlib.h>
+
+#include "utils.h"
 
 #include "pathplan.h"
 #include "point.h"
@@ -13,24 +16,33 @@ Pathplan::Pathplan(Node initial, Node final)
 {
 	this->initialpos = initial;
 	this->finalpos = final;
-	this->radius = OBSTACULE_RADIUS;
+	init();
 }
 
 Pathplan::Pathplan()
 {
 	this->initialpos = Node(0.0, 0.0);
 	this->finalpos = Node(0.0, 0.0);
-	this->radius = OBSTACULE_RADIUS;
+	init();
 }
 
-Pathplan::~Pathplan()
+Pathplan::~Pathplan() {}
+
+void Pathplan::init()
 {
+	this->radius = OBSTACULE_RADIUS;
+	
+	envMatrixX = ENV_MATRIX_SIZE_X;
+	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT/FIELD_WIDTH) + 1);
+	
+	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
 }
+
 
 void Pathplan::fillEnv_playerBox(int x, int y)
 {
 	
-	const int side = 2*(this->getRadius()); //MM_TO_CELLS( ROBOT_RADIUS_MM ) + safetyCells;
+	const int side = 2*(this->getRadius());
 			
 	for(int i=0; i<side; i++)
 		for(int k=0; k<side; k++)
@@ -39,8 +51,8 @@ void Pathplan::fillEnv_playerBox(int x, int y)
 				newy = y+k-side/2;
 				
 			if( Point(x,y).getDistance(Point(newx,newy)) < this->getRadius() &&
-				newx>=0 && newx<MAX_X &&
-				newy>=0 && newy<MAX_Y )
+				newx>=0 && newx<envMatrixX &&
+				newy>=0 && newy<envMatrixY )
 				
 				env[newx][newy] = OBSTACLE;
 		}
@@ -66,9 +78,9 @@ char toChar(int cost)
 
 void Pathplan::printEnv()
 {
-	for (unsigned int i = 0; i < MAX_Y; i += 1)
+	for (unsigned int i = 0; i < envMatrixY; i += 1)
 	{
-		for (unsigned int j = 0; j < MAX_X; j += 1)
+		for (unsigned int j = 0; j < envMatrixX; j += 1)
 		{
             switch (env[i][j]){
                 case FREE: cout << " "; break;
@@ -87,8 +99,8 @@ void Pathplan::fillEnv(vector<Point> positions)
 {
 	int centerx, centery;
 
-	for (int x = 0; x < MAX_X; x++)
-		for (int y = 0; y < MAX_Y; y++)
+	for (int x = 0; x < envMatrixX; x++)
+		for (int y = 0; y < envMatrixY; y++)
 			env[x][y] = FREE;
 
 	vector<Point>::iterator it;

@@ -126,21 +126,24 @@ class Rrt: public Pathplan
 		int 		bresenham(Node stat1, Node stat2);
 		
 		/**
-		 * Guarantee that a line is inside the field limits
+		 * Guarantee that the line between the two nodes can be walked upon
 		 * @param nearest The nearest node
 		 * @param extended The extended node
 		 */
-		int 		collision(Node nearest, Node extended); //há colisão numa linha entre os dois pontos?
+		int 		collision(Node nearest, Node extended);
 		
 		/**
-		 * comment pending
+		 * Finds the nearest node of the tree to the target
+		 * @param tree The tree to be searched on
+		 * @param target The target point
+		 * @param nearest Double pointer to store the nearest node
 		 */
 		void 		nearestState(RRTTree *tree,Node target,RRTTree **nearest);
 		
 		/**
 		 * Find the end of a tree
-		 * @param tree The tree to be searched
-		 * @param goal The goal node
+		 * @param tree The tree to be searched on
+		 * @param goal The ending node
 		 * @param fim A pointer 
 		 */
 		void 		encontraFim(RRTTree *tree,Node goal,RRTTree **fim);
@@ -148,20 +151,7 @@ class Rrt: public Pathplan
 		/**
 		 * Creates a list with the path-solution nodes
 		 */
-		list<Node>	findSolution(); //cria uma lista de nodos com o caminho-solucao
-		
-		/**
-		 * Sets, in the field, all the tree-solution nodes to be a NODE type
-		 * @param tree The tree to be iterated
-		 * @param matrizPrint The matriz in which the tree nodes will be marked
-		 */
-		void 		printVarreTree(RRTTree *tree, int matrizPrint[][MAX_Y]);
-		
-		/**
-		 * Fill the field with players, ball, nodes and the correct path to follow.
-		 * Do that setting a different type of node for different in-field 'objects'
-		 */
-		void 		printResult();
+		list<Node>	findSolution();
 };
 
 

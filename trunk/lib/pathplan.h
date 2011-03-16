@@ -17,21 +17,9 @@ using RP::Point;
 using namespace std;
 
 
-#define CELLS_PER_MM_X  MAX_X / (float) FIELD_WIDTH
-#define CELLS_PER_MM_Y  MAX_Y / (float) FIELD_HEIGHT
-#define MM_PER_CELLS_X  FIELD_WIDTH / (float) MAX_X
-#define MM_PER_CELLS_Y  FIELD_HEIGHT / (float) MAX_Y
-
-#define MM_TO_CELLS_X(x) ((x) * (CELLS_PER_MM_X))
-#define MM_TO_CELLS_Y(y) ((y) * (CELLS_PER_MM_Y))
-
-#define CELLS_TO_MM_X(x) ((x) * (MM_PER_CELLS_X))
-#define CELLS_TO_MM_Y(y) ((y) * (MM_PER_CELLS_Y))
-
 #define OBSTACULE_RADIUS 5
 
-#define MAX_X 60  //dimensões da matriz que abstrai o ambiente
-#define MAX_Y (int)(MAX_X * (FIELD_HEIGHT/FIELD_WIDTH) + 1) //dimensões da matriz que abstrai o ambiente
+#define ENV_MATRIX_SIZE_X 60  //dimensão x da matriz que abstrai o ambiente
 
 /**
  * \defgroup Pathplan Pathplan
@@ -107,6 +95,7 @@ class Pathplan
 		Pathplan(Node initialpos, Node finalpos);
 		Pathplan();
 		~Pathplan();
+		void init();
 
 		//---- Position on the field (in grid coordinates) ----
 		Node initialpos;
@@ -114,7 +103,7 @@ class Pathplan
 
 		list<Node> pathFull;  //full solution, showing possible partial branches
 		list<Node> pathFinal; //final solution, for path execution purposes (next point to visit)
-		envType env[MAX_X][MAX_Y]; //generic environment matrix
+		envType **env; //generic environment matrix
 
 		//----- Functions -----
 		Point getPathNode(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0)
@@ -125,6 +114,8 @@ class Pathplan
 		void fillEnv(vector<RP::Point> positions); //fills the enviroment with positions of the obstacles (currently, only for players)
 		int  getRadius();
 		void setRadius(int radius);
+		
+		int 	envMatrixX, envMatrixY;
 
 		/** Used for debugging purposes.
 		 * Prints the actual environment
@@ -132,7 +123,7 @@ class Pathplan
 		void printEnv();
 		
 		/**
-		 * Creates the path using a given algorithm
+		 * Creates the path using a given algorithm.
 		 */
 		virtual void run() {};
 
@@ -141,14 +132,28 @@ class Pathplan
 
 		void setInitialPos(Point pos);
 		void setFinalPos(Point pos);
+		
+		// CONVERSION FUNCTIONS
+		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH; }
+		double CELLS_PER_MM_Y() { return envMatrixY / (float) FIELD_HEIGHT; }
+		double MM_PER_CELLS_X() { return FIELD_WIDTH / (float) envMatrixX; }
+		double MM_PER_CELLS_Y() { return FIELD_HEIGHT / (float) envMatrixY; }
 
+		double MM_TO_CELLS_X(double x) { return x * (CELLS_PER_MM_X()); }
+		double MM_TO_CELLS_Y(double y) { return y * (CELLS_PER_MM_Y()); }
+
+		double CELLS_TO_MM_X(double x) { return x * (MM_PER_CELLS_X()); }
+		double CELLS_TO_MM_Y(double y) { return y * (MM_PER_CELLS_Y()); }
+
+	
 	private:
-		int radius;
 
 	protected:
+		int  	radius;
+		
 		//---- Functions ----
 		/**
-		 * Crates a 'in-field' circle around the position showing whether it's an obstacle or not
+		 * Crates a 'in-field' circle around the position showing whether it's an obstacle or not.
 		 */
 		void fillEnv_playerBox(int centerx, int centery);
 };
