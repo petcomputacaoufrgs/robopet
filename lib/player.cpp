@@ -35,7 +35,6 @@ double Player::calcDeltaAngle()
   return getDeltaAngle();
 }
 
-
 Player& Player::operator=(const Player& other)
 {
     ((MovingObject*)this)->operator= ( *(dynamic_cast<const MovingObject*>(&other)) );
@@ -105,3 +104,7 @@ void Player::stay()
 	setFutureAngle(getCurrentAngle());
 }
 
+bool Player::isAt(Point p, int distance_threshold)
+{
+	return this->getPosition().getDistance(p) <= distance_threshold;
+}
