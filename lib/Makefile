@@ -17,7 +17,8 @@ OBJECTS= 	movingObject.o \
 			physicsRobot.o \
 			pathplan.o \
 			referee.o \
-			pathplan_player.o
+			pathplan_player.o \
+			utils.o
 
 USERDATA_OBJECTS = movingObject_userdata.o \
 			player_userdata.o \

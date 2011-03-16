@@ -11,10 +11,6 @@
  
 using namespace std; 
  
-// these are variables that define how RRT will print the algorithm process step-by-step
-#define STEP_BY_STEP 0 //yes or no 
-#define STEPS_DELAY 7 
-
 
 /****************************************************************************************** 
  Pathplan Interface 
@@ -43,7 +39,6 @@ RRTTree* Rrt::rrtPlan() {
 
 	time_t _timeStarted = time(0);
 
-	int printCont=0; 
 	RRTTree *nearest; 
 	Node extended, target; 
  
@@ -60,17 +55,6 @@ RRTTree* Rrt::rrtPlan() {
 			if( ( time(0) - _timeStarted ) > timeLimit )
 					return tree;
 			else {
-					if(STEP_BY_STEP){ //impressão passo a passo p/ debug 
-							if(printCont==STEPS_DELAY){ 
-									list<Point> null; 
-									printResult(); 
-									printCont=0; 
-									//getchar(); 
-							} 
-							else 
-									printCont++; 
-					} 
-
 					target = chooseTarget(); 
 					nearest = findNearest(target); 
 					extended = extend(nearest->nodo, target); 
@@ -173,8 +157,8 @@ Node Rrt::extend(Node nearest, Node target) {
 Node Rrt::randomState() { 
     Node randomState; 
  
-    randomState.setX( rand() % MAX_X ); 
-    randomState.setY( rand() % MAX_Y ); 
+    randomState.setX( rand() % envMatrixX ); 
+    randomState.setY( rand() % envMatrixY ); 
  
 	return randomState; 
 } 
@@ -241,8 +225,8 @@ int Rrt::bresenham(Node stat1, Node stat2)
  } 
 
 int Rrt::collision(Node nearest, Node extended) { 
-    if(extended.getX() >= 0 && extended.getX() < MAX_X && 
-       extended.getY() >= 0 && extended.getY() < MAX_Y) 
+    if(extended.getX() >= 0 && extended.getX() < envMatrixX && 
+       extended.getY() >= 0 && extended.getY() < envMatrixY) 
  
         return bresenham(nearest, extended); 
         //return env[extended.getX()][extended.getY()] == OBSTACULO; //for stepsize=1
@@ -307,69 +291,6 @@ list<Node> RRTTree::treeToList()
 	treeToList_recursive(this,&caminho); 
  
 	return caminho; 
-} 
- 
- 
- 
- 
-/****************************************************************************************** 
- Código para testes 
- ******************************************************************************************/ 
- 
-void Rrt::printVarreTree(RRTTree *tree, int matrizPrint[][MAX_Y]) 
-{ 
-    if (tree->nodo != EMPTY_STATE){ 
- 
-        matrizPrint[(int)tree->nodo.getX()][(int)tree->nodo.getY()] = NODE; 
- 
-        for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
-            printVarreTree(&(*i), matrizPrint); 
-    } 
-} 
-void Rrt::printResult() 
-{ 
-    system("cls"); 
- 
-    int matrizPrint[MAX_X][MAX_Y]; 
- 
-    //copia environment para matriz temporária de impressão 
-    for(int i=0;i<MAX_X;i++) 
-        for(int j=0;j<MAX_Y;j++) 
-            matrizPrint[i][j] = env[i][j]; 
- 
-    //preenche matriz com nodos da árvore 
-    this->printVarreTree(tree, matrizPrint); 
- 
-    //marca caminho-solução 
-    for(std::list<Node>::iterator i=pathFinal.begin(); i != pathFinal.end(); ++i) 
-        matrizPrint[(int)i->getX()][(int)i->getY()] = PATH; 
- 
-    //marcadores de ponto inicial e ponto final 
-    matrizPrint[(int)initial.getX()][(int)initial.getY()] = MARKER; 
-    matrizPrint[(int)goal.getX()][(int)goal.getY()] = MARKER; 
- 
-    //imprime! 
-    for(int i=MAX_Y-1;i>=0;i--){ 
-        for(int k=0;k<MAX_X;k++) 
-            switch (matrizPrint[k][i]){ 
-                case FREE: 
-                    cout << " "; 
-                    break; 
-                case MARKER: 
-                    cout << "X"; 
-                    break; 
-                case OBSTACLE: 
-                    cout << "#"; 
-                    break; 
-                case NODE: 
-                    cout << "."; 
-                    break; 
-                case PATH: 
-                    cout << "o"; 
-                    break; 
-            } 
-        cout << endl; 
-    } 
 } 
  
  

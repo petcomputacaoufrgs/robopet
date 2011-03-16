@@ -33,28 +33,28 @@ class AStar : public Pathplan {
 		/**
 		 * The map of navigated nodes
 		 */
-		Node came_from[MAX_X][MAX_Y];
+		Node **came_from;
 
-		bool closed[MAX_X][MAX_Y];
-		bool open[MAX_X][MAX_Y];
+		bool **closed;
+		bool **open;
 
 		/**
 		 * g equals to the distance from the
 		 * source Node to the current evaluated node,
 		 * through an optimal path
 		 */
-		float g[MAX_X][MAX_Y];
+		float **g;
 
 		/**
 		 * h equals to the estimative distance from the
 		 * current evaluated Node to the goal Node (the minimum distance)
 		 */ 
-		float h[MAX_X][MAX_Y];
+		float **h;
 
 		/**
 		 * f = g + h
 		 */
-		float f[MAX_X][MAX_Y];
+		float **f;
 
 		void initialize();
 
@@ -64,6 +64,8 @@ class AStar : public Pathplan {
 		AStar(Node start, Node goal);
 
 		~AStar();
+		
+		void init();
 
 		/**
 		 * @return True if node is inlimit
