@@ -116,6 +116,7 @@ class Pathplan
 		void setRadius(int radius);
 		
 		int 	envMatrixX, envMatrixY;
+		void	setEnvDimensions( int x, int y );
 
 		/** Used for debugging purposes.
 		 * Prints the actual environment
