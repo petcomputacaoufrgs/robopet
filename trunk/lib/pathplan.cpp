@@ -33,7 +33,7 @@ void Pathplan::init()
 	this->radius = OBSTACULE_RADIUS;
 	
 	envMatrixX = ENV_MATRIX_SIZE_X;
-	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT/FIELD_WIDTH) + 1);
+	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT/(float)FIELD_WIDTH) + 1);
 	
 	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
 }
@@ -74,6 +74,15 @@ char toChar(int cost)
 		return 'x';
 	else
 		return 'o';
+}
+
+void Pathplan::setEnvDimensions( int x, int y )
+{
+	envMatrixX = x;
+	envMatrixY = y;
+	
+	free(env);
+	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
 }
 
 void Pathplan::printEnv()
