@@ -35,6 +35,8 @@ void PathplanPlayer::runPathplanning(Point from, Point to)
 
 Point PathplanPlayer::getNextNode()
 {
-	// returns the next node in the path
+	_node++;
+	
+	return _pathplanner->getPathNode(_node);
 }
 

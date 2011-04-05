@@ -7,7 +7,7 @@
 class PathplanPlayer : public Player
 {
 	public:
-		PathplanPlayer(Pathplan *path) : Player() {};
+		PathplanPlayer(Pathplan *path) : Player() { _node = 0; };
 		~PathplanPlayer();
 
 		/**
