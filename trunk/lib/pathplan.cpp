@@ -36,6 +36,10 @@ void Pathplan::init()
 	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT/(float)FIELD_WIDTH) + 1);
 	
 	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
+	
+	for (unsigned int i = 0; i < envMatrixX; i += 1)
+		for (unsigned int j = 0; j < envMatrixY; j += 1)
+            env[i][j] = FREE;
 }
 
 
@@ -91,15 +95,20 @@ void Pathplan::printEnv()
 	{
 		for (unsigned int j = 0; j < envMatrixX; j += 1)
 		{
-            switch (env[i][j]){
+            switch (env[j][i]){
+                case OBSTACLE: cout << "#"; break;
+                case PATH: cout << "o"; break;
+                default: cout << " "; break;
+			}
+            /*switch (env[j][i]){
                 case FREE: cout << " "; break;
                 case MARKER: cout << "X"; break;
                 case OBSTACLE: cout << "#"; break;
                 case NODE: cout << "."; break;
                 case PATH: cout << "o"; break;
-			}
-			cout << endl;
+			}*/
 		}
+		cout << endl;
     }	
 
 }
