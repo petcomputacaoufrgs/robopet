@@ -27,7 +27,7 @@ void Rrt::run()
     this->pathFull = tree->treeToList(); 
 	this->pathFinal = findSolution(); 
  
-	//printResult(); //print result in console 
+	printPathplan();
 } 
  
 /****************************************************************************************** 
