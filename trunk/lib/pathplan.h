@@ -106,7 +106,8 @@ class Pathplan
 		envType **env; //generic environment matrix
 
 		//----- Functions -----
-		Point getPathNode(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0)
+		Point getPathNodeMM(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0) in cells units
+		Point getPathNodeCell(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0) in mm (milimiters)
 		
 		/** 
 		 * Fills the enviroment with positions of the obstacles (currently, ball and players)
@@ -122,6 +123,11 @@ class Pathplan
 		 * Prints the actual environment
 		 */
 		void printEnv();
+		
+		/** Used for debugging purposes.
+		 * Prints the actual environment with the calculated path
+		 */
+		void printPathplan();
 		
 		/**
 		 * Creates the path using a given algorithm.

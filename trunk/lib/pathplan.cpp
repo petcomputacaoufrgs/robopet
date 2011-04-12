@@ -37,8 +37,8 @@ void Pathplan::init()
 	
 	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
 	
-	for (unsigned int i = 0; i < envMatrixX; i += 1)
-		for (unsigned int j = 0; j < envMatrixY; j += 1)
+	for (int i = 0; i < envMatrixX; i += 1)
+		for (int j = 0; j < envMatrixY; j += 1)
             env[i][j] = FREE;
 }
 
@@ -91,22 +91,49 @@ void Pathplan::setEnvDimensions( int x, int y )
 
 void Pathplan::printEnv()
 {
-	for (unsigned int i = 0; i < envMatrixY; i += 1)
+	for (int i = 0; i < envMatrixY; i += 1)
 	{
-		for (unsigned int j = 0; j < envMatrixX; j += 1)
+		for (int j = 0; j < envMatrixX; j += 1)
 		{
             switch (env[j][i]){
+                case OBSTACLE: cout << "#"; break;
+                default: cout << " "; break;
+			}
+		}
+		cout << endl;
+    }	
+}
+
+void Pathplan::printPathplan()
+{
+	envType aux[envMatrixX][envMatrixY];
+
+	// creates temporary copy of the environment
+	for (int i = 0; i < envMatrixY; i += 1)
+		for (int j = 0; j < envMatrixX; j += 1)
+			aux[j][i] = env[j][i];
+
+	// fills the nodes positions
+	for(unsigned int i=0; i<pathFinal.size(); i++) {
+		Point p = getPathNodeCell(i);
+		aux[(int)p.getX()][(int)p.getY()] = PATH;
+	}
+
+	// print a separator
+	for (int x = 0; x < envMatrixX; x++)
+		cout<<"_";
+	cout<<endl;
+	
+	// print it all
+	for (int i = 0; i < envMatrixY; i += 1)
+	{
+		for (int j = 0; j < envMatrixX; j += 1)
+		{
+            switch (aux[j][i]){
                 case OBSTACLE: cout << "#"; break;
                 case PATH: cout << "o"; break;
                 default: cout << " "; break;
 			}
-            /*switch (env[j][i]){
-                case FREE: cout << " "; break;
-                case MARKER: cout << "X"; break;
-                case OBSTACLE: cout << "#"; break;
-                case NODE: cout << "."; break;
-                case PATH: cout << "o"; break;
-			}*/
 		}
 		cout << endl;
     }	
@@ -130,7 +157,7 @@ void Pathplan::fillEnv(vector<Point> positions)
 	}
 }
 
-Point Pathplan::getPathNode(int nodeIndex)
+Point Pathplan::getPathNodeMM(int nodeIndex)
 {
 	list<Node>::iterator it;
 
@@ -143,6 +170,16 @@ Point Pathplan::getPathNode(int nodeIndex)
 	node.setY(CELLS_TO_MM_Y(node.getY()));
 	
 	return Point(node.getX(), node.getY());
+}
+
+Point Pathplan::getPathNodeCell(int nodeIndex)
+{
+	list<Node>::iterator it;
+
+	for( it=pathFinal.begin(); nodeIndex>0; it++ )
+		nodeIndex--;
+
+	return Point((*it).getX(), (*it).getY());
 }
 
 void Pathplan::setInitialPos(Node pos)
