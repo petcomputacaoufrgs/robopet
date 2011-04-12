@@ -37,6 +37,6 @@ Point PathplanPlayer::getNextNode()
 {
 	_node++;
 	
-	return _pathplanner->getPathNode(_node);
+	return _pathplanner->getPathNodeMM(_node);
 }
 
