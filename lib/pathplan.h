@@ -26,14 +26,9 @@ using namespace std;
  * \ingroup Pathplan
  */
 
-enum pathplanType
-{
-	RRT, ASTAR
-};
-
 enum envType
 {
-	FREE, MARKER, NODE, PATH, OBSTACLE
+	FREE, MARKER1, MARKER2, NODE, PATH, OBSTACLE
 };
 
 /**
@@ -97,28 +92,62 @@ class Pathplan
 		~Pathplan();
 		void init();
 
-		//---- Position on the field (in grid coordinates) ----
-		Node initialpos;
-		Node finalpos;
-
 		list<Node> pathFull;  //full solution, showing possible partial branches
 		list<Node> pathFinal; //final solution, for path execution purposes (next point to visit)
 		envType **env; //generic environment matrix
-
+		
 		//----- Functions -----
+		/** 
+		 * Returns a node from the calculated path with coordinates in mm (milimiters).
+		 * 
+		 * @param NodeIndex index of the node on the path.
+		 * @return The requested node if it exists, Point(-1,-1) otherwhise.
+		 */
 		Point getPathNodeMM(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0) in cells units
+		
+		/** 
+		 * Returns a node from the calculated path with coordinates in Cells unit.
+		 * 
+		 * @param NodeIndex index of the node on the path.
+		 * @return The requested node if it exists, Point(-1,-1) otherwhise.
+		 */
 		Point getPathNodeCell(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0) in mm (milimiters)
 		
 		/** 
-		 * Fills the enviroment with positions of the obstacles (currently, ball and players)
+		 * Fills the enviroment with positions of the obstacles.
+		 * 
+		 * @param positions positions, in mm, of the obstacules.
 		*/
 		void fillEnv(vector<RP::Point> positions); //fills the enviroment with positions of the obstacles (currently, only for players)
+		
+		/** 
+		 * Returns the value used as radius (unit: cells) for obstacules in the environment matrix.
+		 */
 		int  getRadius();
+		
+		/** 
+		 * Sets the value used as radius (unit: cells) for obstacules in the environment matrix.
+		 */
 		void setRadius(int radius);
 		
-		int 	envMatrixX, envMatrixY;
-		void	setEnvDimensions( int x, int y );
-
+		/** 
+		 * Sets the dimensions (unit: cells) of the environment matrix.
+		 * 
+		 * @param x horizontal dimension
+		 * @param y vertical dimension
+		 */
+		void setEnvXY( int x, int y );
+		
+		/** 
+		 * Returns the horizontal dimension (unit: cells) of the environment matrix.
+		 */
+		int getEnvMatrixX();
+		
+		/** 
+		 * Returns the vertical dimension (unit: cells) of the environment matrix.
+		 */
+		int getEnvMatrixY();
+		
 		/** Used for debugging purposes.
 		 * Prints the actual environment
 		 */
@@ -134,11 +163,43 @@ class Pathplan
 		 */
 		virtual void run() {};
 
+		/** 
+		 * Sets the initial position of the pathplan to be runned.
+		 * 
+		 * @param pos Position in mm (milimiters).
+		 */
 		void setInitialPos(Node pos);
+		
+		/** 
+		 * Sets the final position of the pathplan to be runned.
+		 * 
+		 * @param pos Position in mm (milimiters).
+		 */
 		void setFinalPos(Node pos);
 
+		/** 
+		 * Sets the initial position of the pathplan to be runned.
+		 * 
+		 * @param pos Position in mm (milimiters).
+		 */
 		void setInitialPos(Point pos);
+		
+		/** 
+		 * Sets the final position of the pathplan to be runned.
+		 * 
+		 * @param pos Position in mm (milimiters).
+		 */
 		void setFinalPos(Point pos);
+		
+		/** 
+		 * Returns the initial position (unit: mm) of the pathplan.
+		 */
+		Point getInitialPos();
+		
+		/** 
+		 * Returns the final position (unit: mm) of the pathplan.
+		 */
+		Point getFinalPos();
 		
 		// CONVERSION FUNCTIONS
 		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH; }
@@ -156,6 +217,11 @@ class Pathplan
 	private:
 
 	protected:
+		//---- Position on the field (in grid coordinates) ----
+		Node initialpos;
+		Node finalpos;
+		
+		int 	envMatrixX, envMatrixY;
 		int  	radius;
 		
 		//---- Functions ----

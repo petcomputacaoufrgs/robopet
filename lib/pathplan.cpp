@@ -45,6 +45,7 @@ void Pathplan::init()
 
 void Pathplan::fillEnv_playerBox(int x, int y)
 {
+	// Maybe this code could be optimized? It's a critical thing for pathplanning work smoothly.
 	
 	const int side = 2*(this->getRadius());
 			
@@ -80,13 +81,23 @@ char toChar(int cost)
 		return 'o';
 }
 
-void Pathplan::setEnvDimensions( int x, int y )
+void Pathplan::setEnvXY( int x, int y )
 {
 	envMatrixX = x;
 	envMatrixY = y;
 	
 	free(env);
 	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
+}
+
+int Pathplan::getEnvMatrixX()
+{
+	return envMatrixX;
+}
+
+int Pathplan::getEnvMatrixY()
+{
+	return envMatrixY;
 }
 
 void Pathplan::printEnv()
@@ -118,7 +129,11 @@ void Pathplan::printPathplan()
 		Point p = getPathNodeCell(i);
 		aux[(int)p.getX()][(int)p.getY()] = PATH;
 	}
-
+	
+	// put markers on initial and final positions
+	aux[initialpos.getX()][initialpos.getY()] = MARKER1;
+	aux[finalpos.getX()][finalpos.getY()] = MARKER2;
+	
 	// print a separator
 	for (int x = 0; x < envMatrixX; x++)
 		cout<<"_";
@@ -132,6 +147,8 @@ void Pathplan::printPathplan()
             switch (aux[j][i]){
                 case OBSTACLE: cout << "#"; break;
                 case PATH: cout << "o"; break;
+                case MARKER1: cout << "I"; break;
+                case MARKER2: cout << "F"; break;
                 default: cout << " "; break;
 			}
 		}
@@ -190,6 +207,16 @@ void Pathplan::setInitialPos(Node pos)
 void Pathplan::setFinalPos(Node pos)
 {
 	finalpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
+}
+
+Point Pathplan::getInitialPos()
+{
+	return Point( CELLS_TO_MM_X(initialpos.getX()), CELLS_TO_MM_Y(initialpos.getY()) );	
+}
+		
+Point Pathplan::getFinalPos()
+{
+	return Point( CELLS_TO_MM_X(finalpos.getX()), CELLS_TO_MM_Y(finalpos.getY()) );
 }
 
 void Pathplan::setInitialPos(Point pos)
