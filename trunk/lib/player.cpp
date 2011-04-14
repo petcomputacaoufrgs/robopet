@@ -61,10 +61,10 @@ void Player::keepDistanceToBall(double d) {
 void Player::pointTo( Point p )
 {
 	RP::Vector playerToPVector(this->getPosition(),p);
-	int angle = playerToPVector.angleDegrees(Vector(1,0));
-
-	if(playerToPVector.getY() > 0)
-		angle = 360 - angle;
+	int angle = playerToPVector.myAngleDegrees();
+		
+	if(angle>180)
+		angle = angle - 360;
 
 	this->setFutureAngle( angle );
 }
