@@ -20,14 +20,6 @@ OBJECTS= 	movingObject.o \
 			pathplan_player.o \
 			utils.o
 
-USERDATA_OBJECTS = movingObject_userdata.o \
-			player_userdata.o \
-			point_userdata.o  \
-			vector_userdata.o \
-			line_userdata.o \
-			physicsRobot_userdata.o \
-			referee_userdata.o
-
 .PHONY : all doc make_userdata
 
 all: robopet.a robopet_lua.a
@@ -35,23 +27,17 @@ all: robopet.a robopet_lua.a
 doc:
 	doxygen robopet.doc
 
-make_userdata:
+userdata/robopet_lua.o:
 	cd userdata ; make
-
-%_userdata.o: userdata/%_userdata.cpp %.o
-	$(CC) -I. -c -o $@ $^ $(LUA)
 
 %.o: %.cpp %.h
 	$(CC) -c $< -o  $@ $(CFLAGS)
 
-repl: userdata/interpreter.cpp robopet.a robopet_lua.a
+repl: userdata/interpreter.cpp userdata/robopet_lua.o robopet.a
 	$(CC) -I. -o $@ $^ $(LUA)
 
 robopet.a: $(OBJECTS)
 	$(AA) $(AFLAGS) $@ $^
-
-robopet_lua.a: $(OBJECTS) make_userdata $(USERDATA_OBJECTS)
-	$(AA) $(AFLAGS) $@ $(OBJECTS) $(USERDATA_OBJECTS)
 
 clean:
 	rm *.o

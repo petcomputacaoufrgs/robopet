@@ -1,0 +1,280 @@
+#!/usr/bin/ruby
+
+require 'rubygems'
+require 'nokogiri'
+
+class String
+	def wrap marker='%%%'
+		content = yield if block_given?
+
+		self.sub(marker, content)
+	end
+end
+
+
+
+module Moonbind
+
+class Method
+
+	attr_accessor :class_name, :name, :parameters , :returns, :visibility
+
+	def initialize n #data, parser, commenter
+
+		# spliting the demangled method, this is kinda ugly
+		name, params = n.attr('demangled').split('(')
+		name = name.split('::')
+
+		@parameters = params.split(')')[0]
+		@class_name = name[-2]
+		@name = name[-1]
+
+		# here we separate the parameters or yield an empty list
+		@parameters = @parameters ? @parameters.split(',') : []
+
+		#remove extra spaces from parameter names
+		@parameters = @parameters.map { |p| p.split('::')[-1].split[0].strip }
+
+        if n.attr('returns') != nil
+		    @returns = Type.get(n.attr('returns'))
+		else
+		    @returns = ''
+		end
+
+		@visibility = n.attr('access')
+	end
+
+	def cpp_header
+		"#{returns} #{name}(#{parameters.join(',')});"
+	end
+
+    def void?
+        returns == 'void'
+    end
+
+end
+
+# this a convenient type table
+class Type
+
+	@types = {}
+	@lua_primitive = {
+		"int" => "number", "float" => "number",
+		"double" => "number", "char" => "number",
+		"bool" => "boolean",
+		"char*" => "string",
+		"const char*" => "string"
+	}
+
+	# adds one type
+	def self.add  id, name
+		#OMG, sometimes tipes may be namespace::name !!
+		splited = name.split("::")[1]
+
+		if splited
+			@types[id] = splited
+		else
+			@types[id] = name
+		end
+
+	end
+
+	def self.add_pointer id, type
+		# pointers are crazy
+		begin
+			@types[id] = get(type) + "*"
+		rescue Exception => e
+			print ''
+		end
+	end
+
+	def self.add_reference id, type
+		# references are crazier
+		type = type.gsub('c','')
+        id = id.gsub('&','')
+
+		begin
+			@types[id] = get(type)
+		rescue Exception => e
+			print ''
+		end
+
+	end
+
+	# retrieves one type, given it's id
+	def self.get id
+		# for reference types
+		id = id.gsub('&','')
+		return @types[id] || raise("Invalid Type: #{id}")
+	end
+
+	# receives all the default type
+	# nodes and registers them
+	def self.read table = {}
+
+		table[:fundamental].each do |type|
+			add type.attr('id'), type.attr('name')
+		end
+
+		table[:pointer].each do |type|
+			add_pointer type.attr('id'), type.attr('type')
+		end
+
+		table[:reference].each do |type|
+			add_reference type.attr('id'), type.attr('type')
+		end
+
+	end
+
+	def self.is_userdata? t
+		not @lua_primitive[t]
+	end
+
+	def self.lua_type t
+		# for references
+		t = t.gsub('&','')
+
+		userdata = is_userdata? t
+
+		if !userdata
+			@lua_primitive[t]
+		else
+			"userdata"
+		end
+	end
+
+	def self.variable_name t, index
+		"just_a_#{t}#{index}".gsub('*','_ptr')
+	end
+
+  def self.all
+    @types.each.to_a.join("\n")
+  end
+
+end
+
+class CClass
+
+	attr_accessor :methods, :name, :type_id
+
+	def initialize node
+		@type_id = node.attr('id')
+		@name = node.attr('name')
+		@methods = []
+
+		base = node.attr('bases') || ''
+		@super_class_id = base.strip
+	end
+
+	def add_method m
+        @methods << m
+	end
+
+	def methods_declaration
+		methods.map do |m|
+			m.cpp_header
+		end.join("\n")
+	end
+
+    def inheritance
+        begin
+			inheritance = " : public " + Type.get(@super_class_id)
+		rescue Exception => e
+			inheritance = nil
+		end
+	end
+
+    def class_body
+"
+class #{name} #{inheritance} {
+
+public:
+#{methods_declaration}
+
+};
+"
+    end
+
+end
+
+end #moonbind module
+
+def header cn
+
+#    filename = cn.split(/(?=[A-Z])/)
+#    filename[0].downcase!
+#    filename = filename.join
+
+#"
+#class #{cn} {
+
+#public:
+#%%%
+
+#};
+
+
+#"
+"%%%"
+end
+
+def parse filename
+
+	doc = Nokogiri::XML(IO.read(filename))
+
+	classes = doc.xpath('//Class')
+
+    header_name = filename.split('.')[0]+'.h'
+
+	current_file = doc.xpath('//File').find { |x| /^(\.\.\/)?#{header_name}$/.match(x.attr('name')) }
+	current_file = current_file.attr('id')
+
+	file_classes = []
+
+	classes.each do |c|
+
+		if c.attr('file') == current_file
+			file_classes << Moonbind::CClass.new(c)
+		end
+
+		Moonbind::Type.add c.attr('id'), c.attr('name')
+
+	end
+
+
+	Moonbind::Type.read :fundamental => doc.xpath('//FundamentalType'),
+                      	:pointer => doc.xpath('//PointerType'),
+                      	:reference => doc.xpath('//ReferenceType')
+
+	output = ''
+
+	file_classes.each do |c|
+
+		output = header(c.name).wrap do
+
+			buff = ''
+
+			doc.xpath('//Method').each do |m|
+				if c.type_id == m.attr('context') && !m.attr('artificial')
+					c.add_method Moonbind::Method.new(m)
+				end
+			end
+
+            doc.xpath('//Constructor').each do |m|
+				if c.type_id == m.attr('context') && m.attr('explicit') == "1"
+					c.add_method Moonbind::Method.new(m)
+				end
+			end
+
+			buff << c.class_body
+
+		end
+	end
+
+
+	output
+end
+
+exit if ARGV.size < 1
+
+puts parse(ARGV[0])

@@ -1,0 +1,11 @@
+%module RoboPET
+%{
+#include "referee.h"
+#include "vector.h"
+#include "point.h"
+#include "line.h"
+#include "movingObject.h"
+#include "player.h"
+#include "physicsRobot.h"
+%}
+
