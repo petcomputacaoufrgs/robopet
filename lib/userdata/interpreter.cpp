@@ -19,6 +19,8 @@ extern "C" {
 #include "lauxlib.h"
 #include "lualib.h"
 
+extern int luaopen_RoboPET(lua_State* L);
+
 }
 
 #include "robopet_lua.h"
@@ -349,13 +351,7 @@ static int pmain (lua_State *L) {
   lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
 
 	luaL_openlibs(L);  /* open libraries */
-	luaopen_Point(L);
-	luaopen_Vector(L);
-	luaopen_MovingObject(L);
-	luaopen_Player(L);
-	luaopen_Line(L);
-	luaopen_PhysicsRobot(L);
-	luaopen_Referee(L);
+    luaopen_RoboPET(L);
 
   lua_gc(L, LUA_GCRESTART, 0);
   s->status = handle_luainit(L);

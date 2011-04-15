@@ -1,22 +1,27 @@
-OBJECTS = referee vector point line movingObject player physicsRobot
+CC = gcc
+OBJECTS = referee point vector line movingObject player physicsRobot
 XML = $(OBJECTS:=.xml)
-HEADERS = $(OBJECTS:=_userdata.h)
-CPPS = $(OBJECTS:=_userdata.cpp)
+SWIGS = $(OBJECTS:=.i)
 
-all: $(XML) $(HEADERS) $(CPPS)
-
-doc:
-	doxygen .
+all: robopet_lua.o
 
 %.xml: ../%.cpp
 	gccxml $< -fxml=$@
 
-%_userdata.cpp: %.xml %_userdata.h
-	../moonbind $< > $@
+%.i: %.xml
+	../swigbind $< >> robopet_temp.i
 
-%_userdata.h: %.xml
-	../moonbind $< header > $@
+robopet.i: $(XML) $(SWIGS)
+	cat header robopet_temp.i > robopet.i
+	rm robopet_temp.i
+
+robopet_lua.cpp: robopet.i
+	swig -c++ -lua -o $@ $<
+
+robopet_lua.o: robopet_lua.cpp
+	$(CC) -I../ -c $< -o  $@ $(CFLAGS) -llua -ldl
 
 clean:
 	rm *.xml
-	rm *_userdata.*
+	rm robopet_lua.cpp
+	rm *.i
