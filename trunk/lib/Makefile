@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -Wall -pg
+CFLAGS = -Wall
 
 AA = ar
 AFLAGS = rsv
@@ -20,15 +20,16 @@ OBJECTS= 	movingObject.o \
 			pathplan_player.o \
 			utils.o
 
-.PHONY : all doc make_userdata
+.PHONY : all doc
 
-all: robopet.a robopet_lua.a
+all: robopet.a
 
 doc:
 	doxygen robopet.doc
 
-userdata/robopet_lua.o:
+robopet_lua.o:
 	cd userdata ; make
+	$(CC) -I./ -c userdata/robopet_lua.cpp -o $@ $(CFLAGS) -llua -ldl
 
 %.o: %.cpp %.h
 	$(CC) -c $< -o  $@ $(CFLAGS)
