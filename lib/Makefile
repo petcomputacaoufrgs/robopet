@@ -22,10 +22,13 @@ OBJECTS= 	movingObject.o \
 
 .PHONY : all doc
 
-all: robopet.a robopet_lua.o
+all: robopet.a robopet_lua.o lua_runtime.h
 
 doc:
 	doxygen robopet.doc
+
+lua_runtime.h: robopet_lua.o
+	swig -lua -external-runtime lua_runtime.h
 
 robopet_lua.o:
 	cd userdata ; make
