@@ -22,7 +22,7 @@ OBJECTS= 	movingObject.o \
 
 .PHONY : all doc
 
-all: robopet.a
+all: robopet.a robopet_lua.o
 
 doc:
 	doxygen robopet.doc
