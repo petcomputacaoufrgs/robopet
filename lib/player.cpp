@@ -62,7 +62,7 @@ void Player::pointTo( Point p )
 {
 	RP::Vector playerToPVector(this->getPosition(),p);
 	int angle = playerToPVector.myAngleDegrees();
-		
+	
 	if(angle>180)
 		angle = angle - 360;
 
