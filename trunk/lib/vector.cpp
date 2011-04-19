@@ -164,7 +164,7 @@ v: outro vetor
 double Vector::angleCW(Vector v) const {
 	double alpha = myAngle();
 	double beta = v.myAngle();
-
+	
 	if(alpha < beta)
 		return abs( 2*M_PI - (beta-alpha) );
 	else
@@ -205,8 +205,13 @@ v: outro vetor
 ******************************************************/
 double Vector::myAngle() const
 {
-	double angle = this->angle( Vector(1,0) );
-
+	double angle;
+	
+	if(this->getX()==0 && this->getY()==0)
+		angle = 0; //so we don't get a "nan" result here
+	else
+		angle = this->angle( Vector(1,0) );
+	
 	if(this->getY()<0)
 		angle = 2*M_PI - angle;	
 
