@@ -1,6 +1,3 @@
-#ifndef _PATHPLAN_CPP_
-#define _PATHPLAN_CPP_
-
 #include <iostream>
 #include <stdlib.h>
 
@@ -11,7 +8,7 @@
 using RP::Point;
 using namespace std;
 
-Pathplan::Pathplan(Node initial, Node final)
+Pathplan::Pathplan(Point initial, Point final)
 {
 	this->initialpos = initial;
 	this->finalpos = final;
@@ -20,8 +17,8 @@ Pathplan::Pathplan(Node initial, Node final)
 
 Pathplan::Pathplan()
 {
-	this->initialpos = Node(0.0, 0.0);
-	this->finalpos = Node(0.0, 0.0);
+	this->initialpos = Point(0.0, 0.0);
+	this->finalpos = Point(0.0, 0.0);
 	init();
 }
 
@@ -30,6 +27,7 @@ Pathplan::~Pathplan() {}
 void Pathplan::init()
 {
 	this->radius = OBSTACULE_RADIUS;
+	status = NOTHING;
 	
 	envMatrixX = ENV_MATRIX_SIZE_X;
 	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT/(float)FIELD_WIDTH) + 1);
@@ -101,10 +99,8 @@ int Pathplan::getEnvMatrixY()
 
 void Pathplan::printEnv()
 {
-	for (int i = 0; i < envMatrixY; i += 1)
-	{
-		for (int j = 0; j < envMatrixX; j += 1)
-		{
+	for (int i = 0; i < envMatrixY; i += 1) {
+		for (int j = 0; j < envMatrixX; j += 1) {
             switch (env[j][i]){
                 case OBSTACLE: cout << "#"; break;
                 default: cout << " "; break;
@@ -123,15 +119,15 @@ void Pathplan::printPathplan()
 		for (int j = 0; j < envMatrixX; j += 1)
 			aux[j][i] = env[j][i];
 
-	// fills the nodes positions
+	// fills the Points positions
 	for(unsigned int i=0; i<pathFinal.size(); i++) {
 		Point p = getPathNodeCell(i);
 		aux[(int)p.getX()][(int)p.getY()] = PATH;
 	}
 	
 	// put markers on initial and final positions
-	aux[initialpos.getX()][initialpos.getY()] = MARKER1;
-	aux[finalpos.getX()][finalpos.getY()] = MARKER2;
+	aux[(int)initialpos.getX()][(int)initialpos.getY()] = MARKER1;
+	aux[(int)finalpos.getX()][(int)finalpos.getY()] = MARKER2;
 	
 	// print a separator
 	for (int x = 0; x < envMatrixX; x++)
@@ -139,10 +135,8 @@ void Pathplan::printPathplan()
 	cout<<endl;
 	
 	// print it all
-	for (int i = 0; i < envMatrixY; i += 1)
-	{
-		for (int j = 0; j < envMatrixX; j += 1)
-		{
+	for (int i = 0; i < envMatrixY; i += 1) {
+		for (int j = 0; j < envMatrixX; j += 1) {
             switch (aux[j][i]){
                 case OBSTACLE: cout << "#"; break;
                 case PATH: cout << "o"; break;
@@ -165,37 +159,36 @@ void Pathplan::fillEnv(vector<Point> positions)
 			env[x][y] = FREE;
 
 	vector<Point>::iterator it;
-	for(it=positions.begin(); it<positions.end(); it++)
-	{
+	for(it=positions.begin(); it<positions.end(); it++) {
 		centerx = round( MM_TO_CELLS_X((*it).getX()) );
 		centery = round( MM_TO_CELLS_Y((*it).getY()) );
 		fillEnv_playerBox(centerx,centery);
 	}
 }
 
-Point Pathplan::getPathNodeMM(int nodeIndex)
+Point Pathplan::getPathNodeMM(int PointIndex)
 {
-	list<Node>::iterator it;
+	list<Point>::iterator it;
 
-	for( it=pathFull.begin(); nodeIndex>0; it++ )
-		nodeIndex--;
+	for( it=pathFull.begin(); PointIndex>0; it++ )
+		PointIndex--;
 
-	Node node = *it;
+	Point Point = *it;
 	
-	node.setX(CELLS_TO_MM_X(node.getX()));
-	node.setY(CELLS_TO_MM_Y(node.getY()));
+	Point.setX( CELLS_TO_MM_X(Point.getX()) );
+	Point.setY( CELLS_TO_MM_Y(Point.getY()) );
 	
-	return Point(node.getX(), node.getY());
+	return Point;
 }
 
-Point Pathplan::getPathNodeCell(int nodeIndex)
+Point Pathplan::getPathNodeCell(int PointIndex)
 {
-	list<Node>::iterator it;
+	list<Point>::iterator it;
 
-	for( it=pathFinal.begin(); nodeIndex>0; it++ )
-		nodeIndex--;
+	for( it=pathFinal.begin(); PointIndex>0; it++ )
+		PointIndex--;
 
-	return Point((*it).getX(), (*it).getY());
+	return *it;
 }
 
 Point Pathplan::getInitialPos()
@@ -210,12 +203,10 @@ Point Pathplan::getFinalPos()
 
 void Pathplan::setInitialPos(Point pos)
 {
-	initialpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
+	initialpos = Point( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
 }
 
 void Pathplan::setFinalPos(Point pos)
 {
-	finalpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
+	finalpos = Point( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
 }
-
-#endif
