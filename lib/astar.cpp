@@ -5,7 +5,7 @@ AStar::AStar() {
 	initialize();
 }
 
-AStar::AStar(Node start, Node goal) : Pathplan(start, goal){
+AStar::AStar(Node start, Node goal) : Pathplan(Point(start.x,start.y), Point(goal.x,goal.y)){
 	initialize();
 }
 

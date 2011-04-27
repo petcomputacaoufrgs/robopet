@@ -7,7 +7,6 @@
 #include "utils.h"
 
 #include "pathplan.h"
-#include "point.h"
 
 using RP::Point;
 using namespace std;
@@ -197,16 +196,6 @@ Point Pathplan::getPathNodeCell(int nodeIndex)
 		nodeIndex--;
 
 	return Point((*it).getX(), (*it).getY());
-}
-
-void Pathplan::setInitialPos(Node pos)
-{
-	initialpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
-}
-
-void Pathplan::setFinalPos(Node pos)
-{
-	finalpos = Node( round(MM_TO_CELLS_X( pos.getX() )), round(MM_TO_CELLS_Y( pos.getY() )) );
 }
 
 Point Pathplan::getInitialPos()
