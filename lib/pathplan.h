@@ -32,7 +32,7 @@ enum envType
 
 enum ppStatusType
 {
-	SUCCESS, ERROR_TIMELIMIT, ERROR_UNKNOWN, ERROR_UNREACHABLE
+	NOTHING, SUCCESS, ERROR_TIMELIMIT, ERROR_UNKNOWN, ERROR_UNREACHABLE
 };
 
 /**
@@ -63,7 +63,7 @@ class Pathplan
 		 * @param PointIndex index of the Point on the path.
 		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
 		 */
-		Point getPathPointMM(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in cells units
+		Point getPathNodeMM(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in cells units
 		
 		/** 
 		 * Returns a Point from the calculated path with coordinates in Cells unit.
@@ -71,7 +71,7 @@ class Pathplan
 		 * @param PointIndex index of the Point on the path.
 		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
 		 */
-		Point getPathPointCell(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in mm (milimiters)
+		Point getPathNodeCell(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in mm (milimiters)
 		
 		/** 
 		 * Fills the enviroment with positions of the obstacles.

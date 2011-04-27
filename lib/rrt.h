@@ -7,6 +7,7 @@
 #include "point.h"
 #include "constants.h"
 #include "pathplan.h"
+#include "utils.h"
 
 using namespace std;
 using RP::Point;

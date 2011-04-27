@@ -12,7 +12,6 @@ OBJECTS= 	movingObject.o \
 			vector.o \
 			line.o \
 			rrt.o \
-			#astar.o \
 			fieldInfo.o \
 			physicsRobot.o \
 			pathplan.o \

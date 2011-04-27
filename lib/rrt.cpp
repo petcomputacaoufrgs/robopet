@@ -21,7 +21,7 @@ void Rrt::run()
  
 	initial = initialpos; 
 	goal = finalpos; 
- 
+	
 	tree = rrtPlan(); 
  
     this->pathFull = tree->treeToList(); 
@@ -42,8 +42,7 @@ RRTTree* Rrt::rrtPlan() {
 	RRTTree *nearest; 
 	Point extended, target; 
  
-	// dá pra fazer melhor 
-	RRTTree *nodoInicial; //aloca raiz 
+	RRTTree *nodoInicial;
 	nodoInicial = new RRTTree; 
 	*nodoInicial = initial; 
 
@@ -52,8 +51,10 @@ RRTTree* Rrt::rrtPlan() {
  
 	while( distance(nearest->nodo, goal) > stepsize ) 
 	{
-			if( ( time(0) - _timeStarted ) > timeLimit )
+			if( ( time(0) - _timeStarted ) > timeLimit ) {
+					status = ERROR_TIMELIMIT;
 					return tree;
+			}
 			else {
 					target = chooseTarget(); 
 					nearest = findNearest(target); 
@@ -222,6 +223,8 @@ int Rrt::bresenham(Point stat1, Point stat2)
  
                return 0; 
        } 
+       
+       return 0;
  } 
 
 int Rrt::collision(Point nearest, Point extended) { 
@@ -271,6 +274,10 @@ std::list<Point> Rrt::findSolution() {
         aux = aux->pai; 
     } 
  
+	if(caminho.size() > 0)
+		status = SUCCESS;
+	else
+		status = ERROR_UNKNOWN;
     return caminho; 
 } 
  

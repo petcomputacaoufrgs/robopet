@@ -1,4 +1,6 @@
 
+#define DEBUG_VAR(x) cout << #x << ": " << x << endl
+
 /**
  * Function used to allocate space for dynamic matrixes.
  * @param sizex Dimension x of the matrix

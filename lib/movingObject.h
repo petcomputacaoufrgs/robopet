@@ -16,7 +16,7 @@ using RP::MovingObject;
 class MovingObject
 {
   public:
-    MovingObject(double stX = 0, double stY = 0) : _current_position(stX, stY), _past_position(0, 0), _future_position(0, 0) {}
+    MovingObject(double stX = 0, double stY = 0) : _current_position(stX, stY), _past_position(-1, -1), _future_position(-1, -1) {}
 	MovingObject(const MovingObject& other);
     ~MovingObject() {}
 
