@@ -1,5 +1,4 @@
-#ifndef __ROBOPET_CONSTANTS_H__
-#define __ROBOPET_CONSTANTS_H__
+#pragma once
 
 //---- MEASURES ----
 #define ARENA_WIDTH_MM 7400
@@ -13,5 +12,3 @@
 
 #define ROBOT_RADIUS_MM 90
 #define BALL_RADIUS_MM 43
-
-#endif
