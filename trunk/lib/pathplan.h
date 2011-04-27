@@ -18,7 +18,6 @@ using namespace std;
 
 
 #define OBSTACULE_RADIUS 5
-
 #define ENV_MATRIX_SIZE_X 60  //dimensão x da matriz que abstrai o ambiente
 
 /**
@@ -28,53 +27,12 @@ using namespace std;
 
 enum envType
 {
-	FREE, MARKER1, MARKER2, NODE, PATH, OBSTACLE
+	FREE, MARKER1, MARKER2, PATH, OBSTACLE
 };
 
-/**
- * Node
- * Documentation Pending
- * \ingroup Pathplan
- */
-
-class Node {
-
-	public:
-		int x;
-		int y;
-
-		Node() {}
-
-		Node(int x, int y) {
-			this->x = x;
-			this->y = y;
-		}
-
-		bool operator==(const Node &other) const {
-			return ((other.x == x) && (other.y == y));
-		}
-
-		bool operator==(const Point &other) const {
-			return ((other.getX() == x) && (other.getY() == y));
-		}
-
-		bool operator!=(const Node &other) const {
-			return ((other.x != x) || (other.y != y));
-		}
-
-		bool operator<(const Node &other) const {
-			return ((this->x < other.x) ||
-					((this->x == other.x) && (this->y < other.y)));
-		}
-
-		int getX() { return x; }
-
-		int getY() { return y; }
-
-		void setX(int x) { this->x = x; }
-
-		void setY(int y) { this->y = y;}
-
+enum ppStatusType
+{
+	SUCCESS, ERROR_TIMELIMIT, ERROR_UNKNOWN, ERROR_UNREACHABLE
 };
 
 /**
@@ -87,31 +45,33 @@ class Pathplan
 {
 	public:
 		//---- Constructor and Destructor ----
-		Pathplan(Node initialpos, Node finalpos);
+		Pathplan(Point initialpos, Point finalpos);
 		Pathplan();
 		~Pathplan();
 		void init();
 
-		list<Node> pathFull;  //full solution, showing possible partial branches
-		list<Node> pathFinal; //final solution, for path execution purposes (next point to visit)
-		envType **env; //generic environment matrix
+		list<Point> 	pathFull;  //full solution, showing possible partial branches
+		list<Point> 	pathFinal; //final solution, for path execution purposes (next point to visit)
+		envType 		**env; //generic environment matrix
+		ppStatusType 	status;
+		
 		
 		//----- Functions -----
 		/** 
-		 * Returns a node from the calculated path with coordinates in mm (milimiters).
+		 * Returns a Point from the calculated path with coordinates in mm (milimiters).
 		 * 
-		 * @param NodeIndex index of the node on the path.
-		 * @return The requested node if it exists, Point(-1,-1) otherwhise.
+		 * @param PointIndex index of the Point on the path.
+		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
 		 */
-		Point getPathNodeMM(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0) in cells units
+		Point getPathPointMM(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in cells units
 		
 		/** 
-		 * Returns a node from the calculated path with coordinates in Cells unit.
+		 * Returns a Point from the calculated path with coordinates in Cells unit.
 		 * 
-		 * @param NodeIndex index of the node on the path.
-		 * @return The requested node if it exists, Point(-1,-1) otherwhise.
+		 * @param PointIndex index of the Point on the path.
+		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
 		 */
-		Point getPathNodeCell(int NodeIndex); //returns a specific Node on pathFinal (initialState is 0) in mm (milimiters)
+		Point getPathPointCell(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in mm (milimiters)
 		
 		/** 
 		 * Fills the enviroment with positions of the obstacles.
@@ -168,20 +128,6 @@ class Pathplan
 		 * 
 		 * @param pos Position in mm (milimiters).
 		 */
-		void setInitialPos(Node pos);
-		
-		/** 
-		 * Sets the final position of the pathplan to be runned.
-		 * 
-		 * @param pos Position in mm (milimiters).
-		 */
-		void setFinalPos(Node pos);
-
-		/** 
-		 * Sets the initial position of the pathplan to be runned.
-		 * 
-		 * @param pos Position in mm (milimiters).
-		 */
 		void setInitialPos(Point pos);
 		
 		/** 
@@ -218,8 +164,8 @@ class Pathplan
 
 	protected:
 		//---- Position on the field (in grid coordinates) ----
-		Node initialpos;
-		Node finalpos;
+		Point initialpos;
+		Point finalpos;
 		
 		int 	envMatrixX, envMatrixY;
 		int  	radius;

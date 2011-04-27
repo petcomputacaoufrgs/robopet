@@ -40,7 +40,7 @@ RRTTree* Rrt::rrtPlan() {
 	time_t _timeStarted = time(0);
 
 	RRTTree *nearest; 
-	Node extended, target; 
+	Point extended, target; 
  
 	// dá pra fazer melhor 
 	RRTTree *nodoInicial; //aloca raiz 
@@ -60,17 +60,17 @@ RRTTree* Rrt::rrtPlan() {
 					extended = extend(nearest->nodo, target); 
 
 					if (extended != EMPTY_STATE) 
-							addNode(nearest, extended); 
+							addPoint(nearest, extended); 
 			}
 	} 
  
 	//We add the final poin to the path to help finding the final path on findSolution()
-	addNode(nearest, goal); 
+	addPoint(nearest, goal); 
  
 	return tree; 
 } 
  
-Node Rrt::chooseTarget() { 
+Point Rrt::chooseTarget() { 
 	float p; 
 	p = (rand() % 100 + 1) / 100.; 
  
@@ -80,7 +80,7 @@ Node Rrt::chooseTarget() {
 		return randomState(); 
 } 
  
-RRTTree* Rrt::findNearest(Node target) { 
+RRTTree* Rrt::findNearest(Point target) { 
 	RRTTree *nearest = tree; 
  
     nearestState(tree,target,&nearest); //calcula nodo mais próximo de target 
@@ -93,11 +93,11 @@ RRTTree* Rrt::findNearest(Node target) {
  Código deduzido do ETDP dos CMDragons de 2009 
  ******************************************************************************************/ 
  
-void Rrt::nearestState(RRTTree *tree,Node target,RRTTree **nearest) { 
+void Rrt::nearestState(RRTTree *tree,Point target,RRTTree **nearest) { 
  
     if (tree->nodo != EMPTY_STATE){ 
  
-       Node actual = tree->nodo; 
+       Point actual = tree->nodo; 
  
        if (distance(actual,target) < distance((*nearest)->nodo,target)) 
            *nearest = tree; 
@@ -107,21 +107,21 @@ void Rrt::nearestState(RRTTree *tree,Node target,RRTTree **nearest) {
     } 
 } 
  
-float Rrt::distance(Node a, Node b) { 
+float Rrt::distance(Point a, Point b) { 
 	return fabs( sqrt(  (float)(  SQR(a.getX() - b.getX()) + SQR(a.getY() - b.getY())  )  )); 
 } 
  
-Node Rrt::extend(Node nearest, Node target) { 
+Point Rrt::extend(Point nearest, Point target) { 
  
     int step = rand()%stepsize + 1; 
  
     int directions[8][2] = {{-step, -step}, {-step, 0}, {-step, step}, {0, -step}, {0, 0}, {step, -step}, {step, 0}, {step, step}}; 
     int res = rand() % directionsToLook, i, resIndex[8], tmp, j, min; 
     float distances[8], temp; 
-    Node extended; 
+    Point extended; 
  
     for(i = 0; i < 8; i++) { 
-        distances[i] = distance(  Node (nearest.getX() + directions[i][0], 
+        distances[i] = distance(  Point (nearest.getX() + directions[i][0], 
                                          nearest.getY() + directions[i][1]), 
                                 target); 
         resIndex[i] = i; 
@@ -144,7 +144,7 @@ Node Rrt::extend(Node nearest, Node target) {
         } 
     } 
  
-    extended = Node(nearest.getX() + directions[resIndex[res]][0], 
+    extended = Point(nearest.getX() + directions[resIndex[res]][0], 
                nearest.getY() + directions[resIndex[res]][1]); 
  
  
@@ -154,8 +154,8 @@ Node Rrt::extend(Node nearest, Node target) {
     else return EMPTY_STATE; 
 } 
  
-Node Rrt::randomState() { 
-    Node randomState; 
+Point Rrt::randomState() { 
+    Point randomState; 
  
     randomState.setX( rand() % envMatrixX ); 
     randomState.setY( rand() % envMatrixY ); 
@@ -164,7 +164,7 @@ Node Rrt::randomState() {
 } 
  
  
-int Rrt::bresenham(Node stat1, Node stat2)
+int Rrt::bresenham(Point stat1, Point stat2)
 // retorna 0 se consegue traçar linha entre os dois pontos 
 // útil para fazer um passo maior que uma unidade de celula.
 {      
@@ -224,7 +224,7 @@ int Rrt::bresenham(Node stat1, Node stat2)
        } 
  } 
 
-int Rrt::collision(Node nearest, Node extended) { 
+int Rrt::collision(Point nearest, Point extended) { 
     if(extended.getX() >= 0 && extended.getX() < envMatrixX && 
        extended.getY() >= 0 && extended.getY() < envMatrixY) 
  
@@ -235,19 +235,19 @@ int Rrt::collision(Node nearest, Node extended) {
 } 
  
  
-void Rrt::addNode(RRTTree *nearest, Node extended) { 
-    //cout << "AddNode " << extended << "at " << nearest->nodo << endl; 
+void Rrt::addPoint(RRTTree *nearest, Point extended) { 
+    //cout << "AddPoint " << extended << "at " << nearest->nodo << endl; 
  
-    RRTTree *extended_node; 
-    extended_node = new RRTTree; 
-    *extended_node = extended; 
+    RRTTree *extended_Point; 
+    extended_Point = new RRTTree; 
+    *extended_Point = extended; 
  
-    extended_node->pai = nearest; 
-    nearest->filhos.push_back(*extended_node); //insere extended como filho de nearest 
+    extended_Point->pai = nearest; 
+    nearest->filhos.push_back(*extended_Point); //insere extended como filho de nearest 
 } 
  
  
-void Rrt::encontraFim(RRTTree *tree,Node goal,RRTTree **fim) 
+void Rrt::encontraFim(RRTTree *tree,Point goal,RRTTree **fim) 
 { 
     if (tree->nodo != EMPTY_STATE){ 
         //cout << tree->nodo << " == " << goal << " = " << (tree->nodo == goal) << endl; 
@@ -260,8 +260,8 @@ void Rrt::encontraFim(RRTTree *tree,Node goal,RRTTree **fim)
     } 
 } 
  
-std::list<Node> Rrt::findSolution() { 
-    std::list<Node> caminho; 
+std::list<Point> Rrt::findSolution() { 
+    std::list<Point> caminho; 
  
     RRTTree *aux = NULL; 
     encontraFim(tree,goal,&aux); 
@@ -274,7 +274,7 @@ std::list<Node> Rrt::findSolution() {
     return caminho; 
 } 
  
-void RRTTree::treeToList_recursive(RRTTree *tree,list<Node>*caminho) 
+void RRTTree::treeToList_recursive(RRTTree *tree,list<Point>*caminho) 
 { 
     if( tree->nodo != EMPTY_STATE ){ 
         caminho->push_back(tree->nodo); 
@@ -284,9 +284,9 @@ void RRTTree::treeToList_recursive(RRTTree *tree,list<Node>*caminho)
     } 
 } 
  
-list<Node> RRTTree::treeToList() 
+list<Point> RRTTree::treeToList() 
 { 
-	std::list<Node> caminho; 
+	std::list<Point> caminho; 
  
 	treeToList_recursive(this,&caminho); 
  

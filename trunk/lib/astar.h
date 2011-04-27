@@ -10,6 +10,52 @@
 
 using namespace std;
 
+/**
+ * Node
+ * Documentation Pending
+ * \ingroup Pathplan
+ */
+
+class Node {
+
+	public:
+		int x;
+		int y;
+
+		Node() {}
+
+		Node(int x, int y) {
+			this->x = x;
+			this->y = y;
+		}
+
+		bool operator==(const Node &other) const {
+			return ((other.x == x) && (other.y == y));
+		}
+
+		bool operator==(const Point &other) const {
+			return ((other.getX() == x) && (other.getY() == y));
+		}
+
+		bool operator!=(const Node &other) const {
+			return ((other.x != x) || (other.y != y));
+		}
+
+		bool operator<(const Node &other) const {
+			return ((this->x < other.x) ||
+					((this->x == other.x) && (this->y < other.y)));
+		}
+
+		int getX() { return x; }
+
+		int getY() { return y; }
+
+		void setX(int x) { this->x = x; }
+
+		void setY(int y) { this->y = y;}
+
+};
+
 typedef set<Node> NodeList;
 
 /**

@@ -8,11 +8,11 @@
 #include "constants.h"
 #include "pathplan.h"
 
-using RP::Point;
 using namespace std;
+using RP::Point;
 
 
-#define EMPTY_STATE (Node(-10, -10))
+#define EMPTY_STATE (Point(-10, -10))
 #define SQR(x) ((x)*(x)) //para Distance
 
 typedef list<Point> Solucao;
@@ -28,24 +28,24 @@ class RRTTree
 		/**
 		 * Transforms a tree into a list recursively containing the correct path
 		 */
-		void treeToList_recursive(RRTTree *tree,list<Node>*caminho);
+		void treeToList_recursive(RRTTree *tree,list<Point>*caminho);
 
     public:
 
-        Node nodo;
+        Point nodo;
         list<RRTTree> filhos;
         RRTTree *pai;
 
         RRTTree() {pai=NULL;};
         ~RRTTree() {};
-        RRTTree(Node param) { nodo = param; };
+        RRTTree(Point param) { nodo = param; };
         
 		/**
 		 * Transforms a tree into a list
 		 */
-		list<Node> 	treeToList(); //transforma arvore em uma lista de nodos
+		list<Point> 	treeToList(); //transforma arvore em uma lista de nodos
 
-		RRTTree operator= (Node param) { return nodo=param; };
+		RRTTree operator= (Point param) { return nodo=param; };
 };
 
 /**
@@ -72,7 +72,7 @@ class Rrt: public Pathplan
 
 	private:
 		RRTTree 	*tree;
-		Node 		initial, goal;
+		Point 		initial, goal;
 
 		/**
 		 * Generates a path between two points within a time limit.
@@ -83,75 +83,75 @@ class Rrt: public Pathplan
 		/**
 		 * Choose whether the direction is towards the objective or to take a random path 
 		 */
-		Node 		chooseTarget();
+		Point 		chooseTarget();
 		
 		/**
-		 * Calculates the nearest node for 'target'
-		 * @param target Target node
+		 * Calculates the nearest Point for 'target'
+		 * @param target Target Point
 		 */
-		RRTTree* 	findNearest(Node target);
+		RRTTree* 	findNearest(Point target);
 		
 		/**
-		 * Calculates the distance between two nodes
-		 * @param a A node
-		 * @param b Another node
+		 * Calculates the distance between two Points
+		 * @param a A Point
+		 * @param b Another Point
 		 */
-		float 		distance(Node a, Node b);
+		float 		distance(Point a, Point b);
 		
 		/**
-		 * Make a step between nodes in the field, selecting the 'shortest' path in a random set of directions
-		 * @param nearest The nearest node
-		 * @param target The target node
+		 * Make a step between Points in the field, selecting the 'shortest' path in a random set of directions
+		 * @param nearest The nearest Point
+		 * @param target The target Point
 		 */
-		Node 		extend(Node nearest, Node target);
+		Point 		extend(Point nearest, Point target);
 		
 		/**
-		 * Creates a new node and sets it's 'father' to be the nearest node.
-		 * Also, it pushes-back the extended node to the list of children-nodes
-		 * @param nearest The nearest node in the set
-		 * @param extended The next node to follow
+		 * Creates a new Point and sets it's 'father' to be the nearest Point.
+		 * Also, it pushes-back the extended Point to the list of children-Points
+		 * @param nearest The nearest Point in the set
+		 * @param extended The next Point to follow
 		 */
-		void 		addNode(RRTTree *nearest, Node extended);
+		void 		addPoint(RRTTree *nearest, Point extended);
 		
 		/**
 		 * @return A ordered pair within the field bounds
 		 */
-		Node 		randomState();
+		Point 		randomState();
 		
 		/**
 		 * Select points in the field that better aproximates a straight line between two points
-		 * @param stat1 Starting node
-		 * @param stat2 Finishing node
+		 * @param stat1 Starting Point
+		 * @param stat2 Finishing Point
 		 */
-		int 		bresenham(Node stat1, Node stat2);
+		int 		bresenham(Point stat1, Point stat2);
 		
 		/**
-		 * Guarantee that the line between the two nodes can be walked upon
-		 * @param nearest The nearest node
-		 * @param extended The extended node
+		 * Guarantee that the line between the two Points can be walked upon
+		 * @param nearest The nearest Point
+		 * @param extended The extended Point
 		 */
-		int 		collision(Node nearest, Node extended);
+		int 		collision(Point nearest, Point extended);
 		
 		/**
-		 * Finds the nearest node of the tree to the target
+		 * Finds the nearest Point of the tree to the target
 		 * @param tree The tree to be searched on
 		 * @param target The target point
-		 * @param nearest Double pointer to store the nearest node
+		 * @param nearest Double pointer to store the nearest Point
 		 */
-		void 		nearestState(RRTTree *tree,Node target,RRTTree **nearest);
+		void 		nearestState(RRTTree *tree,Point target,RRTTree **nearest);
 		
 		/**
 		 * Find the end of a tree
 		 * @param tree The tree to be searched on
-		 * @param goal The ending node
+		 * @param goal The ending Point
 		 * @param fim A pointer 
 		 */
-		void 		encontraFim(RRTTree *tree,Node goal,RRTTree **fim);
+		void 		encontraFim(RRTTree *tree,Point goal,RRTTree **fim);
 		
 		/**
-		 * Creates a list with the path-solution nodes
+		 * Creates a list with the path-solution Points
 		 */
-		list<Node>	findSolution();
+		list<Point>	findSolution();
 };
 
 
