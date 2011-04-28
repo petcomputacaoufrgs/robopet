@@ -16,7 +16,7 @@ using RP::Point;
 #define EMPTY_STATE (Point(-10, -10))
 #define SQR(x) ((x)*(x)) //para Distance
 
-typedef list<Point> Solucao;
+typedef vector<Point> Solucao;
 
 /**
  * @ingroup Pathplan
@@ -29,12 +29,12 @@ class RRTTree
 		/**
 		 * Transforms a tree into a list recursively containing the correct path
 		 */
-		void treeToList_recursive(RRTTree *tree,list<Point>*caminho);
+		void treeToVector_recursive(RRTTree *tree,vector<Point>*caminho);
 
     public:
 
         Point nodo;
-        list<RRTTree> filhos;
+        vector<RRTTree> filhos;
         RRTTree *pai;
 
         RRTTree() {pai=NULL;};
@@ -42,9 +42,9 @@ class RRTTree
         RRTTree(Point param) { nodo = param; };
         
 		/**
-		 * Transforms a tree into a list
+		 * Transforms a tree into a vector
 		 */
-		list<Point> 	treeToList(); //transforma arvore em uma lista de nodos
+		vector<Point> 	treeToVector(); //transforma arvore em uma lista de nodos
 
 		RRTTree operator= (Point param) { return nodo=param; };
 };
@@ -64,6 +64,8 @@ class Rrt: public Pathplan
 		int			stepsize;
 		double		goalProb;
 		int			timeLimit;
+		
+		vector<Point>	fullPath;
 
 		/**
 		 * Runs the Rrt algorithm
@@ -152,7 +154,7 @@ class Rrt: public Pathplan
 		/**
 		 * Creates a list with the path-solution Points
 		 */
-		list<Point>	findSolution();
+		vector<Point>	findSolution();
 };
 
 

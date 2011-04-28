@@ -6,7 +6,6 @@
 #include <cstdio>
 #include <vector>
 #include <iostream>
-#include <list>
 #include <climits>
 
 #include "constants.h"
@@ -50,8 +49,7 @@ class Pathplan
 		~Pathplan();
 		void init();
 
-		list<Point> 	pathFull;  //full solution, showing possible partial branches
-		list<Point> 	pathFinal; //final solution, for path execution purposes (next point to visit)
+		vector<Point> 	path;
 		envType 		**env; //generic environment matrix
 		ppStatusType 	status;
 		
@@ -63,7 +61,7 @@ class Pathplan
 		 * @param PointIndex index of the Point on the path.
 		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
 		 */
-		Point getPathNodeMM(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in cells units
+		Point getPathNodeMM(int pointIndex);
 		
 		/** 
 		 * Returns a Point from the calculated path with coordinates in Cells unit.
@@ -71,14 +69,14 @@ class Pathplan
 		 * @param PointIndex index of the Point on the path.
 		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
 		 */
-		Point getPathNodeCell(int PointIndex); //returns a specific Point on pathFinal (initialState is 0) in mm (milimiters)
+		Point getPathNodeCell(int pointIndex);
 		
 		/** 
 		 * Fills the enviroment with positions of the obstacles.
 		 * 
 		 * @param positions positions, in mm, of the obstacules.
 		*/
-		void fillEnv(vector<RP::Point> positions); //fills the enviroment with positions of the obstacles (currently, only for players)
+		void fillEnv(vector<RP::Point> positions);
 		
 		/** 
 		 * Returns the value used as radius (unit: cells) for obstacules in the environment matrix.
