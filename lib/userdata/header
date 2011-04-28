@@ -7,5 +7,7 @@
 #include "movingObject.h"
 #include "player.h"
 #include "physicsRobot.h"
+#include "pathplan_player.h"
+#include "pathplan.h"
 %}
 

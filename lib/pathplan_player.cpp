@@ -1,42 +1,30 @@
 #include "pathplan_player.h"
 
-void PathplanPlayer::setPath(Pathplan *path)
+void PathplanPlayer::iteratePathplan()
 {
-	if ( _pathplanner != NULL ) {
-		delete _pathplanner;
+	// Case 1: no pathplanning has been calculated for this player.
+	if ( node == PATH_NOT_READY ) {
+
+		pathplan->setInitialPos( getPosition() );
+		pathplan->setFinalPos( getFuturePosition() );
+		pathplan->run();
+		node = 0;
 	}
-	
-	_pathplanner = path;
+	// Case 2: this player has reached it's final goal.
+	else if ( isAt( pathplan->getFinalPos(), 60 ) ) {
+		
+		node = PATH_NOT_READY;
+		return;
+	}
+	// Case 3: this player has reached the destinated pathplan node.
+	else if ( isAt( getActualNode(), 60 ) ) {
+
+		node += 1;
+	}
 }
 
-void PathplanPlayer::setFuturePosition(Point p)
-{		
-	runPathplanning( getCurrentPosition() , p );
-
-	Player::setFuturePosition(getNextNode());
-}
-
-void PathplanPlayer::addObstacle(const MovingObject &m)
+Point PathplanPlayer::getActualNode()
 {
-	_obstacles.push_back(m.getPosition());
-}
-
-void PathplanPlayer::runPathplanning(Point from, Point to)
-{	
-	
-	// make it a smart pathplan
-	
-	_pathplanner->setInitialPos(from);
-	_pathplanner->setFinalPos(to);
-
-	_pathplanner->fillEnv(_obstacles);
-	_pathplanner->run();
-}
-
-Point PathplanPlayer::getNextNode()
-{
-	_node++;
-	
-	return _pathplanner->getPathNodeMM(_node);
+	return pathplan->getPathNodeMM(node);
 }
 

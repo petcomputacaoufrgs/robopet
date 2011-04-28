@@ -255,7 +255,7 @@ def parse filename
 			buff = ''
 
 			doc.xpath('//Method').each do |m|
-				if c.type_id == m.attr('context') && !m.attr('artificial')
+				if c.type_id == m.attr('context') && !m.attr('artificial') && m.attr('access') == 'public'
 					c.add_method Moonbind::Method.new(m)
 				end
 			end

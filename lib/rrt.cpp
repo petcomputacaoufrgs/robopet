@@ -24,8 +24,8 @@ void Rrt::run()
 	
 	tree = rrtPlan(); 
  
-    this->pathFull = tree->treeToList(); 
-	this->pathFinal = findSolution(); 
+    this->fullPath = tree->treeToVector(); 
+	this->path = findSolution(); 
  
 //	printPathplan();
 } 
@@ -103,7 +103,7 @@ void Rrt::nearestState(RRTTree *tree,Point target,RRTTree **nearest) {
        if (distance(actual,target) < distance((*nearest)->nodo,target)) 
            *nearest = tree; 
  
-       for(list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
+       for(vector<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
            nearestState(&(*i),target,nearest); 
     } 
 } 
@@ -258,13 +258,13 @@ void Rrt::encontraFim(RRTTree *tree,Point goal,RRTTree **fim)
         if(tree->nodo == goal) 
             *fim = tree; 
         else 
-            for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
+            for(std::vector<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
                 encontraFim(&(*i),goal,fim); 
     } 
 } 
  
-std::list<Point> Rrt::findSolution() { 
-    std::list<Point> caminho; 
+std::vector<Point> Rrt::findSolution() { 
+    std::vector<Point> caminho; 
  
     RRTTree *aux = NULL; 
     encontraFim(tree,goal,&aux); 
@@ -281,21 +281,21 @@ std::list<Point> Rrt::findSolution() {
     return caminho; 
 } 
  
-void RRTTree::treeToList_recursive(RRTTree *tree,list<Point>*caminho) 
+void RRTTree::treeToVector_recursive(RRTTree *tree,vector<Point>*caminho) 
 { 
     if( tree->nodo != EMPTY_STATE ){ 
         caminho->push_back(tree->nodo); 
  
-        for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
-			treeToList_recursive(&(*i),caminho); 
+        for(std::vector<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
+			treeToVector_recursive(&(*i),caminho); 
     } 
 } 
  
-list<Point> RRTTree::treeToList() 
+vector<Point> RRTTree::treeToVector() 
 { 
-	std::list<Point> caminho; 
+	vector<Point> caminho; 
  
-	treeToList_recursive(this,&caminho); 
+	treeToVector_recursive(this,&caminho); 
  
 	return caminho; 
 } 

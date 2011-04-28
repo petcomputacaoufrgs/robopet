@@ -1,5 +1,5 @@
 CC = gcc
-OBJECTS = referee point vector line movingObject player physicsRobot
+OBJECTS = referee point vector line movingObject player physicsRobot pathplan_player 
 XML = $(OBJECTS:=.xml)
 SWIGS = $(OBJECTS:=.i)
 

@@ -120,7 +120,7 @@ void Pathplan::printPathplan()
 			aux[j][i] = env[j][i];
 
 	// fills the Points positions
-	for(unsigned int i=0; i<pathFinal.size(); i++) {
+	for(unsigned int i=0; i<path.size(); i++) {
 		Point p = getPathNodeCell(i);
 		aux[(int)p.getX()][(int)p.getY()] = PATH;
 	}
@@ -166,29 +166,23 @@ void Pathplan::fillEnv(vector<Point> positions)
 	}
 }
 
-Point Pathplan::getPathNodeMM(int PointIndex)
+Point Pathplan::getPathNodeMM(int pointIndex)
 {
-	list<Point>::iterator it;
-
-	for( it=pathFull.begin(); PointIndex>0; it++ )
-		PointIndex--;
-
-	Point Point = *it;
+	Point p = getPathNodeCell(pointIndex);
 	
-	Point.setX( CELLS_TO_MM_X(Point.getX()) );
-	Point.setY( CELLS_TO_MM_Y(Point.getY()) );
-	
-	return Point;
+	if( p.getX()==-1 && p.getY()==-1 )
+		return p;
+	else
+		return Point( CELLS_TO_MM_X(p.getX()),
+					  CELLS_TO_MM_Y(p.getY()) );
 }
 
-Point Pathplan::getPathNodeCell(int PointIndex)
+Point Pathplan::getPathNodeCell(int pointIndex)
 {
-	list<Point>::iterator it;
-
-	for( it=pathFinal.begin(); PointIndex>0; it++ )
-		PointIndex--;
-
-	return *it;
+	if( pointIndex>=0 && pointIndex<path.size() )
+		return path[pointIndex];
+	else
+		return Point(-1,-1);
 }
 
 Point Pathplan::getInitialPos()
