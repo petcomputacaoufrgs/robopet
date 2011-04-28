@@ -112,41 +112,45 @@ void Pathplan::printEnv()
 
 void Pathplan::printPathplan()
 {
-	envType aux[envMatrixX][envMatrixY];
+	if(status == SUCCESS) {
+		
+		envType aux[envMatrixX][envMatrixY];
 
-	// creates temporary copy of the environment
-	for (int i = 0; i < envMatrixY; i += 1)
-		for (int j = 0; j < envMatrixX; j += 1)
-			aux[j][i] = env[j][i];
+		// creates temporary copy of the environment
+		for (int i = 0; i < envMatrixY; i += 1)
+			for (int j = 0; j < envMatrixX; j += 1)
+				aux[j][i] = env[j][i];
 
-	// fills the Points positions
-	for(unsigned int i=0; i<path.size(); i++) {
-		Point p = getPathNodeCell(i);
-		aux[(int)p.getX()][(int)p.getY()] = PATH;
-	}
-	
-	// put markers on initial and final positions
-	aux[(int)initialpos.getX()][(int)initialpos.getY()] = MARKER1;
-	aux[(int)finalpos.getX()][(int)finalpos.getY()] = MARKER2;
-	
-	// print a separator
-	for (int x = 0; x < envMatrixX; x++)
-		cout<<"_";
-	cout<<endl;
-	
-	// print it all
-	for (int i = 0; i < envMatrixY; i += 1) {
-		for (int j = 0; j < envMatrixX; j += 1) {
-            switch (aux[j][i]){
-                case OBSTACLE: cout << "#"; break;
-                case PATH: cout << "o"; break;
-                case MARKER1: cout << "I"; break;
-                case MARKER2: cout << "F"; break;
-                default: cout << " "; break;
-			}
+		// fills the Points positions
+		for(unsigned int i=0; i<path.size(); i++) {
+			Point p = getPathNodeCell(i);
+			aux[(int)p.getX()][(int)p.getY()] = PATH;
 		}
-		cout << endl;
-    }	
+		
+		// put markers on initial and final positions
+		aux[(int)initialpos.getX()][(int)initialpos.getY()] = MARKER1;
+		aux[(int)finalpos.getX()][(int)finalpos.getY()] = MARKER2;
+		
+		// print a separator
+		for (int x = 0; x < envMatrixX; x++)
+			cout<<"_";
+		cout<<endl;
+		
+		// print it all
+		for (int i = 0; i < envMatrixY; i += 1) {
+			for (int j = 0; j < envMatrixX; j += 1) {
+				switch (aux[j][i]){
+					case OBSTACLE: cout << "#"; break;
+					case PATH: cout << "o"; break;
+					case MARKER1: cout << "I"; break;
+					case MARKER2: cout << "F"; break;
+					default: cout << " "; break;
+				}
+			}
+			cout << endl;
+		}
+	
+	}
 
 }
 
