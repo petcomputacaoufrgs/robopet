@@ -18,14 +18,19 @@ using namespace std;
  
 void Rrt::run() 
 {
- 
-	initial = initialpos; 
+ 	initial = initialpos; 
 	goal = finalpos; 
 	
 	tree = rrtPlan(); 
- 
+
     this->fullPath = tree->treeToVector(); 
-	this->path = findSolution(); 
+
+	if(status != ERROR_TIMELIMIT) {
+		vector<Point> inversePath = findSolution();
+		int size = inversePath.size();
+		for(int i=0; i<size; i++)
+			this->path.push_back( inversePath[size-i-1] );
+	}
  
 //	printPathplan();
 } 
@@ -65,8 +70,7 @@ RRTTree* Rrt::rrtPlan() {
 			}
 	} 
  
-	//We add the final poin to the path to help finding the final path on findSolution()
-	addPoint(nearest, goal); 
+	addPoint(nearest, goal); //we add the final poin to the path to help finding the final path on findSolution()
  
 	return tree; 
 } 
@@ -286,8 +290,8 @@ void RRTTree::treeToVector_recursive(RRTTree *tree,vector<Point>*caminho)
     if( tree->nodo != EMPTY_STATE ){ 
         caminho->push_back(tree->nodo); 
  
-        for(std::vector<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
-			treeToVector_recursive(&(*i),caminho); 
+        for(unsigned int i=0; i < tree->filhos.size(); i++) 
+			treeToVector_recursive(&tree->filhos[i],caminho); 
     } 
 } 
  

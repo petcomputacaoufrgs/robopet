@@ -9,7 +9,7 @@
 class PathplanPlayer : public Player
 {
 	public:
-		PathplanPlayer() : Player() { node = PATH_NOT_READY; pathplan=NULL; };
+		PathplanPlayer() : Player(), pathplan(NULL), node(PATH_NOT_READY) {};
 		~PathplanPlayer() {};
 
 		Pathplan	*pathplan;
