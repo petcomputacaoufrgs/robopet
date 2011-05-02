@@ -18,6 +18,8 @@ using namespace std;
  
 void Rrt::run() 
 {
+	path.clear();
+	
  	initial = initialpos; 
 	goal = finalpos; 
 	
@@ -26,12 +28,21 @@ void Rrt::run()
     this->fullPath = tree->treeToVector(); 
 
 	if(status != ERROR_TIMELIMIT) {
-		vector<Point> inversePath = findSolution();
-		int size = inversePath.size();
-		for(int i=0; i<size; i++)
-			this->path.push_back( inversePath[size-i-1] );
+		this->path = findSolution();
+		
+		// convert public Path to MM
+		for(unsigned int i=0; i<path.size(); i++) {
+			path[i].setXY( CELLS_TO_MM_X(path[i].getX()),
+						   CELLS_TO_MM_Y(path[i].getY()));
+		}
 	}
- 
+
+	// convert public Full Path to MM
+	for(unsigned int i=0; i<fullPath.size(); i++) {
+		fullPath[i].setXY( CELLS_TO_MM_X(fullPath[i].getX()),
+							CELLS_TO_MM_Y(fullPath[i].getY()));
+	}
+
 //	printPathplan();
 } 
  
@@ -107,7 +118,7 @@ void Rrt::nearestState(RRTTree *tree,Point target,RRTTree **nearest) {
        if (distance(actual,target) < distance((*nearest)->nodo,target)) 
            *nearest = tree; 
  
-       for(vector<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
+       for(list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
            nearestState(&(*i),target,nearest); 
     } 
 } 
@@ -254,7 +265,7 @@ void Rrt::addPoint(RRTTree *nearest, Point extended) {
 } 
  
  
-void Rrt::encontraFim(RRTTree *tree,Point goal,RRTTree **fim) 
+void Rrt::findEnding(RRTTree *tree,Point goal,RRTTree **fim) 
 { 
     if (tree->nodo != EMPTY_STATE){ 
         //cout << tree->nodo << " == " << goal << " = " << (tree->nodo == goal) << endl; 
@@ -262,27 +273,38 @@ void Rrt::encontraFim(RRTTree *tree,Point goal,RRTTree **fim)
         if(tree->nodo == goal) 
             *fim = tree; 
         else 
-            for(std::vector<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
-                encontraFim(&(*i),goal,fim); 
+            for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
+                findEnding(&(*i),goal,fim); 
     } 
 } 
  
 std::vector<Point> Rrt::findSolution() { 
-    std::vector<Point> caminho; 
+    
+    std::vector<Point> tempPath, correctedPath;
  
+    // First we find the last node of the tree, i.e. the goal.
     RRTTree *aux = NULL; 
-    encontraFim(tree,goal,&aux); 
- 
+    findEnding(tree,goal,&aux);
+    
+    // With aux pointing to the last node of the tree, we reconstruct the solution tree by navigating upwards.
     while( aux != NULL ){ 
-        caminho.push_back(aux->nodo); 
-        aux = aux->pai; 
+        tempPath.push_back(aux->nodo); 
+        aux = aux->pai; //"Who's your daddy?" - Darth Vader
     } 
- 
-	if(caminho.size() > 0)
+	
+	int size = tempPath.size();
+	if(size > 0) {
+		// Because we built the path upwards on the tree, the result is inverted (it starts in the end).
+		for(int i=0; i<size; i++)
+			correctedPath.push_back( tempPath[size-i-1] );
+		
 		status = SUCCESS;
-	else
+	}
+	// If no path was built then the goal wasn't in the tree, which means it wasn't reached.
+	else 
 		status = ERROR_UNKNOWN;
-    return caminho; 
+		
+    return correctedPath; 
 } 
  
 void RRTTree::treeToVector_recursive(RRTTree *tree,vector<Point>*caminho) 
@@ -290,8 +312,8 @@ void RRTTree::treeToVector_recursive(RRTTree *tree,vector<Point>*caminho)
     if( tree->nodo != EMPTY_STATE ){ 
         caminho->push_back(tree->nodo); 
  
-        for(unsigned int i=0; i < tree->filhos.size(); i++) 
-			treeToVector_recursive(&tree->filhos[i],caminho); 
+        for(std::list<RRTTree>::iterator i=tree->filhos.begin(); i != tree->filhos.end(); ++i) 
+			treeToVector_recursive(&(*i),caminho); 
     } 
 } 
  

@@ -1,6 +1,6 @@
 #include "pathplan_player.h"
 
-void PathplanPlayer::iteratePathplan()
+void PathplanPlayer::calculateFuturePosition()
 {
 	// Case 1: no pathplanning has been calculated for this player.
 	if ( node == PATH_NOT_READY ) {
@@ -21,6 +21,8 @@ void PathplanPlayer::iteratePathplan()
 	else if ( isAt( getActualNode(), 60 ) ) {
 		node += 1;
 	}
+	
+	setFuturePosition(getActualNode());
 }
 
 Point PathplanPlayer::getActualNode()
