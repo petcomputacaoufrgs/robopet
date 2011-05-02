@@ -15,7 +15,7 @@ class PathplanPlayer : public Player
 		Pathplan	*pathplan;
 		int 		node;
 			
-		void 		iteratePathplan();
+		void 		calculateFuturePosition();
 		Point 		getActualNode();
 
 	private:	

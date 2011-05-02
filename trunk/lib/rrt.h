@@ -34,7 +34,7 @@ class RRTTree
     public:
 
         Point nodo;
-        vector<RRTTree> filhos;
+        list<RRTTree> filhos;
         RRTTree *pai;
 
         RRTTree() {pai=NULL;};
@@ -149,7 +149,7 @@ class Rrt: public Pathplan
 		 * @param goal The ending Point
 		 * @param fim A pointer 
 		 */
-		void 		encontraFim(RRTTree *tree,Point goal,RRTTree **fim);
+		void 		findEnding(RRTTree *tree,Point goal,RRTTree **fim);
 		
 		/**
 		 * Creates a list with the path-solution Points

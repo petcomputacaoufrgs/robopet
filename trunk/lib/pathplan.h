@@ -50,6 +50,7 @@ class Pathplan
 		void init();
 
 		vector<Point> 	path;
+		vector<Point>	obstacles;
 		envType 		**env; //generic environment matrix
 		ppStatusType 	status;
 		
@@ -76,7 +77,7 @@ class Pathplan
 		 * 
 		 * @param positions positions, in mm, of the obstacules.
 		*/
-		void fillEnv(vector<RP::Point> positions);
+		void fillEnv();
 		
 		/** 
 		 * Returns the value used as radius (unit: cells) for obstacules in the environment matrix.
@@ -145,19 +146,6 @@ class Pathplan
 		 */
 		Point getFinalPos();
 		
-		// CONVERSION FUNCTIONS
-		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH; }
-		double CELLS_PER_MM_Y() { return envMatrixY / (float) FIELD_HEIGHT; }
-		double MM_PER_CELLS_X() { return FIELD_WIDTH / (float) envMatrixX; }
-		double MM_PER_CELLS_Y() { return FIELD_HEIGHT / (float) envMatrixY; }
-
-		double MM_TO_CELLS_X(double x) { return x * (CELLS_PER_MM_X()); }
-		double MM_TO_CELLS_Y(double y) { return y * (CELLS_PER_MM_Y()); }
-
-		double CELLS_TO_MM_X(double x) { return x * (MM_PER_CELLS_X()); }
-		double CELLS_TO_MM_Y(double y) { return y * (MM_PER_CELLS_Y()); }
-
-	
 	private:
 
 	protected:
@@ -173,6 +161,18 @@ class Pathplan
 		 * Crates a 'in-field' circle around the position showing whether it's an obstacle or not.
 		 */
 		void fillEnv_playerBox(int centerx, int centery);
+		
+		// CONVERSION FUNCTIONS
+		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH; }
+		double CELLS_PER_MM_Y() { return envMatrixY / (float) FIELD_HEIGHT; }
+		double MM_PER_CELLS_X() { return FIELD_WIDTH / (float) envMatrixX; }
+		double MM_PER_CELLS_Y() { return FIELD_HEIGHT / (float) envMatrixY; }
+
+		double MM_TO_CELLS_X(double x) { return x * (CELLS_PER_MM_X()); }
+		double MM_TO_CELLS_Y(double y) { return y * (CELLS_PER_MM_Y()); }
+
+		double CELLS_TO_MM_X(double x) { return x * (MM_PER_CELLS_X()); }
+		double CELLS_TO_MM_Y(double y) { return y * (MM_PER_CELLS_Y()); }
 };
 
 

@@ -154,7 +154,7 @@ void Pathplan::printPathplan()
 
 }
 
-void Pathplan::fillEnv(vector<Point> positions)
+void Pathplan::fillEnv()
 {
 	int centerx, centery;
 
@@ -162,10 +162,9 @@ void Pathplan::fillEnv(vector<Point> positions)
 		for (int y = 0; y < envMatrixY; y++)
 			env[x][y] = FREE;
 
-	vector<Point>::iterator it;
-	for(it=positions.begin(); it<positions.end(); it++) {
-		centerx = round( MM_TO_CELLS_X((*it).getX()) );
-		centery = round( MM_TO_CELLS_Y((*it).getY()) );
+	for(unsigned int i=0; i<obstacles.size(); i++) {
+		centerx = round( MM_TO_CELLS_X(obstacles[i].getX()) );
+		centery = round( MM_TO_CELLS_Y(obstacles[i].getY()) );
 		fillEnv_playerBox(centerx,centery);
 	}
 }
@@ -183,7 +182,7 @@ Point Pathplan::getPathNodeMM(int pointIndex)
 
 Point Pathplan::getPathNodeCell(int pointIndex)
 {
-	if( pointIndex>=0 && pointIndex<path.size() )
+	if( pointIndex>=0 && (unsigned int)pointIndex<path.size() )
 		return path[pointIndex];
 	else
 		return Point(-1,-1);
