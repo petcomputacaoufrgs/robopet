@@ -6,7 +6,7 @@
 
 #include "point.h"
 #include "constants.h"
-#include "pathplan.h"
+#include "discretePathplan.h"
 #include "utils.h"
 
 using namespace std;
@@ -54,7 +54,7 @@ class RRTTree
  * @ingroup Pathplan
  */
 
-class Rrt: public Pathplan
+class Rrt: public DiscretePathplan
 {
 	public:
 		Rrt( int _directionsToLook=3, int _stepsize=1, double _goalProb=0.5, int _timeLimit=1 ) : directionsToLook(_directionsToLook), stepsize(_stepsize), goalProb(_goalProb), timeLimit(_timeLimit) {}

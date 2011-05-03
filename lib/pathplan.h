@@ -1,5 +1,5 @@
-#ifndef _PATHPLAN_H_
-#define _PATHPLAN_H_
+#pragma once
+
 
 #include <set>
 #include <cmath>
@@ -17,7 +17,6 @@ using namespace std;
 
 
 #define OBSTACULE_RADIUS 5
-#define ENV_MATRIX_SIZE_X 60  //dimensão x da matriz que abstrai o ambiente
 
 /**
  * \defgroup Pathplan Pathplan
@@ -34,6 +33,19 @@ enum ppStatusType
 	NOTHING, SUCCESS, ERROR_TIMELIMIT, ERROR_UNKNOWN, ERROR_UNREACHABLE
 };
 
+enum obstacleType
+{
+	BALL, ROBOT
+};
+
+struct ppObstacle
+{
+	Point pos;
+	obstacleType type;
+	
+	ppObstacle(Point _pos, obstacleType _type) : pos(_pos), type(_type) {}
+};
+
 /**
  * Abstract class defining a framework for pathplanning code
  * Further Documentation Pending
@@ -44,136 +56,34 @@ class Pathplan
 {
 	public:
 		//---- Constructor and Destructor ----
-		Pathplan(Point initialpos, Point finalpos);
 		Pathplan();
 		~Pathplan();
-		void init();
 
-		vector<Point> 	path;
-		vector<Point>	obstacles;
-		envType 		**env; //generic environment matrix
-		ppStatusType 	status;
+		vector<Point> 		path;
+		vector<ppObstacle>	obstacles;
+		ppStatusType 		status;
 		
 		
 		//----- Functions -----
-		/** 
-		 * Returns a Point from the calculated path with coordinates in mm (milimiters).
-		 * 
-		 * @param PointIndex index of the Point on the path.
-		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
-		 */
-		Point getPathNodeMM(int pointIndex);
-		
-		/** 
-		 * Returns a Point from the calculated path with coordinates in Cells unit.
-		 * 
-		 * @param PointIndex index of the Point on the path.
-		 * @return The requested Point if it exists, Point(-1,-1) otherwhise.
-		 */
-		Point getPathNodeCell(int pointIndex);
-		
-		/** 
-		 * Fills the enviroment with positions of the obstacles.
-		 * 
-		 * @param positions positions, in mm, of the obstacules.
-		*/
-		void fillEnv();
-		
-		/** 
-		 * Returns the value used as radius (unit: cells) for obstacules in the environment matrix.
-		 */
-		int  getRadius();
-		
-		/** 
-		 * Sets the value used as radius (unit: cells) for obstacules in the environment matrix.
-		 */
-		void setRadius(int radius);
-		
-		/** 
-		 * Sets the dimensions (unit: cells) of the environment matrix.
-		 * 
-		 * @param x horizontal dimension
-		 * @param y vertical dimension
-		 */
-		void setEnvXY( int x, int y );
-		
-		/** 
-		 * Returns the horizontal dimension (unit: cells) of the environment matrix.
-		 */
-		int getEnvMatrixX();
-		
-		/** 
-		 * Returns the vertical dimension (unit: cells) of the environment matrix.
-		 */
-		int getEnvMatrixY();
-		
-		/** Used for debugging purposes.
-		 * Prints the actual environment
-		 */
-		void printEnv();
-		
-		/** Used for debugging purposes.
-		 * Prints the actual environment with the calculated path
-		 */
-		void printPathplan();
-		
 		/**
-		 * Creates the path using a given algorithm.
+		 * Runs the pathplanning.
 		 */
-		virtual void run() {};
-
-		/** 
-		 * Sets the initial position of the pathplan to be runned.
-		 * 
-		 * @param pos Position in mm (milimiters).
-		 */
-		void setInitialPos(Point pos);
+		virtual void run() = 0;
 		
-		/** 
-		 * Sets the final position of the pathplan to be runned.
-		 * 
-		 * @param pos Position in mm (milimiters).
-		 */
-		void setFinalPos(Point pos);
+		virtual Point getPathNode(int pointIndex) = 0;
+				
+		virtual void setInitialPos(Point pos) = 0;
 		
-		/** 
-		 * Returns the initial position (unit: mm) of the pathplan.
-		 */
-		Point getInitialPos();
+		virtual void setFinalPos(Point pos) = 0;
 		
-		/** 
-		 * Returns the final position (unit: mm) of the pathplan.
-		 */
-		Point getFinalPos();
+		virtual Point getInitialPos() = 0;
 		
-	private:
-
+		virtual Point getFinalPos() = 0;
+		
+		
 	protected:
+	
 		//---- Position on the field (in grid coordinates) ----
 		Point initialpos;
 		Point finalpos;
-		
-		int 	envMatrixX, envMatrixY;
-		int  	radius;
-		
-		//---- Functions ----
-		/**
-		 * Crates a 'in-field' circle around the position showing whether it's an obstacle or not.
-		 */
-		void fillEnv_playerBox(int centerx, int centery);
-		
-		// CONVERSION FUNCTIONS
-		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH; }
-		double CELLS_PER_MM_Y() { return envMatrixY / (float) FIELD_HEIGHT; }
-		double MM_PER_CELLS_X() { return FIELD_WIDTH / (float) envMatrixX; }
-		double MM_PER_CELLS_Y() { return FIELD_HEIGHT / (float) envMatrixY; }
-
-		double MM_TO_CELLS_X(double x) { return x * (CELLS_PER_MM_X()); }
-		double MM_TO_CELLS_Y(double y) { return y * (CELLS_PER_MM_Y()); }
-
-		double CELLS_TO_MM_X(double x) { return x * (MM_PER_CELLS_X()); }
-		double CELLS_TO_MM_Y(double y) { return y * (MM_PER_CELLS_Y()); }
 };
-
-
-#endif

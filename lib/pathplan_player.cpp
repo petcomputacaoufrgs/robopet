@@ -27,6 +27,6 @@ void PathplanPlayer::calculateFuturePosition()
 
 Point PathplanPlayer::getActualNode()
 {
-	return pathplan->getPathNodeMM(node);
+	return pathplan->getPathNode(node);
 }
 
