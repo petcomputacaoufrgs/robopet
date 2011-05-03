@@ -15,6 +15,7 @@ OBJECTS= 	movingObject.o \
 			fieldInfo.o \
 			physicsRobot.o \
 			pathplan.o \
+			discretePathplan.o \
 			referee.o \
 			pathplan_player.o \
 			utils.o

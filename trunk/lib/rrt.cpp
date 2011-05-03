@@ -19,6 +19,8 @@ using namespace std;
 void Rrt::run() 
 {
 	path.clear();
+	fullPath.clear();
+	status = NOTHING;
 	
  	initial = initialpos; 
 	goal = finalpos; 
