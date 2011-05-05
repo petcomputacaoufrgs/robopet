@@ -9,6 +9,7 @@ void PathplanPlayer::calculateFuturePosition()
 		
 		cout << "running pathplan..." << endl;
 		pathplan->run();
+		
 		if(pathplan->status == SUCCESS)
 			node = 0;
 	}
@@ -22,7 +23,8 @@ void PathplanPlayer::calculateFuturePosition()
 		node += 1;
 	}
 	
-	setFuturePosition(getActualNode());
+	if(node != PATH_NOT_READY)
+		setFuturePosition( getActualNode() );
 }
 
 Point PathplanPlayer::getActualNode()

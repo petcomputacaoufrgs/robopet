@@ -6,19 +6,24 @@ AFLAGS = rsv
 
 LUA = -llua -ldl -lm
 
-OBJECTS= 	movingObject.o \
-			player.o \
-			point.o  \
-			vector.o \
-			line.o \
-			rrt.o \
-			fieldInfo.o \
-			physicsRobot.o \
-			pathplan.o \
-			discretePathplan.o \
-			referee.o \
-			pathplan_player.o \
-			utils.o
+OBJ_NAMES= 	movingObject \
+			player \
+			point  \
+			vector \
+			line \
+			rrt \
+			fieldInfo \
+			physicsRobot \
+			pathplan \
+			discretePathplan \
+			referee \
+			pathplan_player \
+			utils
+
+OBJDIR = obj
+OBJ_FILES = $(addsuffix .o,$(OBJ_NAMES))
+OBJECTS = $(addprefix $(OBJDIR)/,$(OBJ_FILES))
+
 
 .PHONY : all doc
 
@@ -34,8 +39,11 @@ robopet_lua.o:
 	cd userdata ; make
 	$(CC) -I./ -c userdata/robopet_lua.cpp -o $@ $(CFLAGS) -llua -ldl
 
-%.o: %.cpp %.h
+$(OBJDIR)/%.o: %.cpp %.h | $(OBJDIR)
 	$(CC) -c $< -o  $@ $(CFLAGS)
+
+$(OBJDIR):
+	@mkdir $(OBJDIR) -p
 
 repl: userdata/interpreter.cpp userdata/robopet_lua.o robopet.a
 	$(CC) -I. -o $@ $^ $(LUA)

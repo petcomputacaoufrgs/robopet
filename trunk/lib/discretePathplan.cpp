@@ -81,8 +81,9 @@ void DiscretePathplan::printEnv()
 
 void DiscretePathplan::printPathplan()
 {
+
 	if(status == SUCCESS) {
-		
+
 		envType aux[envMatrixX][envMatrixY];
 
 		// creates temporary copy of the environment
@@ -95,7 +96,7 @@ void DiscretePathplan::printPathplan()
 			Point p = getPathNodeCell(i);
 			aux[(int)p.getX()][(int)p.getY()] = PATH;
 		}
-		
+
 		// put markers on initial and final positions
 		aux[(int)initialpos.getX()][(int)initialpos.getY()] = MARKER1;
 		aux[(int)finalpos.getX()][(int)finalpos.getY()] = MARKER2;
@@ -104,7 +105,7 @@ void DiscretePathplan::printPathplan()
 		for (int x = 0; x < envMatrixX; x++)
 			cout<<"_";
 		cout<<endl;
-		
+
 		// print it all
 		for (int i = 0; i < envMatrixY; i += 1) {
 			for (int j = 0; j < envMatrixX; j += 1) {
@@ -118,7 +119,6 @@ void DiscretePathplan::printPathplan()
 			}
 			cout << endl;
 		}
-	
 	}
 
 }
@@ -145,21 +145,21 @@ void DiscretePathplan::fillEnv_playerBox(int x, int y)
 
 Point DiscretePathplan::getPathNode(int pointIndex)
 {
-	Point p = getPathNodeCell(pointIndex);
-	
-	if( p.getX()==-1 && p.getY()==-1 )
-		return p;
-	else
-		return Point( CELLS_TO_MM_X(p.getX()),
-					  CELLS_TO_MM_Y(p.getY()) );
-}
-
-Point DiscretePathplan::getPathNodeCell(int pointIndex)
-{
 	if( pointIndex>=0 && (unsigned int)pointIndex<path.size() )
 		return path[pointIndex];
 	else
 		return Point(-1,-1);
+}
+
+Point DiscretePathplan::getPathNodeCell(int pointIndex)
+{
+	Point p = getPathNode(pointIndex);
+	
+	if( p.getX()==-1 && p.getY()==-1 )
+		return p;
+	else
+		return Point( MM_TO_CELLS_X(p.getX()),
+					  MM_TO_CELLS_Y(p.getY()) );
 }
 
 Point DiscretePathplan::getInitialPos()
