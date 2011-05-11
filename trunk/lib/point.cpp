@@ -10,36 +10,24 @@ std::ostream& operator<<(std::ostream& out, Point p)
 
 void Point::setX(double newX)
 {
-      /*if(newX < 0)
-      {
-      		WARNING("Tried to set x < 0 ! Turned x into default value (0).");
-      		_x = 0;
-      }
-      else//*/
-      		_x = newX;
+	_x = newX;
 }
 
 void Point::setY(double newY)
 {
-     /*if(newY < 0)
-      {
-      		WARNING("Tried to set y < 0 ! Turned y into default value (0).");
-      		_y = 0;
-      }
-      else//*/
-      		_y = newY;
+	_y = newY;
 }
 
 void Point::setXY(double u, double v)
 {
-     setX(u);
-     setY(v);
+	_x = u;
+	_y = v;
 }
 
 void Point::setXY(const Point &p)
 {
-	setX(p.getX());
-	setY(p.getY());
+	_x = p._x;
+	_y = p._y;
 }
 
 

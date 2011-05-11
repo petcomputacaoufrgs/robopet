@@ -6,18 +6,26 @@ MovingObject::MovingObject(const MovingObject& other)
 }
 
 void MovingObject::setCurrentPosition(Point newCurrentPosition)
-{ _current_position = newCurrentPosition; }
+{
+	_current_position.setX(newCurrentPosition.getX());
+	_current_position.setY(newCurrentPosition.getY());
+}
 
 void MovingObject::setCurrentPosition(double x, double y)
-{ _current_position = Point(x, y); }
+{
+	_current_position.setX(x);
+	_current_position.setY(y);
+}
 
 void MovingObject::setCurrentPositionX(double x)
-{ _current_position = Point(x, getCurrentPosition().getY()); }
+{
+	_current_position.setX(x);
+}
 
 void MovingObject::setCurrentPositionY(double y)
-{ _current_position = Point(getCurrentPosition().getX(), y); }
-
-
+{
+	_current_position.setY(y);
+}
 
 void MovingObject::setPastPosition(Point newPastPosition)
 { _past_position = newPastPosition; }
@@ -62,7 +70,6 @@ double MovingObject::getDistance(const MovingObject& other) {
 }
 
 
-
 MovingObject& MovingObject::operator=(const MovingObject& other)
 {
     setCurrentPosition( other.getCurrentPosition() );
@@ -75,4 +82,3 @@ MovingObject& MovingObject::operator=(const MovingObject& other)
 
     return *this;
 }
-
