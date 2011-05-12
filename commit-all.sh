@@ -7,4 +7,6 @@ else
 	do
 		./commit.sh $projectname "Commiting all robopet. $1" $2
 	done
+	
+	./commit.sh hismas "Commiting all robopet. $1" $2
 fi
