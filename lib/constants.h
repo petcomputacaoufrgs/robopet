@@ -14,3 +14,5 @@
 #define BALL_RADIUS_MM 43
 
 #define BORDER 0 //to work we need to define a border
+
+#define TRESHOLD 20
