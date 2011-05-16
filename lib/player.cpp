@@ -101,8 +101,8 @@ void Player::follow(MovingObject m)
 void Player::goToPoint(Point p)
 {
 	setFuturePosition(p);
-	double angle = Vector(getPosition(),p).angle(Vector(1,0));
-	setFutureAngle( angle );
+//	double angle = Vector(getPosition(),p).angle(Vector(1,0));
+//	setFutureAngle( angle );
 }
 
 void Player::stay()
