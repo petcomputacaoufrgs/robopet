@@ -69,6 +69,7 @@ class Player: public MovingObject
 	 *	Sets the player future position to be that of the object
 	 */
 	void follow(MovingObject);
+	void goToPoint(Point);
 	
 	/***
 	 *	Asks the object if it is currently at (or very close to) the point
