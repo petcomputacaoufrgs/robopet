@@ -6,6 +6,8 @@
 using RP::MovingObject;
 using RP::Player;
 
+
+
 /**
  * 
  * \ingroup RoboPETLib
@@ -18,7 +20,8 @@ class Player: public MovingObject
 
     Player() { setId(-1); }
     ~Player() {}
-
+	
+		
     //----- Getters -----
     inline double 	getCurrentAngle() const { return _current_angle; }
     inline double 	getFutureAngle() const { return _future_angle; }
@@ -70,6 +73,7 @@ class Player: public MovingObject
 	 */
 	void follow(MovingObject);
 	void goToPoint(Point);
+
 	
 	/***
 	 *	Asks the object if it is currently at (or very close to) the point
@@ -82,7 +86,8 @@ class Player: public MovingObject
 	/**
      * to be done!!!
      */
-	void keepDistanceToBall(double distance);
+    void keepDistanceToBall(double);
+	void keepDistanceToBall(MovingObject, double);
 	
     /**
      * Sets the kick intensity to 999
