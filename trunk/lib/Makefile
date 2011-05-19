@@ -18,7 +18,8 @@ OBJ_NAMES= 	movingObject \
 			discretePathplan \
 			referee \
 			pathplan_player \
-			utils
+			utils \
+			gstar
 
 OBJDIR = obj
 OBJ_FILES = $(addsuffix .o,$(OBJ_NAMES))
