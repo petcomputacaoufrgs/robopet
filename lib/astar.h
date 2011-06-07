@@ -7,6 +7,7 @@
 #include <set>
 #include <vector>
 #include "pathplan.h"
+#include "discretePathplan.h"
 
 using namespace std;
 
@@ -63,9 +64,11 @@ typedef set<Node> NodeList;
  * \ingroup Pathplan
  */
 
-class AStar : public Pathplan {
+class AStar : public DiscretePathplan {
 
 	private:
+		Node nodeinitialpos, nodefinalpos;
+		
 		/**
 		*The set of nodes already evaluated
 		*/
@@ -162,7 +165,5 @@ class AStar : public Pathplan {
 		 * Construct the way of pathplan
 		 */
 		void reconstructPath();
-
 };
-
 #endif
