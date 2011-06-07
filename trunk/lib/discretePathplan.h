@@ -123,5 +123,4 @@ class DiscretePathplan : public Pathplan
 		double CELLS_TO_MM_X(double x) { return x * (MM_PER_CELLS_X()); }
 		double CELLS_TO_MM_Y(double y) { return y * (MM_PER_CELLS_Y()); }
 	
-	
 };

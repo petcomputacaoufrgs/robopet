@@ -2,12 +2,20 @@
 #include "utils.h"
 
 AStar::AStar() {
+			
+	
+	nodeinitialpos.setX(initialpos.getX());
+	nodeinitialpos.setY(initialpos.getY());
+	
+	nodefinalpos.setX(finalpos.getX());
+	nodefinalpos.setY(finalpos.getY());
+	
 	initialize();
 }
-
-AStar::AStar(Node start, Node goal) : Pathplan(Point(start.x,start.y), Point(goal.x,goal.y)){
+/*
+AStar::AStar(Node start, Node goal) : DiscretePathplan(Point(start.x,start.y), Point(goal.x,goal.y)){
 	initialize();
-}
+}*/
 
 void AStar::initialize() {
 	
@@ -86,8 +94,7 @@ float AStar::calcG(Node n) {
 }
 
 float AStar::calcH(Node x) {
-
-	return distance(x, finalpos);
+	return distance(x, nodefinalpos); //?
 }
 
 float AStar::calcF(Node x) {
@@ -128,14 +135,14 @@ void AStar::run() {
 	float tentative_g;
 
 	//INITIALIZE WITH THE INITIAL NODE
-	open_set.insert(initialpos);
+	open_set.insert(nodeinitialpos);
 
 	//the distance from the current Node to the start Node is 0
-	g[initialpos.x][initialpos.y] = 0;
-	h[initialpos.x][initialpos.y] = calcH(initialpos);
-	f[initialpos.x][initialpos.y] =
-			g[initialpos.x][initialpos.y] +
-			h[initialpos.x][initialpos.y];
+	g[nodeinitialpos.x][nodeinitialpos.y] = 0;
+	h[nodeinitialpos.x][nodeinitialpos.y] = calcH(nodeinitialpos);
+	f[nodeinitialpos.x][nodeinitialpos.y] =
+			g[nodeinitialpos.x][nodeinitialpos.y] +
+			h[nodeinitialpos.x][nodeinitialpos.y];
 
 	while(!(open_set.empty())) {
 
@@ -143,7 +150,7 @@ void AStar::run() {
 		Node current_node = lowestF();
 
 		//if current_node is the goal node
-		if(current_node == finalpos) {
+		if(current_node == nodefinalpos) {
 			//printf("ending AStar\n");
 			reconstructPath();
 		}
@@ -182,7 +189,7 @@ void AStar::run() {
 					if (tentative_is_better) {
 						came_from[current_neighbor.x][current_neighbor.y] 	= current_node;
 						g[current_neighbor.x][current_neighbor.y]			= tentative_g;
-						h[current_neighbor.x][current_neighbor.y] 			= distance(current_neighbor, finalpos);
+						h[current_neighbor.x][current_neighbor.y] 			= distance(current_neighbor, nodefinalpos);
 						f[current_neighbor.x][current_neighbor.y] 			=
 																		g[current_neighbor.x][current_neighbor.y] +
 																		h[current_neighbor.x][current_neighbor.y];
@@ -195,12 +202,24 @@ void AStar::run() {
 
 void AStar::reconstructPath() {
 
-	Node current = finalpos;
-
-	while(current != initialpos) {
-		pathFinal.push_front(current);
+	Node current = nodefinalpos;
+	Point a;
+	
+	a.setXY(current.getX(), current.getY());
+	
+	while(current != nodeinitialpos) {
+		path.push_back(a);
 		//goto previous node
 		current = came_from[current.x][current.y];
+		a.setXY(current.getX(), current.getY());
 	}
-	pathFinal.push_front(initialpos);
+	path.push_back(a);
+	
+	for (int i=0 ; i < path.size()/2 ; i++)
+	{
+		a=path[i];
+		path[i] = path[path.size()-i];
+		path[path.size()-i] = a;
+	}
+	
 }

@@ -19,7 +19,8 @@ OBJ_NAMES= 	movingObject \
 			referee \
 			pathplan_player \
 			utils \
-			gstar
+			gstar \
+			astar
 
 OBJDIR = obj
 OBJ_FILES = $(addsuffix .o,$(OBJ_NAMES))
