@@ -2,14 +2,6 @@
 #include "utils.h"
 
 AStar::AStar() {
-			
-	
-	nodeinitialpos.setX(initialpos.getX());
-	nodeinitialpos.setY(initialpos.getY());
-	
-	nodefinalpos.setX(finalpos.getX());
-	nodefinalpos.setY(finalpos.getY());
-	
 	initialize();
 }
 /*
@@ -18,7 +10,6 @@ AStar::AStar(Node start, Node goal) : DiscretePathplan(Point(start.x,start.y), P
 }*/
 
 void AStar::initialize() {
-	
 	came_from = (Node**) allocMatrix( envMatrixX,envMatrixY,sizeof(Node) );
 	closed = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
 	open = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
@@ -133,6 +124,13 @@ void AStar::run() {
 
 	bool tentative_is_better;
 	float tentative_g;
+	
+	
+	nodeinitialpos.setX(initialpos.getX());
+	nodeinitialpos.setY(initialpos.getY());
+	
+	nodefinalpos.setX(finalpos.getX());
+	nodefinalpos.setY(finalpos.getY());
 
 	//INITIALIZE WITH THE INITIAL NODE
 	open_set.insert(nodeinitialpos);
@@ -205,21 +203,21 @@ void AStar::reconstructPath() {
 	Node current = nodefinalpos;
 	Point a;
 	
-	a.setXY(current.getX(), current.getY());
+	a.setXY( CELLS_TO_MM_X(current.getX()), CELLS_TO_MM_Y(current.getY()));
 	
 	while(current != nodeinitialpos) {
 		path.push_back(a);
 		//goto previous node
 		current = came_from[current.x][current.y];
-		a.setXY(current.getX(), current.getY());
+		a.setXY( CELLS_TO_MM_X(current.getX()), CELLS_TO_MM_Y(current.getY()));
 	}
 	path.push_back(a);
 	
 	for (int i=0 ; i < path.size()/2 ; i++)
 	{
 		a=path[i];
-		path[i] = path[path.size()-i];
-		path[path.size()-i] = a;
+		path[i] = path[path.size()-i-1];
+		path[path.size()-i-1] = a;
 	}
 	
 }
