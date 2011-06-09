@@ -23,7 +23,7 @@ class Node {
 		int x;
 		int y;
 
-		Node() {}
+		Node() { x=0; y=0; }
 
 		Node(int x, int y) {
 			this->x = x;
@@ -82,28 +82,28 @@ class AStar : public DiscretePathplan {
 		/**
 		 * The map of navigated nodes
 		 */
-		Node **came_from;
+		Node** came_from;
 
-		bool **closed;
-		bool **open;
+		bool** closed;
+		bool** open;
 
 		/**
 		 * g equals to the distance from the
 		 * source Node to the current evaluated node,
 		 * through an optimal path
 		 */
-		float **g;
+		float** g;
 
 		/**
 		 * h equals to the estimative distance from the
 		 * current evaluated Node to the goal Node (the minimum distance)
 		 */ 
-		float **h;
+		float** h;
 
 		/**
 		 * f = g + h
 		 */
-		float **f;
+		float** f;
 
 		void initialize();
 

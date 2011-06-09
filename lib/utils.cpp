@@ -6,9 +6,9 @@ void** allocMatrix(int sizex, int sizey, int typeSize)
 {
 	void** matrix;
 	
-	matrix = (void**) malloc(typeSize*sizex);
+	matrix = (void**) calloc(sizex, 4);
 	for(int i=0; i<sizex; i++)
-		matrix[i] = malloc(typeSize*sizey);
+		matrix[i] = (void*) calloc(sizey, typeSize);
 		
 	return matrix;	
 }
