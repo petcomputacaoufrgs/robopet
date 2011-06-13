@@ -1,5 +1,6 @@
 #include "pathplan.h"
 #include "vector.h"
+#include "gstar.h"
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
@@ -10,6 +11,10 @@ using namespace std;
 
 int main()
 {
+	Gstar nome = new Gstar();	
+	
+	nome.straightIsBlocked(Point(0,0), Point (2,2));
+
 	#if 0
 	cout << "MAX_X: 0 to " << MAX_X-1 << ", MAX_Y: 0 to " << MAX_Y-1 << endl << endl;	
 	{
