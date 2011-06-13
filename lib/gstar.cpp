@@ -1,6 +1,6 @@
 #include "gstar.h"
 #include "point.h"
-#define PARTES 50
+#define PARTES 50//nr de partes que dividimos a reta
 
 using namespace std;
 
@@ -12,82 +12,61 @@ GStar::~GStar() {}
 
 
 void GStar::run() {
-	
-	cout << straightIsBlocked(initialpos,finalpos) << endl;
+	radius=300;
+	cout << straightIsBlocked() << endl;
 	
 }
 
 
-//bool vai_até_o_fim?(point origem, point final, vector obstáculos)
-	/*totalmente algébrica. Deve verificar se uma reta está bloqueado em 
-	qualquer ponto por um obstáculo. Retorna true se a reta estiver bloqueada*/
-bool GStar::straightIsBlocked(Point initial, Point final)
+//Return true if straightIsBlocked
+bool GStar::straightIsBlocked()
 {
-	//equação da reta é ax+by+c=0
 	double x,y;
 	double centerx,centery;
-	double comprimentoR, dist, m,delta,xp1,xp2,varX;
+	double comprimentoR, dist, m, xp, varX;
+	double initialX = initialpos.getX();
+	double initialY = initialpos.getY();
+	double finalX = finalpos.getX();
+	double finalY = finalpos.getY();
 
-	comprimentoR = initial.getDistance(final);	//comprimento da reta
+	comprimentoR = initialpos.getDistance(finalpos);	//comprimento da reta
 
-	dist = comprimentoR/PARTES; //nr de partes que dividimos a reta
-
-	m = (final.getY() - initial.getY())/(final.getX() - initial.getX());
-	delta = ((2*initial.getX())*(2*initial.getX())) - (4*-(((dist*dist)/(m*m)+1)-(2*initial.getX())*(2*initial.getX())));
-	xp1 = (2*initial.getX() + sqrt(delta))/2;	
-	xp2 = (2*initial.getX() - sqrt(delta))/2;
-
-	if(initial.getX() < final.getX())
-	{//soma
-		if(xp1 > initial.getX())
-			varX = xp1 - initial.getX();
-		else
-			varX = xp2 - initial.getX();		
-	}
-	else
-	{//subtrai
-		if(xp1 > initial.getX())
-			varX = xp2 - initial.getX();
-		else
-			varX = xp1 - initial.getX();
-	}
-
+	dist = comprimentoR/PARTES;
 	
-	//vamos percorrer toda a reta
-	x = initial.getX(); // x começa no inicio
-	for(int i = 0; i<PARTES; i++) //variamos o X e calculamos um Y, e dai vemos se (x,y) não é obstáculo
-	{
-		y = m*(x-initial.getX())+initial.getY();
+	m = (finalY - initialY)/(finalX - initialX);
+	xp=(dist/sqrt(1+m*m))+initialX;
+	varX = xp - initialX;
 		
+	x = initialX; // x começa no inicio
+	for(int i = 0; i<PARTES; i++)
+	{
+		y = (m*(x-initialX))+initialY;
+				
 		for(unsigned int j=0; j<obstacles.size(); j++) { //para cada obstaculo ve se ele bate na reta
 			
 			centerx = (obstacles[j].pos.getX());
 			centery = (obstacles[j].pos.getY());							
 			//equação circunferencia, se da dentro do circulo			 
 			if(Point(centerx,centery).getDistance(Point(x,y)) <= radius)
-				return true; //obstaculo						
+				return true; //obstaculo
 		}
-		x = x+varX;
+		if(initialX < finalX)
+			x = x+varX;
+		else
+			x = x-varX;
 	}
 	return false;
 }
 
-#pragma message "Mensagem aos desenvolvedores na linha 76."
 /* São necessários mesmo esses getters e setters?
  * Só faz sentido fazer esse tipo de coisa quando há um tratamento a mais envolvido. Por exemplo, uma conversão de coordenadas.
  * Nesse caso aqui acho que é uma complicação desnecessária ;)
  */
 
-int GStar::getRadius()
-{
-	return radius;
-}
-
 void GStar::setRadius(int radius)
 {
 	this->radius = radius;
 }
-
 	
 //void ordena_obstáculos(point origem, vector obstáculos)
 	/*ordena o vetor de obstáculos de acordo com a proximidade da origem
