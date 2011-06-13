@@ -18,8 +18,6 @@ using namespace std;
  
 void Rrt::run() 
 {
-	cout << envMatrixX << "," << envMatrixY << endl;
-	
 	path.clear();
 	fullPath.clear();
 	status = NOTHING;

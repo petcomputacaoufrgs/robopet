@@ -11,12 +11,25 @@ class GStar : public Pathplan {
 	//---- Constructor and Destructor ----
 		GStar();
 		~GStar();
+		
 	//----- Getters & Setters -----
 		int  getRadius();
 		void setRadius(int radius);
 	
 	//----- Functions -----
 		bool straightIsBlocked(Point initial, Point final);
+		
+		void run();
+		
+		Point getPathNode(int pointIndex);
+				
+		void setInitialPos(Point pos);
+		
+		void setFinalPos(Point pos);
+		
+		Point getInitialPos();
+		
+		Point getFinalPos();
 
 	protected:
 	

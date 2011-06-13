@@ -4,7 +4,19 @@
 
 using namespace std;
 
-//now let's start !!
+GStar::GStar() {
+
+}
+
+GStar::~GStar() {}
+
+
+void GStar::run() {
+	
+	cout << straightIsBlocked(initialpos,finalpos) << endl;
+	
+}
+
 
 //bool vai_até_o_fim?(point origem, point final, vector obstáculos)
 	/*totalmente algébrica. Deve verificar se uma reta está bloqueado em 
@@ -60,6 +72,12 @@ bool GStar::straightIsBlocked(Point initial, Point final)
 	return false;
 }
 
+#pragma message "Mensagem aos desenvolvedores na linha 76."
+/* São necessários mesmo esses getters e setters?
+ * Só faz sentido fazer esse tipo de coisa quando há um tratamento a mais envolvido. Por exemplo, uma conversão de coordenadas.
+ * Nesse caso aqui acho que é uma complicação desnecessária ;)
+ */
+
 int GStar::getRadius()
 {
 	return radius;
@@ -109,3 +127,31 @@ só pelo lolz, e se der poe no grafo, senão esquece.
 lados do robô obstáculo tentando ir até o final, e parando caso esteja 
 tentando ir para um ponto que já havia sido calculado.
 */
+
+
+// ...
+
+Point GStar::getPathNode(int pointIndex) {
+
+	// do me ;)
+}
+				
+void GStar::setInitialPos(Point pos) {
+	
+	initialpos = pos;
+}		
+
+void GStar::setFinalPos(Point pos) {
+	
+	finalpos = pos;
+}
+
+Point GStar::getInitialPos() {
+	
+	return initialpos;
+}
+		
+Point GStar::getFinalPos() {
+	
+	return finalpos;
+}
