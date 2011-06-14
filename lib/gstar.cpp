@@ -75,9 +75,9 @@ bool GStar::straightIsBlockedB()
 	//dá pra calcular a distancia do ponto a reta com 1 fórmula só, e nao precisa iterar pra caralho.
 	//a questão é delimitar origem e fim da reta, pra nao calcular quem tá depois.
 	//segue aqui o método de sarrus, simplificado, pra achar a equação geral da reta:
-	Azinho = (initialY - finalY);
-	Bzinho = (finalX - initialX);
-	Czinho = ((initialX * finalY) - (finalX * initialY));
+	A = (initialY - finalY);
+	B = (finalX - initialX);
+	C = ((initialX * finalY) - (finalX * initialY));
 	//cout << "0 = "<<Azinho<<"x + "<<Bzinho<<"y + "<<Czinho<<endl;
 	
 	//x e y aqui são os mesmos do robô, os quais devem ser iterados uma só vez
