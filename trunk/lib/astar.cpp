@@ -172,7 +172,7 @@ void AStar::run() {
 					tentative_g = calcG(current_node) +
 								//if the nodes are in diagonal, we sum 1.4. Otherwise, 1.
 								(	current_node.x == current_neighbor.x ||
-									current_node.y == current_neighbor.y) ? 1 : 1.4;
+									current_node.y == current_neighbor.y) ? 1 : 100;
 
 					//if current_neighbor doesn't belongs to open_set
 					if(open_set.find(current_neighbor) == open_set.end()) {
