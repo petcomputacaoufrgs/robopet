@@ -10,7 +10,7 @@ using RP::Point;
 #include <iostream>
 
 /**
- * 
+ * A vector.
  * \ingroup RoboPETLib
  */
 

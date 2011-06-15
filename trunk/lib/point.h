@@ -8,6 +8,7 @@
 
 using RP::Point;
 /**
+ * Point class.
  * \ingroup RoboPETLib
  */ 
 

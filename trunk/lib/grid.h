@@ -12,6 +12,11 @@ enum flags
 
 typedef unsigned char byte;
 
+/**
+ * Documentation Pending
+ * @ingroup Pathplan
+ */
+
 class Grid
 {
     private:

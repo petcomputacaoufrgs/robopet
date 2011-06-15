@@ -125,8 +125,6 @@ void DiscretePathplan::printPathplan()
 
 void DiscretePathplan::fillEnv_playerBox(int x, int y)
 {
-	// Maybe this code could be optimized? It's a critical thing for pathplanning work smoothly.
-	
 	const int side = 2*(this->getRadius());
 			
 	for(int i=0; i<side; i++)

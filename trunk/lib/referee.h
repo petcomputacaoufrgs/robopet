@@ -23,6 +23,11 @@
 
 using RP::Referee;
 
+/**
+ * Referee class.
+ * \ingroup RoboPETLib
+ * */
+
 class Referee {
 
 	public:

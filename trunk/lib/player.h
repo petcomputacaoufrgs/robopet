@@ -9,7 +9,7 @@ using RP::Player;
 
 
 /**
- * 
+ * The RoboPET player abstraction.
  * \ingroup RoboPETLib
  */
 
