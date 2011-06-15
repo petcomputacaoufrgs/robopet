@@ -10,7 +10,7 @@ using RP::Vector;
 using RP::MovingObject;
 
 /**
- * 
+ * Basic class for any moving objects.
  * \ingroup RoboPETLib
  */
 class MovingObject

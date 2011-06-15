@@ -3,7 +3,7 @@
 
 #include "vector.h"
 
-/** Physic state of a robot 
+/** Physic representation of a robot.
  * \ingroup RoboPETLib
  */
 	

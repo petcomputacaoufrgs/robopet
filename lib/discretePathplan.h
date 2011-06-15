@@ -5,7 +5,11 @@
 
 #define ENV_MATRIX_SIZE_X 60
 
-
+/**
+ * Abstract class defining a framework for pathplanning algorithms based on grid abstractions of the environment.
+ * \ingroup Pathplan
+ */
+ 
 class DiscretePathplan : public Pathplan
 {
 	public:
@@ -107,20 +111,48 @@ class DiscretePathplan : public Pathplan
 		
 		//---- Functions ----
 		/**
-		 * Crates a 'in-field' circle around the position showing whether it's an obstacle or not.
+		 * Fills the environment matrix with a circle around the given position.
+		 * @param x Coordinate x of the point, in grid cells.
+		 * @param y Coordinate y of the point, in grid cells.
+		 * 
+		 * @todo Maybe this code could be optimized? It's a critical thing for discrete pathplanning work smoothly.
 		 */
-		void fillEnv_playerBox(int centerx, int centery);
+		void fillEnv_playerBox(int x, int y);
 		
 		// CONVERSION FUNCTIONS
+		/** 
+		 * Calculates the grid cells per mm horizontal ratio.
+		 */
 		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH; }
+		/** 
+		 * Calculates the grid cells per mm vertical ratio.
+		 */
 		double CELLS_PER_MM_Y() { return envMatrixY / (float) FIELD_HEIGHT; }
+		/** 
+		 * Calculates the mm per grid cells horizontal ratio.
+		 */
 		double MM_PER_CELLS_X() { return FIELD_WIDTH / (float) envMatrixX; }
+		/** 
+		 * Calculates the mm per grid cells vertical ratio.
+		 */
 		double MM_PER_CELLS_Y() { return FIELD_HEIGHT / (float) envMatrixY; }
 
+		/** 
+		 * Converts mm to grid celular coordinates, using the HORIZONTAL ratio.
+		 */
 		double MM_TO_CELLS_X(double x) { return x * (CELLS_PER_MM_X()); }
+		/** 
+		 * Converts mm to grid celular coordinates, using the VERTICAL ratio.
+		 */
 		double MM_TO_CELLS_Y(double y) { return y * (CELLS_PER_MM_Y()); }
 
+		/** 
+		 * Converts grid celular coordinates to mm, using the HORIZONTAL ratio.
+		 */
 		double CELLS_TO_MM_X(double x) { return x * (MM_PER_CELLS_X()); }
+		/** 
+		 * Converts grid celular coordinates to mm, using the VERTICAL ratio.
+		 */
 		double CELLS_TO_MM_Y(double y) { return y * (MM_PER_CELLS_Y()); }
 	
 };

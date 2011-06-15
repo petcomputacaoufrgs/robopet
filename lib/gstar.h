@@ -14,14 +14,19 @@ struct Vertexes
 	Point D;
 };
 
+/**
+ * Documentation Pending
+ * @ingroup Pathplan
+ */
+
 class GStar : public Pathplan {
 
 	public:
-	//---- Constructor and Destructor ----
+		//---- Constructor and Destructor ----
 		GStar();
 		~GStar();
 		
-	//----- Getters & Setters -----
+		//----- Getters & Setters -----
 		void setInitialPos(Point pos);
 		void setFinalPos(Point pos);
 		Point getInitialPos();
@@ -30,19 +35,32 @@ class GStar : public Pathplan {
 		void setTreshold(int treshold);
 		void setSecureDistance();
 	
-	//----- Functions -----
+		//----- Functions -----
 		void run();
 		Point getPathNode(int pointIndex);
 
 	protected:
-	//----- Variables -----
+		//----- Variables -----
 		int radius;
 		int treshold;
 		double secureDistance;
 		
-	//----- Functions -----
+		//----- Functions -----
+		/**
+		 * Descricao da funcao.
+		 * @return Descricao do valor de retorno.
+		 */
 		bool straightIsBlocked();
+		
+		/**
+		 * Descricao da funcao.
+		 * @return Descricao do valor de retorno.
+		 */
 		bool straightIsBlockedB();
+		
+		/**
+		 * Descricao da funcao.
+		 */
 		void makePoints();
 };
 

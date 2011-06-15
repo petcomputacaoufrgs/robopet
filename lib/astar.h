@@ -12,8 +12,8 @@
 using namespace std;
 
 /**
- * Node
- * Documentation Pending
+ * Node class.
+ * \todo Why not create a Point class to work with integers?
  * \ingroup Pathplan
  */
 
