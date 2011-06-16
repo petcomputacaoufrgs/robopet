@@ -1,7 +1,9 @@
 #include "gstar.h"
 #include "point.h"
+#include "math.h"
 #define PARTES 50//nr de partes que dividimos a reta
-
+#define LADO_QUADRADO 4*ROBOT_RADIUS_MM + 2*TRESHOLD
+#define DIST_ROBO_POINT (LADO_QUADRADO*sqrt(2))/2
 using namespace std;
 
 GStar::GStar() {
@@ -15,7 +17,9 @@ void GStar::run() {
 	setRadius(300);
 	setTreshold(150);
 	setSecureDistance();
-	cout << straightIsBlocked() << endl;
+
+	if(straightIsBlocked())
+		makePoints( (finalpos.getY() - initialpos.getY())/(finalpos.getX() - initialpos.getX()), vert.center);
 }
 
 void GStar::setSecureDistance()
@@ -52,7 +56,10 @@ bool GStar::straightIsBlocked() //Return true if straightIsBlocked
 			centery = (obstacles[j].pos.getY());							
 			//equação circunferencia, se da dentro do circulo			 
 			if(Point(centerx,centery).getDistance(Point(x,y)) <= (radius + treshold))
+			{
+				vert.center = Point(centerx, centery);
 				return true; //obstaculo
+			}
 		}
 		if(initialX < finalX)
 			x = x+varX;
@@ -62,7 +69,7 @@ bool GStar::straightIsBlocked() //Return true if straightIsBlocked
 	return false;
 }
 
-bool GStar::straightIsBlockedB()
+bool GStar::straightIsBlockedB() //provavelmente ta testando obstaculos que estao fora da trajetoria...
 {
 	double centerx,centery;
 	double dist;
@@ -90,33 +97,28 @@ bool GStar::straightIsBlockedB()
 		//equação circunferencia, se da dentro do circulo			 
 		if(dist <= (radius + treshold))
 			return true; //obstaculo
-		else
-			return false;
 	}
+	return false;
 }
 
 //void createPoints()
 	/*cria os 4 pontos ABCD ao redor do obstáculo e armazena numa 
 	estrutura*/
-void GStar::makePoints()
+void GStar::makePoints(double m, Point p)
 {
-	double centerx,centery;
+	double centerX = p.getX();
+	double centerY = p.getY();
+	double angle,mR;
 
-	for(unsigned int j=0; j<obstacles.size(); j++) { 
-		centerx = (obstacles[j].pos.getX());
-		centery = (obstacles[j].pos.getY());		
-	}
-
+	angle = atan(m) + 0.785398163; //45°
 	
+	mR = tan(angle);
+
+	vert.A.setX((DIST_ROBO_POINT/sqrt((mR*mR)+1))+centerX);
+	vert.A.setY((mR*(vert.A.getX()-centerX))+centerY);
 }
 
-/* São necessários mesmo esses getters e setters?
- * Só faz sentido fazer esse tipo de coisa quando há um tratamento a mais envolvido. Por exemplo, uma conversão de coordenadas.
- * Nesse caso aqui acho que é uma complicação desnecessária ;)
- */
 
-
-	
 //void ordena_obstáculos(point origem, vector obstáculos)
 	/*ordena o vetor de obstáculos de acordo com a proximidade da origem
 	para saber qual foi o primeiro ponto que bloqueou o caminho*/
@@ -162,6 +164,11 @@ void GStar::setRadius(int radius) {
 
 void GStar::setTreshold(int treshold ){
 	this->treshold = treshold;
+}
+
+struct Vertexes GStar::getPoints()
+{
+	return vert;
 }
 
 Point GStar::getPathNode(int pointIndex) {

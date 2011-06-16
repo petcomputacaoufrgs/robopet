@@ -27,13 +27,16 @@ class GStar : public Pathplan {
 		~GStar();
 		
 		//----- Getters & Setters -----
-		void setInitialPos(Point pos);
-		void setFinalPos(Point pos);
 		Point getInitialPos();
 		Point getFinalPos();
+
+		void setInitialPos(Point pos);
+		void setFinalPos(Point pos);
 		void setRadius(int radius);
 		void setTreshold(int treshold);
 		void setSecureDistance();
+
+		struct Vertexes getPoints();
 	
 		//----- Functions -----
 		void run();
@@ -44,6 +47,7 @@ class GStar : public Pathplan {
 		int radius;
 		int treshold;
 		double secureDistance;
+		struct Vertexes vert;
 		
 		//----- Functions -----
 		/**
@@ -61,7 +65,7 @@ class GStar : public Pathplan {
 		/**
 		 * Descricao da funcao.
 		 */
-		void makePoints();
+		void makePoints(double m, Point p);
 };
 
 #endif
