@@ -15,6 +15,7 @@ GStar::~GStar() {}
 
 
 void GStar::run() {
+	Point actual;
 	Obstacle o;
 
 	setRadius(300);
@@ -25,7 +26,58 @@ void GStar::run() {
 	{
 		makePoints( M, obst.back().center);
 	}
+	//chama essa e está pronto o caminho ;D
+	//goToEnd(initialpos, finalpos);
 }
+
+void GStar::goToEnd(Point actual, Point final)
+{
+	if(straightIsBlocked( actual, final))
+	{//vai tentando ir pro A e B
+		makePoints ( M, obst.back().center);		
+		goToEndA(actual, obst.back().p[0]); //Actual->A
+		goToEndB(actual, obst.back().p[1]); //Actual->B
+	}
+	else
+	{//conseguiu ir pro ponto final		
+			//bota na arvore actual->final
+		//testa se o ponto final é realmente o finalzão lá
+		if((final.getX() == finalpos.getX()) && (final.getY() == finalpos.getY()))
+		{
+				//é o fim :'(
+		}
+		else
+			goToEnd(final, finalpos);		
+	}	
+}
+
+void GStar::goToEndA(Point actual, Point final)
+{
+	if(straightIsBlocked( actual, final))
+	{//vai tentando ir pro A
+		makePoints ( M, obst.back().center);		
+		goToEnd(actual, obst.back().p[0]); //Actual->A		
+	}
+	else
+	{//conseguiu ir pro A tenta ir pra C
+		//adiciona actual->final na árvore e tenta ir pro C
+		goToEnd(final, obst.back().p[2]); //A->C		
+	}
+}
+void GStar::goToEndB(Point actual, Point final)
+{
+	if(straightIsBlocked( actual, final))
+	{//vai tentando ir pro B
+		makePoints ( M, obst.back().center);		
+		goToEnd(actual, obst.back().p[1]); //Actual->B
+	}
+	else
+	{//conseguiu ir pro B, tenta ir pra D
+		//adiciona actual->final na árvore e tenta ir pro C
+		goToEnd(final, obst.back().p[2]); //B->D
+	}
+}
+
 
 void GStar::setSecureDistance()
 {
