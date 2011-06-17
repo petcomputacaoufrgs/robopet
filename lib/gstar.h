@@ -2,17 +2,15 @@
 #define _GSTAR_H_
 
 #include "pathplan.h"
+#include <vector>
 
 using namespace std;
 
-struct Vertexes
+typedef struct str_Obstacle
 {
 	Point center;
-	Point A;
-	Point B;
-	Point C;
-	Point D;
-};
+	Point p[4];
+} Obstacle;
 
 /**
  * Documentation Pending
@@ -36,7 +34,7 @@ class GStar : public Pathplan {
 		void setTreshold(int treshold);
 		void setSecureDistance();
 
-		struct Vertexes getPoints();
+		Obstacle getLastObstacle();
 	
 		//----- Functions -----
 		void run();
@@ -47,14 +45,14 @@ class GStar : public Pathplan {
 		int radius;
 		int treshold;
 		double secureDistance;
-		struct Vertexes vert;
+		vector<Obstacle> obst;
 		
 		//----- Functions -----
 		/**
 		 * Descricao da funcao.
 		 * @return Descricao do valor de retorno.
 		 */
-		bool straightIsBlocked();
+		bool straightIsBlocked(Point initial, Point final);
 		
 		/**
 		 * Descricao da funcao.
