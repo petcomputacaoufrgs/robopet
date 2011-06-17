@@ -48,6 +48,11 @@ class GStar : public Pathplan {
 		vector<Obstacle> obst;
 		
 		//----- Functions -----
+
+		void goToEnd(Point actual, Point final);
+		void goToEndA(Point actual, Point final);
+		void goToEndB(Point actual, Point final);
+
 		/**
 		 * Descricao da funcao.
 		 * @return Descricao do valor de retorno.
