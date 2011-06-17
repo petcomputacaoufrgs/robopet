@@ -4,6 +4,7 @@
 #define PARTES 50//nr de partes que dividimos a reta
 #define LADO_QUADRADO 4*ROBOT_RADIUS_MM + 2*TRESHOLD
 #define DIST_ROBO_POINT (LADO_QUADRADO*sqrt(2))/2
+#define M (finalpos.getY() - initialpos.getY())/(finalpos.getX() - initialpos.getX())
 using namespace std;
 
 GStar::GStar() {
@@ -14,12 +15,16 @@ GStar::~GStar() {}
 
 
 void GStar::run() {
+	Obstacle o;
+
 	setRadius(300);
 	setTreshold(150);
 	setSecureDistance();
 
-	if(straightIsBlocked())
-		makePoints( (finalpos.getY() - initialpos.getY())/(finalpos.getX() - initialpos.getX()), vert.center);
+	if(straightIsBlocked(initialpos, finalpos))
+	{
+		makePoints( M, obst.back().center);
+	}
 }
 
 void GStar::setSecureDistance()
@@ -27,17 +32,18 @@ void GStar::setSecureDistance()
 	this->secureDistance = ((((4*radius)+(2*treshold))*sqrt(2))/2.);
 }
 
-bool GStar::straightIsBlocked() //Return true if straightIsBlocked
+bool GStar::straightIsBlocked(Point initial, Point final) //Return true if straightIsBlocked
 {
 	double x,y;
 	double centerx,centery;
 	double comprimentoR, dist, m, xp, varX;
-	double initialX = initialpos.getX();
-	double initialY = initialpos.getY();
-	double finalX = finalpos.getX();
-	double finalY = finalpos.getY();
+	double initialX = initial.getX();
+	double initialY = initial.getY();
+	double finalX = final.getX();
+	double finalY = final.getY();
+	Obstacle vert;
 
-	comprimentoR = initialpos.getDistance(finalpos);	//comprimento da reta
+	comprimentoR = initial.getDistance(finalpos);	//comprimento da reta
 
 	dist = comprimentoR/PARTES;
 	
@@ -58,6 +64,7 @@ bool GStar::straightIsBlocked() //Return true if straightIsBlocked
 			if(Point(centerx,centery).getDistance(Point(x,y)) <= (radius + treshold))
 			{
 				vert.center = Point(centerx, centery);
+				obst.push_back(vert);
 				return true; //obstaculo
 			}
 		}
@@ -111,6 +118,8 @@ void GStar::makePoints(double m, Point p)
 	double angle,mAD, mBC;
 	double varX, varY;
 	Point temp;
+	Obstacle vert = obst.back();
+	obst.pop_back();
 	
 	varX = finalpos.getX()-initialpos.getX();
 	varY = finalpos.getY()-initialpos.getY();
@@ -119,63 +128,64 @@ void GStar::makePoints(double m, Point p)
 	
 	mAD = tan(angle);
 	mBC = -1/mAD;
-cout << mAD << endl;
+
 	if((abs(varX)==varX && abs(varY)==varY) || (abs(varX)!=varX && abs(varY)!=varY))
 	{
-		vert.A.setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-		vert.A.setY((mAD*(vert.A.getX()-centerX))+centerY);
-		vert.D.setX(centerX - vert.A.getX() + centerX);
-		vert.D.setY((mAD*(vert.D.getX()-centerX))+centerY);
+		vert.p[0].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+		vert.p[0].setY((mAD*(vert.p[0].getX()-centerX))+centerY);
+		vert.p[3].setX(centerX - vert.p[0].getX() + centerX);
+		vert.p[3].setY((mAD*(vert.p[3].getX()-centerX))+centerY);
 		
 		if(mBC>0)
 		{
-			vert.C.setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-			vert.C.setY((mBC*(vert.C.getX()-centerX))+centerY);
-			vert.B.setX(centerX - vert.C.getX() + centerX);
-			vert.B.setY((mBC*(vert.B.getX()-centerX))+centerY);
+			vert.p[2].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+			vert.p[2].setY((mBC*(vert.p[2].getX()-centerX))+centerY);
+			vert.p[1].setX(centerX - vert.p[2].getX() + centerX);
+			vert.p[1].setY((mBC*(vert.p[1].getX()-centerX))+centerY);
 		}
 		else
 		{
-			vert.B.setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-			vert.B.setY((mBC*(vert.B.getX()-centerX))+centerY);
-			vert.C.setX(centerX - vert.B.getX() + centerX);
-			vert.C.setY((mBC*(vert.C.getX()-centerX))+centerY);
+			vert.p[1].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+			vert.p[1].setY((mBC*(vert.p[1].getX()-centerX))+centerY);
+			vert.p[2].setX(centerX - vert.p[1].getX() + centerX);
+			vert.p[2].setY((mBC*(vert.p[2].getX()-centerX))+centerY);
 		}
 	}
 	else
 	{
-		vert.B.setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-		vert.B.setY((mBC*(vert.B.getX()-centerX))+centerY);
-		vert.C.setX(centerX - vert.B.getX() + centerX);
-		vert.C.setY((mBC*(vert.C.getX()-centerX))+centerY);
+		vert.p[1].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+		vert.p[1].setY((mBC*(vert.p[1].getX()-centerX))+centerY);
+		vert.p[2].setX(centerX - vert.p[1].getX() + centerX);
+		vert.p[2].setY((mBC*(vert.p[2].getX()-centerX))+centerY);
 		
 		if(mAD>0)
 		{
-			vert.D.setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-			vert.D.setY((mAD*(vert.D.getX()-centerX))+centerY);
-			vert.A.setX(centerX - vert.D.getX() + centerX);
-			vert.A.setY((mAD*(vert.A.getX()-centerX))+centerY);
+			vert.p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+			vert.p[3].setY((mAD*(vert.p[3].getX()-centerX))+centerY);
+			vert.p[0].setX(centerX - vert.p[3].getX() + centerX);
+			vert.p[0].setY((mAD*(vert.p[0].getX()-centerX))+centerY);
 		}
 		else
 		{
-			vert.A.setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-			vert.A.setY((mAD*(vert.A.getX()-centerX))+centerY);
-			vert.D.setX(centerX - vert.A.getX() + centerX);
-			vert.D.setY((mAD*(vert.D.getX()-centerX))+centerY);
+			vert.p[0].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+			vert.p[0].setY((mAD*(vert.p[0].getX()-centerX))+centerY);
+			vert.p[3].setX(centerX - vert.p[0].getX() + centerX);
+			vert.p[3].setY((mAD*(vert.p[3].getX()-centerX))+centerY);
 		}
 	}
 	if(abs(varX)!=varX)
 	{
-		temp = vert.A;
-		vert.A = vert.D;
-		vert.D = temp;
+		temp = vert.p[0];
+		vert.p[0] = vert.p[3];
+		vert.p[3] = temp;
 	}
 	if(abs(varY)==varY)
 	{
-		temp = vert.B;
-		vert.B = vert.C;
-		vert.C = temp;
+		temp = vert.p[1];
+		vert.p[1] = vert.p[2];
+		vert.p[2] = temp;
 	}
+	obst.push_back(vert);
 }
 
 
@@ -226,9 +236,9 @@ void GStar::setTreshold(int treshold ){
 	this->treshold = treshold;
 }
 
-struct Vertexes GStar::getPoints()
+Obstacle GStar::getLastObstacle()
 {
-	return vert;
+	return obst.back();
 }
 
 Point GStar::getPathNode(int pointIndex) {
