@@ -108,14 +108,74 @@ void GStar::makePoints(double m, Point p)
 {
 	double centerX = p.getX();
 	double centerY = p.getY();
-	double angle,mR;
-
-	angle = atan(m) + 0.785398163; //45°
+	double angle,mAD, mBC;
+	double varX, varY;
+	Point temp;
 	
-	mR = tan(angle);
+	varX = finalpos.getX()-initialpos.getX();
+	varY = finalpos.getY()-initialpos.getY();
 
-	vert.A.setX((DIST_ROBO_POINT/sqrt((mR*mR)+1))+centerX);
-	vert.A.setY((mR*(vert.A.getX()-centerX))+centerY);
+	angle = atan(m) - 0.785398163; //-45°
+	
+	mAD = tan(angle);
+	mBC = -1/mAD;
+cout << mAD << endl;
+	if((abs(varX)==varX && abs(varY)==varY) || (abs(varX)!=varX && abs(varY)!=varY))
+	{
+		vert.A.setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+		vert.A.setY((mAD*(vert.A.getX()-centerX))+centerY);
+		vert.D.setX(centerX - vert.A.getX() + centerX);
+		vert.D.setY((mAD*(vert.D.getX()-centerX))+centerY);
+		
+		if(mBC>0)
+		{
+			vert.C.setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+			vert.C.setY((mBC*(vert.C.getX()-centerX))+centerY);
+			vert.B.setX(centerX - vert.C.getX() + centerX);
+			vert.B.setY((mBC*(vert.B.getX()-centerX))+centerY);
+		}
+		else
+		{
+			vert.B.setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+			vert.B.setY((mBC*(vert.B.getX()-centerX))+centerY);
+			vert.C.setX(centerX - vert.B.getX() + centerX);
+			vert.C.setY((mBC*(vert.C.getX()-centerX))+centerY);
+		}
+	}
+	else
+	{
+		vert.B.setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+		vert.B.setY((mBC*(vert.B.getX()-centerX))+centerY);
+		vert.C.setX(centerX - vert.B.getX() + centerX);
+		vert.C.setY((mBC*(vert.C.getX()-centerX))+centerY);
+		
+		if(mAD>0)
+		{
+			vert.D.setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+			vert.D.setY((mAD*(vert.D.getX()-centerX))+centerY);
+			vert.A.setX(centerX - vert.D.getX() + centerX);
+			vert.A.setY((mAD*(vert.A.getX()-centerX))+centerY);
+		}
+		else
+		{
+			vert.A.setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+			vert.A.setY((mAD*(vert.A.getX()-centerX))+centerY);
+			vert.D.setX(centerX - vert.A.getX() + centerX);
+			vert.D.setY((mAD*(vert.D.getX()-centerX))+centerY);
+		}
+	}
+	if(abs(varX)!=varX)
+	{
+		temp = vert.A;
+		vert.A = vert.D;
+		vert.D = temp;
+	}
+	if(abs(varY)==varY)
+	{
+		temp = vert.B;
+		vert.B = vert.C;
+		vert.C = temp;
+	}
 }
 
 
