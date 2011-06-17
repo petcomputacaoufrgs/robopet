@@ -12,7 +12,6 @@ OBJ_NAMES= 	movingObject \
 			vector \
 			line \
 			rrt \
-			fieldInfo \
 			physicsRobot \
 			pathplan \
 			discretePathplan \
