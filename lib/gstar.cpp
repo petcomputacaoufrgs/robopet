@@ -2,30 +2,30 @@
 #include "point.h"
 #include "math.h"
 #define PARTES 50//nr de partes que dividimos a reta
-#define LADO_QUADRADO 4*ROBOT_RADIUS_MM + 2*TRESHOLD
-#define DIST_ROBO_POINT (LADO_QUADRADO*sqrt(2))/2
+#define LADO_QUADRADO (4*ROBOT_RADIUS_MM + 2*TRESHOLD)//lado do quadrado de segurança
+#define DIST_ROBO_POINT ((LADO_QUADRADO*sqrt(2))/2)
 #define M (finalpos.getY() - initialpos.getY())/(finalpos.getX() - initialpos.getX())
 using namespace std;
 
-GStar::GStar() {
-
-}
+GStar::GStar() {}
 
 GStar::~GStar() {}
-
 
 void GStar::run() {
 	Point actual;
 	Obstacle o;
 
-	setRadius(300);
-	setTreshold(150);
+	obst.clear();
+
+	setRadius(ROBOT_RADIUS_MM);
+	setTreshold(ROBOT_RADIUS_MM/2);
 	setSecureDistance();
 
 	if(straightIsBlocked(initialpos, finalpos))
 	{
 		makePoints( M, obst.back().center);
 	}
+
 	//chama essa e está pronto o caminho ;D
 	//goToEnd(initialpos, finalpos);
 }
@@ -64,6 +64,7 @@ void GStar::goToEndA(Point actual, Point final)
 		goToEnd(final, obst.back().p[2]); //A->C		
 	}
 }
+
 void GStar::goToEndB(Point actual, Point final)
 {
 	if(straightIsBlocked( actual, final))
@@ -73,12 +74,12 @@ void GStar::goToEndB(Point actual, Point final)
 	}
 	else
 	{//conseguiu ir pro B, tenta ir pra D
-		//adiciona actual->final na árvore e tenta ir pro C
-		goToEnd(final, obst.back().p[2]); //B->D
+		//adiciona actual->final na árvore e tenta ir pro D
+		goToEnd(final, obst.back().p[3]); //B->D
 	}
 }
 
-
+/* Seta um distância na qual os robos que passarem por ela, estarão levemente distantes do robô obstáculo*/
 void GStar::setSecureDistance()
 {
 	this->secureDistance = ((((4*radius)+(2*treshold))*sqrt(2))/2.);
@@ -160,9 +161,6 @@ bool GStar::straightIsBlockedB() //provavelmente ta testando obstaculos que esta
 	return false;
 }
 
-//void createPoints()
-	/*cria os 4 pontos ABCD ao redor do obstáculo e armazena numa 
-	estrutura*/
 void GStar::makePoints(double m, Point p)
 {
 	double centerX = p.getX();
@@ -172,6 +170,7 @@ void GStar::makePoints(double m, Point p)
 	Point temp;
 	Obstacle vert = obst.back();
 	obst.pop_back();
+
 	
 	varX = finalpos.getX()-initialpos.getX();
 	varY = finalpos.getY()-initialpos.getY();
@@ -291,6 +290,16 @@ void GStar::setTreshold(int treshold ){
 Obstacle GStar::getLastObstacle()
 {
 	return obst.back();
+}
+
+Obstacle GStar::getObstacle(int n)
+{
+	return obst[n];
+}
+
+int GStar::getObstaclesSize()
+{
+	return obst.size();
 }
 
 Point GStar::getPathNode(int pointIndex) {

@@ -35,6 +35,8 @@ class GStar : public Pathplan {
 		void setSecureDistance();
 
 		Obstacle getLastObstacle();
+		Obstacle getObstacle(int n);
+		int getObstaclesSize();
 	
 		//----- Functions -----
 		void run();
