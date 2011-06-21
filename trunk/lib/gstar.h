@@ -3,6 +3,7 @@
 
 #include "pathplan.h"
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -37,6 +38,8 @@ class GStar : public Pathplan {
 		Obstacle getLastObstacle();
 		Obstacle getObstacle(int n);
 		int getObstaclesSize();
+
+		vector<Point> getPointPath();
 	
 		//----- Functions -----
 		void run();
@@ -48,6 +51,9 @@ class GStar : public Pathplan {
 		int treshold;
 		double secureDistance;
 		vector<Obstacle> obst;
+		queue<Point> points;
+
+		//vector<Point> pathGS;
 		
 		//----- Functions -----
 
