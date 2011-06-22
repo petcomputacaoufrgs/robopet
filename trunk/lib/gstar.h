@@ -3,7 +3,7 @@
 
 #include "pathplan.h"
 #include <vector>
-#include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -12,6 +12,19 @@ typedef struct str_Obstacle
 	Point center;
 	Point p[4];
 } Obstacle;
+
+typedef struct str_StackPoint
+{
+	int obstacle_id;
+	int p;
+} StackPoint;
+
+typedef struct str_Path
+{
+	Point origin;
+	Point dest;
+	double cost;
+} PathCost;
 
 /**
  * Documentation Pending
@@ -35,9 +48,7 @@ class GStar : public Pathplan {
 		void setTreshold(int treshold);
 		void setSecureDistance();
 
-		Obstacle getLastObstacle();
 		Obstacle getObstacle(int n);
-		int getObstaclesSize();
 
 		vector<Point> getPointPath();
 	
@@ -50,22 +61,23 @@ class GStar : public Pathplan {
 		int radius;
 		int treshold;
 		double secureDistance;
-		vector<Obstacle> obst;
-		queue<Point> points;
+		Obstacle *obst;
+		stack<StackPoint> points;
+		stack<StackPoint> actualPoints2;
 
 		//vector<Point> pathGS;
 		
 		//----- Functions -----
 
-		void goToEnd(Point actual, Point final);
-		void goToEndA(Point actual, Point final);
-		void goToEndB(Point actual, Point final);
+		void calcCost(PathCost *p);
+
+		void goToEnd();
 
 		/**
 		 * Descricao da funcao.
 		 * @return Descricao do valor de retorno.
 		 */
-		bool straightIsBlocked(Point initial, Point final);
+		bool straightIsBlocked(Point initial, Point final, StackPoint* temp);
 		
 		/**
 		 * Descricao da funcao.
@@ -76,7 +88,7 @@ class GStar : public Pathplan {
 		/**
 		 * Descricao da funcao.
 		 */
-		void makePoints(double m, Point p);
+		void makePoints(int x);
 };
 
 #endif

@@ -1,8 +1,9 @@
 #include "gstar.h"
 #include "point.h"
 #include "math.h"
+#include <cstdlib>
 #define PARTES 60//nr de partes que dividimos a reta
-#define LADO_QUADRADO (5*ROBOT_RADIUS_MM)//lado do quadrado de segurança
+#define LADO_QUADRADO (6*ROBOT_RADIUS_MM)//lado do quadrado de segurança
 #define DIST_ROBO_POINT ((LADO_QUADRADO*sqrt(2))/2)
 #define M (finalpos.getY() - initialpos.getY())/(finalpos.getX() - initialpos.getX())
 using namespace std;
@@ -15,88 +16,112 @@ void GStar::run() {
 	Point actual;
 	Obstacle o;
 
-	obst.clear();
+	obst = (Obstacle*) calloc(obstacles.size(), sizeof(Obstacle));
+	for(unsigned int i=0; i<obstacles.size(); i++)
+	{
+		for(int j=0; j<4; j++)
+		{
+			obst[i].p[j].setX(-1);
+			obst[i].p[j].setY(-1);
+		}
+	}
+
 	path.clear();
 
 	setRadius(ROBOT_RADIUS_MM);
 	setTreshold(ROBOT_RADIUS_MM/2);
 	setSecureDistance();
 
-	/*if(straightIsBlocked(initialpos, finalpos))
-	{
-		makePoints( M, obst.back().center);
-	}
-*/
+//	cout<<straightIsBlocked(initialpos, finalpos)<<endl;
+
 	//chama essa e está pronto o caminho ;D
-	goToEnd(initialpos, finalpos);
+	goToEnd();
 }
 
-void GStar::goToEnd(Point actual, Point final)
+void GStar::calcCost(PathCost *p)
 {
-	//cout<< "gotoEnd" << endl;
-	if(straightIsBlocked( actual, final))
-	{//vai tentando ir pro A e B
-		makePoints ( M, obst.back().center);		
-		goToEndA(actual, obst.back().p[0]); //Actual->A
-		makePoints ( M, obst.back().center);	
-		goToEndB(actual, obst.back().p[1]); //Actual->B
-		
-	}
-	else
-	{//conseguiu ir pro ponto final		
-			//bota na arvore actual->final
-		//testa se o ponto final é realmente o finalzão lá
-		//cout << "(" << actual.getX() << "," << actual.getY() << ") -> (" << final.getX() << "," <<final.getY() << ")" << endl;
-		path.push_back(actual);
-		path.push_back(final);
-		
-		if((final.getX() == finalpos.getX()) && (final.getY() == finalpos.getY()))
+	p->cost = (p->origin).getDistance(p->dest);
+}
+
+void GStar::goToEnd()
+{
+	cout << "***********************COMEÇO************************" << endl;
+	StackPoint temp;
+	StackPoint ret;
+	Point actual;
+int k = 1;
+
+	bool chegou = false;
+
+	path.push_back(initialpos);
+
+	actual = initialpos;
+
+		for(int i = 0; i < 5; i++)
+	//	while(!points.empty() && !chegou)
 		{
-			// obst.pop_back();	//é o fim :'(
-			//cout<< "FINZAO gotoEnd" << endl;
-		}
-		else
-		{
-			goToEnd(final, finalpos);	
-		}	
-	}	
-}
+			cout<<"entrou no while"<<endl;
+			if(straightIsBlocked(actual, finalpos, &ret))
+			{cout<<"actual->fim bloqueado"<<endl;
+				ret.p=1;
+				points.push(ret);
+				ret.p=0;
+				points.push(ret);
+			
+				temp = points.top();
+				points.pop();
 
-void GStar::goToEndA(Point actual, Point final)
-{
-	//cout<< "gotoEndA" << endl;
-	if(straightIsBlocked( actual, final))
-	{//vai tentando ir pro A
+		//		cout<<"A- X: "<<obst[temp.obstacle_id].p[temp.p].getX()<<" Y: "<<obst[temp.obstacle_id].p[temp.p].getY()<<endl;
+				if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret)) //se do inicio->A ou B
+				{
+					cout<<"actual->A bloqueado"<<endl;
 
-		makePoints ( M, obst.back().center);		
-		goToEnd(actual, obst.back().p[0]); //Actual->A
-	}
-	else
-	{//conseguiu ir pro A tenta ir pra C
-		//adiciona actual->final na árvore e tenta ir pro C	
-		//cout << "(" << actual.getX() << "," << actual.getY() << ") -> (" << final.getX() << "," <<final.getY() << ")" << endl;	
-		path.push_back(actual);
-		path.push_back(final);
-		goToEnd(final, obst.back().p[2]); //A->C		
-	}
-}
+					ret.p=1;
+					points.push(ret);
+					ret.p=0;
+					points.push(ret);
+				}
+				else//conseguiu inicio->A/B
+				{
+					cout<<"foi actual->A"<<endl;
 
-void GStar::goToEndB(Point actual, Point final)
-{
-	//cout<< "gotoEndB" << endl;
-	if(straightIsBlocked( actual, final))
-	{//vai tentando ir pro B
-		makePoints ( M, obst.back().center);		
-		goToEnd(actual, obst.back().p[1]); //Actual->B
+					path.push_back(obst[temp.obstacle_id].p[temp.p]); //A ou B no caminho
+			//		cout<<"C: ("<<obst[temp.obstacle_id].p[temp.p+2].getX()<<","<<obst[temp.obstacle_id].p[temp.p+2].getY()<<")"<<endl;
+					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
+					{
+						cout<<"A->C bloqueado"<<endl;							//tenta A->C / B->D
+						ret.p=1;
+						points.push(ret);
+						ret.p=0;
+						points.push(ret);
+				
+						actual = obst[temp.obstacle_id].p[temp.p];
+					}
+					else//conseguiu
+					{
+						cout<<"foi A->C"<<endl;
+						path.push_back(obst[temp.obstacle_id].p[temp.p+2]); //C ou D no caminho
+
+						temp.p +=2;
+						actualPoints2.push(temp);
+						temp = actualPoints2.top();
+						actualPoints2.pop();
+						actual = obst[temp.obstacle_id].p[temp.p];
+					}
+				}
+			}
+			else
+			{cout<<"foi Actual-> fim"<<endl;
+				path.push_back(finalpos);
+				if(actualPoints2.empty() && k == 1)
+				{
+					actual = initialpos;
+					k = 0;
+				}
+			}
 	}
-	else
-	{//conseguiu ir pro B, tenta ir pra D
-		//adiciona actual->final na árvore e tenta ir pro D
-		//cout << "(" << actual.getX() << "," << actual.getY() << ") -> (" << final.getX() << "," <<final.getY() << ")" << endl;
-		path.push_back(actual);
-		path.push_back(final);
-		goToEnd(final, obst.back().p[3]); //B->D
-	}
+
+	cout << "***********************FIM***********************" << endl;
 }
 
 /* Seta um distância na qual os robos que passarem por ela, estarão levemente distantes do robô obstáculo*/
@@ -105,7 +130,7 @@ void GStar::setSecureDistance()
 	this->secureDistance = ((((4*radius)+(2*treshold))*sqrt(2))/2.);
 }
 
-bool GStar::straightIsBlocked(Point initial, Point final) //Return true if straightIsBlocked
+bool GStar::straightIsBlocked(Point initial, Point final, StackPoint* temp) //Return true if straightIsBlocked
 {
 	double x,y;
 	double centerx,centery;
@@ -114,9 +139,8 @@ bool GStar::straightIsBlocked(Point initial, Point final) //Return true if strai
 	double initialY = initial.getY();
 	double finalX = final.getX();
 	double finalY = final.getY();
-	Obstacle vert;
 
-	comprimentoR = initial.getDistance(finalpos);	//comprimento da reta
+	comprimentoR = initial.getDistance(final);	//comprimento da reta
 
 	dist = comprimentoR/PARTES;
 	
@@ -136,8 +160,8 @@ bool GStar::straightIsBlocked(Point initial, Point final) //Return true if strai
 			//equação circunferencia, se da dentro do circulo			 
 			if(Point(centerx,centery).getDistance(Point(x,y)) <= (2*radius + treshold))
 			{
-				vert.center = Point(centerx, centery);
-				obst.push_back(vert);
+				temp->obstacle_id = j;
+				makePoints(j);
 				return true; //obstaculo
 			}
 		}
@@ -181,82 +205,81 @@ bool GStar::straightIsBlockedB() //provavelmente ta testando obstaculos que esta
 	return false;
 }
 
-void GStar::makePoints(double m, Point p)
+void GStar::makePoints(int x)
 {
-	double centerX = p.getX();
-	double centerY = p.getY();
+	double centerX = obstacles[x].pos.getX();
+	double centerY = obstacles[x].pos.getY();
 	double angle,mAD, mBC;
 	double varX, varY;
 	Point temp;
-	Obstacle vert = obst.back();
-	obst.pop_back();
-
 	
-	varX = finalpos.getX()-initialpos.getX();
-	varY = finalpos.getY()-initialpos.getY();
-
-	angle = atan(m) - 0.785398163; //-45°
-	
-	mAD = tan(angle);
-	mBC = -1/mAD;
-
-	if((abs(varX)==varX && abs(varY)==varY) || (abs(varX)!=varX && abs(varY)!=varY))
+	if(obst[x].p[0].getX()==-1) //se o X do ponto A for diferente de -1, já calculou os pontos!
 	{
-		vert.p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-		vert.p[3].setY((mAD*(vert.p[3].getX()-centerX))+centerY);
-		vert.p[0].setX(centerX - vert.p[3].getX() + centerX);
-		vert.p[0].setY((mAD*(vert.p[0].getX()-centerX))+centerY);
-		
-		if(mBC>0)
+		varX = finalpos.getX()-initialpos.getX();
+		varY = finalpos.getY()-initialpos.getY();
+
+		angle = atan(M) - 0.785398163; //-45°
+	
+		mAD = tan(angle);
+		mBC = -1/mAD;
+
+		if((abs(varX)==varX && abs(varY)==varY) || (abs(varX)!=varX && abs(varY)!=varY))
 		{
-			vert.p[1].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-			vert.p[1].setY((mBC*(vert.p[1].getX()-centerX))+centerY);
-			vert.p[2].setX(centerX - vert.p[1].getX() + centerX);
-			vert.p[2].setY((mBC*(vert.p[2].getX()-centerX))+centerY);
+			obst[x].p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+			obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+			obst[x].p[0].setX(centerX - obst[x].p[3].getX() + centerX);
+			obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+		
+			if(mBC>0)
+			{
+				obst[x].p[1].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+				obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+				obst[x].p[2].setX(centerX - obst[x].p[1].getX() + centerX);
+				obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+			}
+			else
+			{
+				obst[x].p[2].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+				obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+				obst[x].p[1].setX(centerX - obst[x].p[2].getX() + centerX);
+				obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+			}
 		}
 		else
 		{
-			vert.p[2].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-			vert.p[2].setY((mBC*(vert.p[2].getX()-centerX))+centerY);
-			vert.p[1].setX(centerX - vert.p[2].getX() + centerX);
-			vert.p[1].setY((mBC*(vert.p[1].getX()-centerX))+centerY);
-		}
-	}
-	else
-	{
-		vert.p[2].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-		vert.p[2].setY((mBC*(vert.p[2].getX()-centerX))+centerY);
-		vert.p[1].setX(centerX - vert.p[2].getX() + centerX);
-		vert.p[1].setY((mBC*(vert.p[1].getX()-centerX))+centerY);
+			obst[x].p[2].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+			obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+			obst[x].p[1].setX(centerX - obst[x].p[2].getX() + centerX);
+			obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
 		
-		if(mAD>0)
-		{
-			vert.p[0].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-			vert.p[0].setY((mAD*(vert.p[0].getX()-centerX))+centerY);
-			vert.p[3].setX(centerX - vert.p[0].getX() + centerX);
-			vert.p[3].setY((mAD*(vert.p[3].getX()-centerX))+centerY);
+			if(mAD>0)
+			{
+				obst[x].p[0].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+				obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+				obst[x].p[3].setX(centerX - obst[x].p[0].getX() + centerX);
+				obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+			}
+			else
+			{
+				obst[x].p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+				obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+				obst[x].p[0].setX(centerX - obst[x].p[3].getX() + centerX);
+				obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+			}
 		}
-		else
+		if(abs(varX)!=varX)
 		{
-			vert.p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-			vert.p[3].setY((mAD*(vert.p[3].getX()-centerX))+centerY);
-			vert.p[0].setX(centerX - vert.p[3].getX() + centerX);
-			vert.p[0].setY((mAD*(vert.p[0].getX()-centerX))+centerY);
+			temp = obst[x].p[0];
+			obst[x].p[0] = obst[x].p[3];
+			obst[x].p[3] = temp;
+		}
+		if(abs(varY)==varY)
+		{
+			temp = obst[x].p[1];
+			obst[x].p[1] = obst[x].p[2];
+			obst[x].p[2] = temp;
 		}
 	}
-	if(abs(varX)!=varX)
-	{
-		temp = vert.p[0];
-		vert.p[0] = vert.p[3];
-		vert.p[3] = temp;
-	}
-	if(abs(varY)==varY)
-	{
-		temp = vert.p[1];
-		vert.p[1] = vert.p[2];
-		vert.p[2] = temp;
-	}
-	obst.push_back(vert);
 }
 
 
@@ -307,19 +330,9 @@ void GStar::setTreshold(int treshold ){
 	this->treshold = treshold;
 }
 
-Obstacle GStar::getLastObstacle()
-{
-	return obst.back();
-}
-
 Obstacle GStar::getObstacle(int n)
 {
 	return obst[n];
-}
-
-int GStar::getObstaclesSize()
-{
-	return obst.size();
 }
 
 vector<Point> GStar::getPointPath()
