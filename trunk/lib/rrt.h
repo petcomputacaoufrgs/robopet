@@ -57,13 +57,13 @@ class RRTTree
 class Rrt: public DiscretePathplan
 {
 	public:
-		Rrt( int _directionsToLook=3, int _stepsize=1, double _goalProb=0.5, int _timeLimit=1 ) : directionsToLook(_directionsToLook), stepsize(_stepsize), goalProb(_goalProb), timeLimit(_timeLimit) {}
+		Rrt( int _directionsToLook=3, int _stepsize=1, double _goalProb=0.45, float _timeLimit=1. ) : directionsToLook(_directionsToLook), stepsize(_stepsize), goalProb(_goalProb), timeLimit(_timeLimit) {}
 		~Rrt() {}
 
 		int 		directionsToLook;
 		int			stepsize;
 		double		goalProb;
-		int			timeLimit;
+		float		timeLimit;
 		
 		vector<Point>	fullPath;
 
@@ -74,7 +74,7 @@ class Rrt: public DiscretePathplan
 
 
 	private:
-		RRTTree 	*tree;
+		RRTTree 	*tree, *lastTreePoint;
 		Point 		initial, goal;
 
 		/**

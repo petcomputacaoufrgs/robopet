@@ -55,7 +55,7 @@ void Rrt::run()
 RRTTree* Rrt::rrtPlan() { 
 	srand(time(NULL)); //for Extend 
 
-	time_t _timeStarted = time(0);
+	clock_t clockBase = clock();
 
 	RRTTree *nearest; 
 	Point extended, target; 
@@ -66,24 +66,25 @@ RRTTree* Rrt::rrtPlan() {
 
 	nearest = nodoInicial; 
 	tree = nodoInicial; 
- 
-	while( distance(nearest->nodo, goal) > stepsize ) 
-	{
-			if( ( time(0) - _timeStarted ) > timeLimit ) {
-					status = ERROR_TIMELIMIT;
-					return tree;
-			}
-			else {
-					target = chooseTarget(); 
-					nearest = findNearest(target); 
-					extended = extend(nearest->nodo, target); 
 
-					if (extended != EMPTY_STATE) 
-							addPoint(nearest, extended); 
-			}
+	while( distance(nearest->nodo, goal) > 1 ) 
+	{
+		if( ( (clock() - clockBase)/(float)CLOCKS_PER_SEC ) > timeLimit ) {
+				status = ERROR_TIMELIMIT;
+				return tree;
+		}
+		else {
+				target = chooseTarget(); 
+				nearest = findNearest(target); 
+				extended = extend(nearest->nodo, target); 
+
+				if (extended != EMPTY_STATE) 
+						addPoint(nearest, extended); 
+		}
 	} 
  
-	addPoint(nearest, goal); //we add the final poin to the path to help finding the final path on findSolution()
+	//addPoint(nearest, goal); //we add the final poin to the path to help finding the final path on findSolution()
+	lastTreePoint = nearest;
  
 	return tree; 
 } 
@@ -131,7 +132,7 @@ float Rrt::distance(Point a, Point b) {
  
 Point Rrt::extend(Point nearest, Point target) { 
  
-    int step = rand()%stepsize + 1; 
+    int step = rand()%stepsize + 1;
  
     int directions[8][2] = {{-step, -step}, {-step, 0}, {-step, step}, {0, -step}, {0, 0}, {step, -step}, {step, 0}, {step, step}}; 
     int res = rand() % directionsToLook, i, resIndex[8], tmp, j, min; 
@@ -285,8 +286,8 @@ std::vector<Point> Rrt::findSolution() {
     std::vector<Point> tempPath, correctedPath;
  
     // First we find the last node of the tree, i.e. the goal.
-    RRTTree *aux = NULL; 
-    findEnding(tree,goal,&aux);
+    RRTTree *aux = lastTreePoint; 
+    //findEnding(tree,goal,&aux);
     
     // With aux pointing to the last node of the tree, we reconstruct the solution tree by navigating upwards.
     while( aux != NULL ){ 
