@@ -1,8 +1,7 @@
 #include "astar.h"
 #include "utils.h"
 
-AStar::AStar() {
-	initialize();
+AStar::AStar() {	
 }
 /*
 AStar::AStar(Node start, Node goal) : DiscretePathplan(Point(start.x,start.y), Point(goal.x,goal.y)){
@@ -10,6 +9,10 @@ AStar::AStar(Node start, Node goal) : DiscretePathplan(Point(start.x,start.y), P
 }*/
 
 void AStar::initialize() {
+	status = NOTHING;
+	closed_set.clear();
+	open_set.clear();
+	
 	came_from = (Node**) allocMatrix( envMatrixX,envMatrixY,sizeof(Node) );
 	closed = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
 	open = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
@@ -122,9 +125,10 @@ Node AStar::neighbor(Node n, int i, int j) {
 //given a source and a goal node, runs A* algorithm
 void AStar::run() {
 
+	initialize();
+	
 	bool tentative_is_better;
 	float tentative_g;
-	
 	
 	nodeinitialpos.setX(initialpos.getX());
 	nodeinitialpos.setY(initialpos.getY());
@@ -149,7 +153,7 @@ void AStar::run() {
 
 		//if current_node is the goal node
 		if(current_node == nodefinalpos) {
-			//printf("ending AStar\n");
+			status = SUCCESS;
 			reconstructPath();
 		}
 
@@ -196,6 +200,9 @@ void AStar::run() {
 			}
 		}
 	}
+	
+	if(status == NOTHING)
+		status = ERROR_UNREACHABLE;
 }
 
 void AStar::reconstructPath() {
@@ -205,6 +212,7 @@ void AStar::reconstructPath() {
 	
 	a.setXY( CELLS_TO_MM_X(current.getX()), CELLS_TO_MM_Y(current.getY()));
 	
+	path.clear();
 	while(current != nodeinitialpos) {
 		path.push_back(a);
 		//goto previous node
@@ -219,5 +227,4 @@ void AStar::reconstructPath() {
 		path[i] = path[path.size()-i-1];
 		path[path.size()-i-1] = a;
 	}
-	
 }
