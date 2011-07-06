@@ -11,6 +11,7 @@ using namespace std;
 Pathplan::Pathplan()
 {
 	status = NOTHING;
+	elapsedTime = -1;
 }
 
 Pathplan::~Pathplan() {}

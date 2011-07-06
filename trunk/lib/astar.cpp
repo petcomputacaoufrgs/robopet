@@ -1,6 +1,7 @@
 #include "astar.h"
 #include "utils.h"
 
+
 AStar::AStar() {	
 }
 /*
@@ -125,6 +126,8 @@ Node AStar::neighbor(Node n, int i, int j) {
 //given a source and a goal node, runs A* algorithm
 void AStar::run() {
 
+	clockBase = clock();
+
 	initialize();
 	
 	bool tentative_is_better;
@@ -203,6 +206,8 @@ void AStar::run() {
 	
 	if(status == NOTHING)
 		status = ERROR_UNREACHABLE;
+	else if(status == SUCCESS)
+		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
 }
 
 void AStar::reconstructPath() {

@@ -18,6 +18,8 @@ using namespace std;
  
 void Rrt::run() 
 {
+	clockBase = clock();
+	
 	path.clear();
 	fullPath.clear();
 	status = NOTHING;
@@ -45,6 +47,9 @@ void Rrt::run()
 							CELLS_TO_MM_Y(fullPath[i].getY()));
 	}
 
+	if(status == SUCCESS)
+		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
+
 //	printPathplan();
 } 
  
@@ -54,8 +59,6 @@ void Rrt::run()
  
 RRTTree* Rrt::rrtPlan() { 
 	srand(time(NULL)); //for Extend 
-
-	clock_t clockBase = clock();
 
 	RRTTree *nearest; 
 	Point extended, target; 
@@ -134,7 +137,10 @@ Point Rrt::extend(Point nearest, Point target) {
  
     int step = rand()%stepsize + 1;
  
-    int directions[8][2] = {{-step, -step}, {-step, 0}, {-step, step}, {0, -step}, {0, 0}, {step, -step}, {step, 0}, {step, step}}; 
+    int directions[8][2] = { {-step, -step}, {-step, 0},
+							 {-step, step}, {0, step},
+							 {step, step}, {step, 0},
+							 {step, -step}, {0, -step}}; 
     int res = rand() % directionsToLook, i, resIndex[8], tmp, j, min; 
     float distances[8], temp; 
     Point extended; 

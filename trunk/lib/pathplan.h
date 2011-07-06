@@ -62,6 +62,7 @@ class Pathplan
 		vector<Point> 		path;
 		vector<ppObstacle>	obstacles;
 		ppStatusType 		status;
+		float				elapsedTime;
 		
 		
 		//----- Functions -----
@@ -106,4 +107,6 @@ class Pathplan
 	
 		Point initialpos;
 		Point finalpos;
+		
+		clock_t clockBase;
 };
