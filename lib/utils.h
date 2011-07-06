@@ -24,3 +24,13 @@
  * \ingroup RoboPETLib
  */
 void** allocMatrix(int sizex, int sizey, int typeSize);
+
+/**
+ * The classic itoa() stdlib function.
+ * @param value Number value to be converted.
+ * @param result Adress to store resulting string.
+ * @param base Base of the number (2, 8, 10, ...)
+ * @return Pointer to the resulting string.
+ * \ingroup RoboPETLib
+ */
+char* itoa(int value, char* result, int base);
