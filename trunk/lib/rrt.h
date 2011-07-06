@@ -16,6 +16,11 @@ using RP::Point;
 #define EMPTY_STATE (Point(-10, -10))
 #define SQR(x) ((x)*(x)) //para Distance
 
+#define RRT_DEFAULT_DIRECTIONSTOLOOK 3
+#define RRT_DEFAULT_STEPSIZE 1
+#define RRT_DEFAULT_GOALPROB 0.45
+#define RRT_DEFAULT_TIMELIMIT 0.05
+
 typedef vector<Point> Solucao;
 
 /**
@@ -57,7 +62,12 @@ class RRTTree
 class Rrt: public DiscretePathplan
 {
 	public:
-		Rrt( int _directionsToLook=3, int _stepsize=1, double _goalProb=0.45, float _timeLimit=1. ) : directionsToLook(_directionsToLook), stepsize(_stepsize), goalProb(_goalProb), timeLimit(_timeLimit) {}
+
+		Rrt( int _directionsToLook = RRT_DEFAULT_DIRECTIONSTOLOOK,
+			 int _stepsize = RRT_DEFAULT_STEPSIZE,
+			 double _goalProb = RRT_DEFAULT_GOALPROB,
+			 float _timeLimit = RRT_DEFAULT_TIMELIMIT
+			 ) : directionsToLook(_directionsToLook), stepsize(_stepsize), goalProb(_goalProb), timeLimit(_timeLimit) {}
 		~Rrt() {}
 
 		int 		directionsToLook;
