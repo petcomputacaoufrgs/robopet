@@ -245,7 +245,7 @@ v: outro vetor
 ******************************************************/
 Vector Vector::projection(const Vector &v) const
 {
-	assert(v.getNorm());
+	//assert(v.getNorm());
 
 	if(linearlyDependent(v))
 		return *this;

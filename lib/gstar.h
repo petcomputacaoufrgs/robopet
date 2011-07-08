@@ -63,7 +63,7 @@ class GStar : public Pathplan {
 		double secureDistance;
 		Obstacle *obst;
 		stack<StackPoint> points;
-		stack<StackPoint> actualPoints2;
+		stack<StackPoint> actualPoints;
 
 		//vector<Point> pathGS;
 		
