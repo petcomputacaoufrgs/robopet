@@ -103,9 +103,9 @@ int k = 1;
 						path.push_back(obst[temp.obstacle_id].p[temp.p+2]); //C ou D no caminho
 
 						temp.p +=2;
-						actualPoints2.push(temp);
-						temp = actualPoints2.top();
-						actualPoints2.pop();
+						actualPoints.push(temp);
+						temp = actualPoints.top();
+						actualPoints.pop();
 						actual = obst[temp.obstacle_id].p[temp.p];
 					}
 				}
@@ -113,7 +113,7 @@ int k = 1;
 			else
 			{cout<<"foi Actual-> fim"<<endl;
 				path.push_back(finalpos);
-				if(actualPoints2.empty() && k == 1)
+				if(actualPoints.empty() && k == 1)
 				{
 					actual = initialpos;
 					k = 0;

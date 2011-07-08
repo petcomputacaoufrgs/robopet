@@ -19,13 +19,13 @@ Line::Line(double a, double b) : _vector(Point(0, b), Point(1, a + b)), _point(0
 
 double Line::getAngularCoefficient() const
 {
-	assert(_vector.getX());
+	//assert(_vector.getX());
 	return _vector.getY() / _vector.getX();
 }
 
 double Line::getLinearCoefficient() const
 {
-	assert(_vector.getX());
+	//assert(_vector.getX());
 	return _point.getY() - _point.getX() * _vector.getY() / _vector.getX();
 }
 
@@ -56,7 +56,7 @@ r: outra Line
 **************************************/
 Point Line::intersection(const Line &r) const
 {
-	assert(intersects(r));
+	//assert(intersects(r));
 
 	if(*this == r)
 		return _point;
@@ -136,7 +136,7 @@ double Line::image(double x) const
 {
 	if(vertical())
 	{
-		assert(x == _point.getX());
+		//assert(x == _point.getX());
 		return _point.getY();
 	}
 
@@ -149,7 +149,7 @@ y: valor
 **************************************/
 double Line::preImage(double y) const
 {
-	assert(!horizontal());
+	//assert(!horizontal());
 
 	return (y - getLinearCoefficient()) / getAngularCoefficient();
 }
