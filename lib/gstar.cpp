@@ -27,6 +27,7 @@ void GStar::run() {
 	}
 
 	path.clear();
+	paths.clear();
 
 	setRadius(ROBOT_RADIUS_MM);
 	setTreshold(ROBOT_RADIUS_MM/2);
@@ -43,6 +44,109 @@ void GStar::calcCost(PathCost *p)
 	p->cost = (p->origin).getDistance(p->dest);
 }
 
+void GStar::goToEnd()
+{
+	vector<Point> actualPath;
+	StackPoint ret;
+	StackPoint temp;
+	Point actual;
+	
+	actualPath.push_back(initialpos);
+	
+	actual = initialpos;
+	
+	oldPaths.push(actualPath);
+	
+	temp.obstacle_id = 0;
+	temp.p = 0;
+	points.push(temp);
+	
+	while(!oldPaths.empty() && !points.empty())
+	{
+		cout<<"entrou while"<<endl;
+		actualPath = oldPaths.top();
+		oldPaths.pop();
+		
+		temp = points.top();
+		points.pop();
+		
+		actual = obst[temp.obstacle_id].p[temp.p];
+		if(actual.getX() == -1)
+			actual = initialpos;
+		else
+			if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
+				{
+					cout<<"INCIAL -> B bloqueado"<<endl;
+				}
+				else
+				{
+					cout<<"foi inicial -> B"<<endl;
+					
+					actualPath.push_back(obst[temp.obstacle_id].p[temp.p]); //adiciona o ponto A no caminho
+					
+					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
+					{
+						cout<<"B->D bloqueado"<<endl;
+					}
+					else
+					{
+						cout<<"foi B -> D"<<endl;
+						
+						actualPath.push_back(obst[temp.obstacle_id].p[temp.p+2]); //adiciona o ponto C no caminho
+						
+						actual = obst[temp.obstacle_id].p[temp.p+2];
+					}
+				}
+			
+		while(actual!=finalpos)
+		{
+			
+			if(straightIsBlocked(actual, finalpos, &ret))
+			{
+				oldPaths.push(actualPath);
+				ret.p=1;
+				points.push(ret); //Bota o ponto B com o id do obst que bateu
+				ret.p=0;
+				
+				
+				temp = ret; //pega o A
+				
+				if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
+				{
+					cout<<"INCIAL -> A bloqueado"<<endl;
+				}
+				else
+				{
+					cout<<"foi inicial -> A"<<endl;
+					
+					actualPath.push_back(obst[temp.obstacle_id].p[temp.p]); //adiciona o ponto A no caminho
+					
+					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
+					{
+						cout<<"A->C bloqueado"<<endl;
+					}
+					else
+					{
+						cout<<"foi A -> C"<<endl;
+						
+						actualPath.push_back(obst[temp.obstacle_id].p[temp.p+2]); //adiciona o ponto C no caminho
+						
+						actual = obst[temp.obstacle_id].p[temp.p+2];
+					}
+				}
+			}
+			else
+			{
+				actual = finalpos;
+				actualPath.push_back(finalpos);
+				paths.push_back(actualPath);
+				//path = actualPath;
+			}
+		}
+	}
+}
+
+/*
 void GStar::goToEnd()
 {
 	cout << "***********************COMEÇO************************" << endl;
@@ -122,7 +226,7 @@ int k = 1;
 	}
 
 	cout << "***********************FIM***********************" << endl;
-}
+}*/
 
 /* Seta um distância na qual os robos que passarem por ela, estarão levemente distantes do robô obstáculo*/
 void GStar::setSecureDistance()
