@@ -51,6 +51,7 @@ class GStar : public Pathplan {
 		Obstacle getObstacle(int n);
 
 		vector<Point> getPointPath();
+		vector< vector<Point> > paths;
 	
 		//----- Functions -----
 		void run();
@@ -64,6 +65,7 @@ class GStar : public Pathplan {
 		Obstacle *obst;
 		stack<StackPoint> points;
 		stack<StackPoint> actualPoints;
+		stack< vector<Point> > oldPaths;
 
 		//vector<Point> pathGS;
 		
