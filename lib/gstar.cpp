@@ -15,6 +15,8 @@ GStar::~GStar() {}
 void GStar::run() {
 	Point actual;
 	Obstacle o;
+	
+	clockBase = clock();
 
 	obst = (Obstacle*) calloc(obstacles.size(), sizeof(Obstacle));
 	for(unsigned int i=0; i<obstacles.size(); i++)
@@ -37,6 +39,9 @@ void GStar::run() {
 
 	//chama essa e está pronto o caminho ;D
 	goToEnd();
+	
+	status = SUCCESS;//considera sempre sucesso, arrumar depois
+	elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
 }
 
 void GStar::calcCost(PathCost *p)
@@ -76,7 +81,8 @@ void GStar::goToEnd()
 		else
 			if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
 				{
-					cout<<"INCIAL -> B bloqueado"<<endl;
+					cout<<"INICIAL -> B bloqueado"<<endl;
+					break;//arrumar
 				}
 				else
 				{
@@ -87,6 +93,7 @@ void GStar::goToEnd()
 					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
 					{
 						cout<<"B->D bloqueado"<<endl;
+						break;//arrumar
 					}
 					else
 					{
@@ -113,7 +120,8 @@ void GStar::goToEnd()
 				
 				if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
 				{
-					cout<<"INCIAL -> A bloqueado"<<endl;
+					cout<<"INICIAL -> A bloqueado"<<endl;
+					break;//arrumar
 				}
 				else
 				{
@@ -124,6 +132,7 @@ void GStar::goToEnd()
 					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
 					{
 						cout<<"A->C bloqueado"<<endl;
+						break;//arrumar
 					}
 					else
 					{
