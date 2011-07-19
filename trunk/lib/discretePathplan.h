@@ -123,19 +123,19 @@ class DiscretePathplan : public Pathplan
 		/** 
 		 * Calculates the grid cells per mm horizontal ratio.
 		 */
-		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH; }
+		double CELLS_PER_MM_X() { return envMatrixX / (float) FIELD_WIDTH_MM; }
 		/** 
 		 * Calculates the grid cells per mm vertical ratio.
 		 */
-		double CELLS_PER_MM_Y() { return envMatrixY / (float) FIELD_HEIGHT; }
+		double CELLS_PER_MM_Y() { return envMatrixY / (float) FIELD_HEIGHT_MM; }
 		/** 
 		 * Calculates the mm per grid cells horizontal ratio.
 		 */
-		double MM_PER_CELLS_X() { return FIELD_WIDTH / (float) envMatrixX; }
+		double MM_PER_CELLS_X() { return FIELD_WIDTH_MM / (float) envMatrixX; }
 		/** 
 		 * Calculates the mm per grid cells vertical ratio.
 		 */
-		double MM_PER_CELLS_Y() { return FIELD_HEIGHT / (float) envMatrixY; }
+		double MM_PER_CELLS_Y() { return FIELD_HEIGHT_MM / (float) envMatrixY; }
 
 		/** 
 		 * Converts mm to grid celular coordinates, using the HORIZONTAL ratio.
