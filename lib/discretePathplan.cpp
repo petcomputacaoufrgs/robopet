@@ -10,7 +10,7 @@ DiscretePathplan::DiscretePathplan()
 	this->radius = OBSTACULE_RADIUS;
 	
 	envMatrixX = ENV_MATRIX_SIZE_X;
-	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT/(float)FIELD_WIDTH) + 1);
+	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT_MM/(float)FIELD_WIDTH_MM) + 1);
 	
 	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
 	
