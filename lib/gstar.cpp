@@ -15,6 +15,8 @@ GStar::~GStar() {}
 void GStar::run() {
 	Point actual;
 	Obstacle o;
+	double distance;
+	double minDistance=INFINITY;
 	
 	clockBase = clock();
 
@@ -35,19 +37,43 @@ void GStar::run() {
 	setTreshold(ROBOT_RADIUS_MM/2);
 	setSecureDistance();
 
-//	cout<<straightIsBlocked(initialpos, finalpos)<<endl;
+//	//cout<<straightIsBlocked(initialpos, finalpos)<<endl;
 
 	//chama essa e está pronto o caminho ;D
 	//goToEnd();
 	vector<Point> aPath;
 	aPath.push_back(initialpos);
-	path = walk(aPath);
-
-//	cout << pointIsInsideRobot(finalpos) << endl;
+	aPath = walk(aPath);
 	
+	if(aPath.back() == finalpos)
+		paths.push_back(aPath);
 	
-	status = SUCCESS;//considera sempre sucesso, arrumar depois
-	elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
+	if(paths.size()>0)
+	{
+		status = SUCCESS;
+		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
+		//cout<<paths.size()<<endl;
+	}
+	else
+	{
+		if(status != ERROR_TIMELIMIT)
+			status = ERROR_UNREACHABLE;
+	}
+	
+	for (unsigned int i=0; i<paths.size(); i++)
+	{
+		distance=0;
+		for(unsigned int j=0; j<paths[i].size()-1; j++)
+		{
+			distance += paths[i][j].getDistance(paths[i][j+1]);
+		}
+		if(distance < minDistance)
+		{
+			minDistance = distance;
+			path = paths[i];
+		}
+	}
+	//cout<<minDistance<<endl;
 }
 
 void GStar::calcCost(PathCost *p)
@@ -72,47 +98,56 @@ vector<Point> GStar::walkA(vector<Point> aPath, Point final, int obstID)
 {
 	StackPoint ret;
 	Point actual = aPath.back();
-	if(!pointIsInsideRobot(final))
+	if(!(((clock() - clockBase)/(float)CLOCKS_PER_SEC ) > 0.05 )) 
 	{
-		if(straightIsBlocked(actual, obst[obstID].p[0], &ret))
-		{//actual->A bloqueado, e agora?
-			cout<<"actual->A bloqueado"<<endl;
-			if(ret.obstacle_id != obstID)
-			{
-				cout << "Nao se bateu" << endl;
-				return walkA(aPath, finalpos, ret.obstacle_id);
-			}	
+		if(!pointIsInsideRobot(final))
+		{
+			if(straightIsBlocked(actual, obst[obstID].p[0], &ret))
+			{//actual->A bloqueado, e agora?
+				//cout<<"actual->A bloqueado"<<endl;
+				if(ret.obstacle_id != obstID)
+				{
+					//cout << "Nao se bateu" << endl;
+					return walkA(aPath, finalpos, ret.obstacle_id);
+				}	
+				else
+				{
+					//cout << "Se bateu fecha caminho" << endl;
+					aPath.empty();
+					return aPath;	
+				}
+			}
 			else
-			{
-				cout << "Se bateu fecha caminho" << endl;
-				aPath.empty();
-				return aPath;	
+			{//foi actual->A
+				actual = obst[obstID].p[0];
+				aPath.push_back(actual);
+				
+				if(straightIsBlocked(actual, obst[obstID].p[2], &ret))
+				{//A->C bloqueado, e agora?
+					aPath.pop_back();			
+					//cout<<"A->C bloqueado"<<endl;
+					return walkA(aPath, finalpos, ret.obstacle_id);
+								
+				}
+				else
+				{//foi A->C
+					actual = obst[obstID].p[2];
+					aPath.push_back(actual);			
+					aPath = walk(aPath); //continua caminho
+					return aPath;
+				}
 			}
 		}
 		else
-		{//foi actual->A
-			actual = obst[obstID].p[0];
-			aPath.push_back(actual);
-			
-			if(straightIsBlocked(actual, obst[obstID].p[2], &ret))
-			{//A->C bloqueado, e agora?
-				aPath.pop_back();			
-				cout<<"A->C bloqueado"<<endl;
-				return walkA(aPath, finalpos, ret.obstacle_id);
-							
-			}
-			else
-			{//foi A->C
-				actual = obst[obstID].p[2];
-				aPath.push_back(actual);			
-				aPath = walk(aPath); //continua caminho
-				return aPath;
-			}
+		{
+			//cout << "Ponto dentro do robo" << endl;
+			aPath.empty();
+			return aPath;
 		}
 	}
 	else
 	{
-		cout << "Ponto dentro do robo" << endl;
+		status = ERROR_TIMELIMIT;
 		aPath.empty();
 		return aPath;
 	}
@@ -122,44 +157,54 @@ vector<Point> GStar::walkB(vector<Point> aPath, Point final, int obstID)
 {
 	StackPoint ret;
 	Point actual = aPath.back();
-	if(!pointIsInsideRobot(final))
+	
+	if(!(((clock() - clockBase)/(float)CLOCKS_PER_SEC ) > 0.05 )) 
 	{
-		if(straightIsBlocked(actual, obst[obstID].p[1], &ret))
+		if(!pointIsInsideRobot(final))
 		{
-			cout<<"actual->B bloqueado"<<endl;
-			if(ret.obstacle_id != obstID)
-				return walkB(aPath, finalpos, ret.obstacle_id);
-			else
+			if(straightIsBlocked(actual, obst[obstID].p[1], &ret))
 			{
-				cout << "Se bateu fecha caminho" << endl;
-				aPath.empty();
-				return aPath;	
+				//cout<<"actual->B bloqueado"<<endl;
+				if(ret.obstacle_id != obstID)
+					return walkB(aPath, finalpos, ret.obstacle_id);
+				else
+				{
+					//cout << "Se bateu fecha caminho" << endl;
+					aPath.empty();
+					return aPath;	
+				}
+				
 			}
-			
+			else
+			{//foi actual->B
+				actual = obst[obstID].p[1];
+				aPath.push_back(actual);
+				
+				if(straightIsBlocked(actual, obst[obstID].p[3], &ret))
+				{
+					aPath.pop_back();			
+					//cout<<"B->D bloqueado"<<endl;
+					return walkB(aPath, finalpos, ret.obstacle_id);
+				}
+				else
+				{//foi B->D
+					actual = obst[obstID].p[3];
+					aPath.push_back(actual);
+					aPath = walk(aPath); //continua caminho
+					return aPath;
+				}
+			}
 		}
 		else
-		{//foi actual->B
-			actual = obst[obstID].p[1];
-			aPath.push_back(actual);
-			
-			if(straightIsBlocked(actual, obst[obstID].p[3], &ret))
-			{
-				aPath.pop_back();			
-				cout<<"B->D bloqueado"<<endl;
-				return walkB(aPath, finalpos, ret.obstacle_id);
-			}
-			else
-			{//foi B->D
-				actual = obst[obstID].p[3];
-				aPath.push_back(actual);
-				aPath = walk(aPath); //continua caminho
-				return aPath;
-			}
+		{
+			//cout << "Ponto dentro do robo" << endl;
+			aPath.empty();
+			return aPath;
 		}
 	}
 	else
 	{
-		cout << "Ponto dentro do robo" << endl;
+		status = ERROR_TIMELIMIT;
 		aPath.empty();
 		return aPath;
 	}
@@ -171,43 +216,53 @@ vector<Point> GStar::walk(vector<Point> aPath)
 	vector<Point> pathA;
 	vector<Point> pathB;
 	Point actual = aPath.back();
-	if(!pointIsInsideRobot(finalpos))
-	{	
-		if(straightIsBlocked(actual, finalpos, &ret))
-		{
-			if(obst[ret.obstacle_id].p[2] != actual && obst[ret.obstacle_id].p[3] != actual)
-			{//aqui ele nao esta se batendo
-				pathA = walkA(aPath, finalpos, ret.obstacle_id);
-				pathB = walkB(aPath, finalpos, ret.obstacle_id);
-				if(pathA.back() == finalpos)
-				{
-					cout << "chegou no fim A" << endl;
-					paths.push_back(pathA);
-				}
-				if(pathB.back() == finalpos)
-				{
-					cout << "chegou no fim B" << endl;
-					paths.push_back(pathB);
-				}
-				
-			}	
+	
+	if(!(((clock() - clockBase)/(float)CLOCKS_PER_SEC ) > 0.05 )) 
+	{
+		if(!pointIsInsideRobot(finalpos))
+		{	
+			if(straightIsBlocked(actual, finalpos, &ret))
+			{
+				if(obst[ret.obstacle_id].p[2] != actual && obst[ret.obstacle_id].p[3] != actual)
+				{//aqui ele nao esta se batendo
+					pathA = walkA(aPath, finalpos, ret.obstacle_id);
+					pathB = walkB(aPath, finalpos, ret.obstacle_id);
+					if(pathA.back() == finalpos)
+					{
+						//cout << "chegou no fim A" << endl;
+						paths.push_back(pathA);
+					}
+					if(pathB.back() == finalpos)
+					{
+						//cout << "chegou no fim B" << endl;
+						paths.push_back(pathB);
+					}
+					
+				}	
+				else
+				{//aqui ele ta se batendo
+					//cout << "Se bateu fecha caminho" << endl;
+					aPath.empty();
+					return aPath;	
+				}			
+			}
 			else
-			{//aqui ele ta se batendo
-				cout << "Se bateu fecha caminho" << endl;
-				aPath.empty();
-				return aPath;	
-			}			
+			{			
+				aPath.push_back(finalpos);
+				//paths.push_back(aPath);
+			}
+			return aPath;
 		}
 		else
-		{			
-			aPath.push_back(finalpos);
-			//paths.push_back(aPath);
+		{
+			//cout << "Ponto dentro do robo" << endl;
+			aPath.empty();
+			return aPath;
 		}
-		return aPath;
 	}
 	else
 	{
-		cout << "Ponto dentro do robo" << endl;
+		status = ERROR_TIMELIMIT;
 		aPath.empty();
 		return aPath;
 	}
@@ -232,7 +287,7 @@ void GStar::goToEnd()
 	
 	while(!oldPaths.empty() && !points.empty())
 	{
-		cout<<"entrou while"<<endl;
+		//cout<<"entrou while"<<endl;
 		actualPath = oldPaths.top();
 		oldPaths.pop();
 		
@@ -245,23 +300,23 @@ void GStar::goToEnd()
 		else
 			if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
 				{
-					cout<<"INICIAL -> B bloqueado"<<endl;
+					//cout<<"INICIAL -> B bloqueado"<<endl;
 					break;//arrumar
 				}
 				else
 				{
-					cout<<"foi inicial -> B"<<endl;
+					//cout<<"foi inicial -> B"<<endl;
 					
 					actualPath.push_back(obst[temp.obstacle_id].p[temp.p]); //adiciona o ponto A no caminho
 					
 					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
 					{
-						cout<<"B->D bloqueado"<<endl;
+						//cout<<"B->D bloqueado"<<endl;
 						break;//arrumar
 					}
 					else
 					{
-						cout<<"foi B -> D"<<endl;
+						//cout<<"foi B -> D"<<endl;
 						
 						actualPath.push_back(obst[temp.obstacle_id].p[temp.p+2]); //adiciona o ponto C no caminho
 						
@@ -284,23 +339,23 @@ void GStar::goToEnd()
 				
 				if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
 				{
-					cout<<"INICIAL -> A bloqueado"<<endl;
+					//cout<<"INICIAL -> A bloqueado"<<endl;
 					break;//arrumar
 				}
 				else
 				{
-					cout<<"foi inicial -> A"<<endl;
+					//cout<<"foi inicial -> A"<<endl;
 					
 					actualPath.push_back(obst[temp.obstacle_id].p[temp.p]); //adiciona o ponto A no caminho
 					
 					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
 					{
-						cout<<"A->C bloqueado"<<endl;
+						//cout<<"A->C bloqueado"<<endl;
 						break;//arrumar
 					}
 					else
 					{
-						cout<<"foi A -> C"<<endl;
+						//cout<<"foi A -> C"<<endl;
 						
 						actualPath.push_back(obst[temp.obstacle_id].p[temp.p+2]); //adiciona o ponto C no caminho
 						
@@ -384,7 +439,7 @@ bool GStar::straightIsBlockedB() //provavelmente ta testando obstaculos que esta
 	A = (initialY - finalY);
 	B = (finalX - initialX);
 	C = ((initialX * finalY) - (finalX * initialY));
-	//cout << "0 = "<<Azinho<<"x + "<<Bzinho<<"y + "<<Czinho<<endl;
+	////cout << "0 = "<<Azinho<<"x + "<<Bzinho<<"y + "<<Czinho<<endl;
 	
 	//x e y aqui são os mesmos do robô, os quais devem ser iterados uma só vez
 	//dist = (abs(x*Azinho + y*Bzinho + Czinho) / sqrt((Azinho*Azinho) + (Bzinho*Bzinho)))
@@ -534,8 +589,9 @@ vector<Point> GStar::getPointPath()
 {
 	return path;
 }
-Point GStar::getPathNode(int pointIndex) {
-	// do me ;)
+Point GStar::getPathNode(int pointIndex)
+{
+	return path[pointIndex];
 }
 				
 void GStar::setInitialPos(Point pos) {
