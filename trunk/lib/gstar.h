@@ -56,6 +56,7 @@ class GStar : public Pathplan {
 		//----- Functions -----
 		void run();
 		Point getPathNode(int pointIndex);
+		
 
 	protected:
 		//----- Variables -----
@@ -91,6 +92,11 @@ class GStar : public Pathplan {
 		 * Descricao da funcao.
 		 */
 		void makePoints(int x);
+		
+		vector<Point> walk(vector<Point> aPath);
+		vector<Point> walkA(vector<Point> aPath, Point final, int obstID);
+		vector<Point> walkB(vector<Point> aPath, Point final, int obstID);
+		bool pointIsInsideRobot(Point p);
 };
 
 #endif
