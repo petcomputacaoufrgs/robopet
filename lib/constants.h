@@ -13,6 +13,6 @@
 #define ROBOT_RADIUS_MM 90
 #define BALL_RADIUS_MM 27.5
 
-#define BORDER 675 //(ARENA - FIELD)/2
+#define BORDER 0 //(ARENA - FIELD)/2
 
 #define TRESHOLD 20

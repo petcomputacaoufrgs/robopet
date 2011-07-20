@@ -58,7 +58,8 @@ float AStar::distance(Node a, Node b) {
 		return delta_x;
 	//otherwise
 	else
-		return sqrt(delta_x*delta_x + delta_y*delta_y);
+		return pow((delta_x*delta_x + delta_y*delta_y), 0.5);
+		//sqrt(delta_x*delta_x + delta_y*delta_y);
 
 	//return sqrt( (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) );
     //float d = (a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y) ;
@@ -176,10 +177,10 @@ void AStar::run() {
 						continue;
 					}
 
-					tentative_g = calcG(current_node) +
-								//if the nodes are in diagonal, we sum 1.4. Otherwise, 1.
+					tentative_g = calcG(current_node) *
+								//if the nodes are in diagonal, we multiply 1.4. Otherwise, 1.
 								(	current_node.x == current_neighbor.x ||
-									current_node.y == current_neighbor.y) ? 1 : 100;
+									current_node.y == current_neighbor.y) ? 1 : 999999999999;
 
 					//if current_neighbor doesn't belongs to open_set
 					if(open_set.find(current_neighbor) == open_set.end()) {
