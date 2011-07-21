@@ -12,7 +12,7 @@ DiscretePathplan::DiscretePathplan()
 	envMatrixX = ENV_MATRIX_SIZE_X;
 	envMatrixY = (int)(envMatrixX * (FIELD_HEIGHT_MM/(float)FIELD_WIDTH_MM) + 1);
 	
-	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
+	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType),sizeof(envType*));
 	
 	for (int i = 0; i < envMatrixX; i += 1)
 		for (int j = 0; j < envMatrixY; j += 1)
@@ -49,11 +49,13 @@ void DiscretePathplan::setRadius(int radius)
 
 void DiscretePathplan::setEnvXY( int x, int y )
 {
+	DEBUGL();
 	envMatrixX = x;
 	envMatrixY = y;
-	
-	free(env);
-	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType) );
+	DEBUGL();
+	if(env) free(env);
+	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType),sizeof(envType*));
+	DEBUGL();
 }
 
 int DiscretePathplan::getEnvMatrixX()
