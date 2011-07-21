@@ -49,13 +49,11 @@ void DiscretePathplan::setRadius(int radius)
 
 void DiscretePathplan::setEnvXY( int x, int y )
 {
-	DEBUGL();
 	envMatrixX = x;
 	envMatrixY = y;
-	DEBUGL();
+
 	if(env) free(env);
 	env = (envType**) allocMatrix(envMatrixX,envMatrixY,sizeof(envType),sizeof(envType*));
-	DEBUGL();
 }
 
 int DiscretePathplan::getEnvMatrixX()
