@@ -20,10 +20,11 @@
  * @param sizex Dimension x of the matrix
  * @param sizey Dimension y of the matrix
  * @param typeSize Size of the matrix type. Use sizeof(<matrix_type>) when calling
+ * @param typePtrSize Size of the pointer of the matrix type. Use sizeof(<matrix_type>*) when calling
  * @return The variable storing the matrix
  * \ingroup RoboPETLib
  */
-void** allocMatrix(int sizex, int sizey, int typeSize);
+void** allocMatrix(int sizex, int sizey, int typeSize, int typePtrSize);
 
 /**
  * The classic itoa() stdlib function.

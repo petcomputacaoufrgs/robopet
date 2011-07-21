@@ -2,11 +2,11 @@
 
 #include "utils.h"
 
-void** allocMatrix(int sizex, int sizey, int typeSize)
+void** allocMatrix(int sizex, int sizey, int typeSize, int typePtrSize)
 {
 	void** matrix;
 	
-	matrix = (void**) calloc(sizex, 4);
+	matrix = (void**) calloc(sizex, typePtrSize);
 	for(int i=0; i<sizex; i++)
 		matrix[i] = (void*) calloc(sizey, typeSize);
 		

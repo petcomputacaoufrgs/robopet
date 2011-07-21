@@ -14,12 +14,12 @@ void AStar::initialize() {
 	closed_set.clear();
 	open_set.clear();
 	
-	came_from = (Node**) allocMatrix( envMatrixX,envMatrixY,sizeof(Node) );
-	closed = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
-	open = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool) );
-	g = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float) );
-	h = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float) );
-	f = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float) );
+	came_from = (Node**) allocMatrix( envMatrixX,envMatrixY,sizeof(Node),sizeof(Node*) );
+	closed = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool),sizeof(bool*) );
+	open = (bool**) allocMatrix( envMatrixX,envMatrixY,sizeof(bool),sizeof(bool*) );
+	g = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float),sizeof(float*) );
+	h = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float),sizeof(float*) );
+	f = (float**) allocMatrix( envMatrixX,envMatrixY,sizeof(float),sizeof(float*));
 }
 
 AStar::~AStar() {
