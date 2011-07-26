@@ -37,10 +37,6 @@ void GStar::run() {
 	setTreshold(ROBOT_RADIUS_MM/2);
 	setSecureDistance();
 
-//	//cout<<straightIsBlocked(initialpos, finalpos)<<endl;
-
-	//chama essa e está pronto o caminho ;D
-	//goToEnd();
 	vector<Point> aPath;
 	aPath.push_back(initialpos);
 	aPath = walk(aPath);
@@ -51,6 +47,7 @@ void GStar::run() {
 	if(paths.size()>0)
 	{
 		status = SUCCESS;
+		bestWay();	
 		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
 		//cout<<paths.size()<<endl;
 	}
@@ -60,6 +57,7 @@ void GStar::run() {
 			status = ERROR_UNREACHABLE;
 	}
 	
+
 	for (unsigned int i=0; i<paths.size(); i++)
 	{
 		distance=0;
@@ -76,9 +74,37 @@ void GStar::run() {
 	//cout<<minDistance<<endl;
 }
 
-void GStar::calcCost(PathCost *p)
+void GStar::bestWay()
 {
-	p->cost = (p->origin).getDistance(p->dest);
+	StackPoint ret;
+	vector<Point> tmp_path;
+	int trocou=0,j,k;
+	for(int i=paths.size()-1; i>=0; i--)
+	{
+		tmp_path = paths[i];
+		
+		j = tmp_path.size()-1;
+		while(j>0 && trocou == 0)
+		{
+			k=0;
+			while(straightIsBlocked(tmp_path[k], tmp_path[j], &ret) && k < j-1)
+				k++;
+						
+			if(k < j-1) //se achou um atalho
+			{
+				//cout << "achou atalho" << endl;
+				tmp_path.erase(tmp_path.begin()+k+1,tmp_path.begin()+j);
+				trocou = 1;
+			}
+			j--;		
+		}
+		if(trocou)
+		{
+		//	cout << "trocou o/" << endl;
+			paths.push_back(tmp_path);
+		}	
+		trocou = 0;	
+	}	
 }
 
 bool GStar::pointIsInsideRobot(Point p)
@@ -268,112 +294,6 @@ vector<Point> GStar::walk(vector<Point> aPath)
 	}
 }
 
-void GStar::goToEnd()
-{
-	vector<Point> actualPath;
-	StackPoint ret;
-	StackPoint temp;
-	Point actual;
-	
-	actualPath.push_back(initialpos);
-	
-	actual = initialpos;
-	
-	oldPaths.push(actualPath);
-	
-	temp.obstacle_id = 0;
-	temp.p = 0;
-	points.push(temp);
-	
-	while(!oldPaths.empty() && !points.empty())
-	{
-		//cout<<"entrou while"<<endl;
-		actualPath = oldPaths.top();
-		oldPaths.pop();
-		
-		temp = points.top();
-		points.pop();
-		
-		actual = obst[temp.obstacle_id].p[temp.p];
-		if(actual.getX() == -1)
-			actual = initialpos;
-		else
-			if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
-				{
-					//cout<<"INICIAL -> B bloqueado"<<endl;
-					break;//arrumar
-				}
-				else
-				{
-					//cout<<"foi inicial -> B"<<endl;
-					
-					actualPath.push_back(obst[temp.obstacle_id].p[temp.p]); //adiciona o ponto A no caminho
-					
-					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
-					{
-						//cout<<"B->D bloqueado"<<endl;
-						break;//arrumar
-					}
-					else
-					{
-						//cout<<"foi B -> D"<<endl;
-						
-						actualPath.push_back(obst[temp.obstacle_id].p[temp.p+2]); //adiciona o ponto C no caminho
-						
-						actual = obst[temp.obstacle_id].p[temp.p+2];
-					}
-				}
-			
-		while(actual!=finalpos)
-		{
-			
-			if(straightIsBlocked(actual, finalpos, &ret))
-			{
-				oldPaths.push(actualPath);
-				ret.p=1;
-				points.push(ret); //Bota o ponto B com o id do obst que bateu
-				ret.p=0;
-				
-				
-				temp = ret; //pega o A
-				
-				if(straightIsBlocked(actual, obst[temp.obstacle_id].p[temp.p], &ret))
-				{
-					//cout<<"INICIAL -> A bloqueado"<<endl;
-					break;//arrumar
-				}
-				else
-				{
-					//cout<<"foi inicial -> A"<<endl;
-					
-					actualPath.push_back(obst[temp.obstacle_id].p[temp.p]); //adiciona o ponto A no caminho
-					
-					if(straightIsBlocked(obst[temp.obstacle_id].p[temp.p], obst[temp.obstacle_id].p[temp.p+2], &ret)) 
-					{
-						//cout<<"A->C bloqueado"<<endl;
-						break;//arrumar
-					}
-					else
-					{
-						//cout<<"foi A -> C"<<endl;
-						
-						actualPath.push_back(obst[temp.obstacle_id].p[temp.p+2]); //adiciona o ponto C no caminho
-						
-						actual = obst[temp.obstacle_id].p[temp.p+2];
-					}
-				}
-			}
-			else
-			{
-				actual = finalpos;
-				actualPath.push_back(finalpos);
-				paths.push_back(actualPath);
-				//path = actualPath;
-			}
-		}
-	}
-}
-
 /* Seta um distância na qual os robos que passarem por ela, estarão levemente distantes do robô obstáculo*/
 void GStar::setSecureDistance()
 {
@@ -532,46 +452,6 @@ void GStar::makePoints(int x)
 	}
 }
 
-
-//void ordena_obstáculos(point origem, vector obstáculos)
-	/*ordena o vetor de obstáculos de acordo com a proximidade da origem
-	para saber qual foi o primeiro ponto que bloqueou o caminho*/
-	
-//point descobre_obstáculo(point origem, point final, vector obstáculos)
-	/*retorna qual é o primeiro ponto que está no caminho origem-final
-	do robô*/
-	
-
-	
-/*
-a partir desse ponto, já é possível verificar se é possível ir da 
-origem até os pontos A e B. Basta chamas a "vai_até_o_fim?" com "final"
-sendo A ou B, e isso retorna o booleano correto.
-*/
-
-/*
-após isso, devemos chama a mesma "vai_até_o_fim?" mas somente de A-C ou 
-B-D, pois outras permutações cruzam o robô.
-*/
-
-//void joga_no_grafo_reta(point origem, point final)
-	/*manda uma reta entre os dois pontos no grafo, atribuindo seu custo*/
-	
-//void joga_no_grafo_ponto(point ponto)
-	/*poe no grafo os pontos indicados na passagem da função. Pode ser 
-	inserida na "cria_pontos".*/
-	
-/*fazer aqui a manolisse de testar se é possível ir da origem pro final, 
-só pelo lolz, e se der poe no grafo, senão esquece.
-*/
-
-/*a ideia é ir na recursão tentando chegar no F, indo sempre pelos 2 
-lados do robô obstáculo tentando ir até o final, e parando caso esteja 
-tentando ir para um ponto que já havia sido calculado.
-*/
-
-
-// ...
 void GStar::setRadius(int radius) {
 	this->radius = radius;
 }
