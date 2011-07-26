@@ -72,10 +72,6 @@ class GStar : public Pathplan {
 		
 		//----- Functions -----
 
-		void calcCost(PathCost *p);
-
-		void goToEnd();
-
 		/**
 		 * Descricao da funcao.
 		 * @return Descricao do valor de retorno.
@@ -97,6 +93,7 @@ class GStar : public Pathplan {
 		vector<Point> walkA(vector<Point> aPath, Point final, int obstID);
 		vector<Point> walkB(vector<Point> aPath, Point final, int obstID);
 		bool pointIsInsideRobot(Point p);
+		void bestWay();
 };
 
 #endif
