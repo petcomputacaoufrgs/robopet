@@ -57,11 +57,31 @@ void Player::kick() {
 void Player::keepDistanceToBall(double d) {
 	
 }
+
 void Player::keepDistanceToBall(MovingObject m, double d) {
-	if(!isAt(m.getPosition(), d))
+	double ma,xp,yp;
+	if(!isAt(m.getPosition(), d+80))
 		setFuturePosition(m.getPosition());
 	else
-		stay();
+	{
+		if(isAt(m.getPosition(), d))
+		{//vai pra tras
+			ma = (m.getPosition().getY() - this->getPosition().getY())/(m.getPosition().getX() - this->getPosition().getX());
+			if(this->getPosition().getX() <= m.getPosition().getX()) //robo ta na esquerda da bola
+			{
+				xp=(d/sqrt(1+ma*ma))-m.getPosition().getX();
+				yp = ma*(xp-m.getPosition().getX())+m.getPosition().getY();
+			}
+			else
+			{
+				xp=(d/sqrt(1+ma*ma))+m.getPosition().getX();
+				yp = ma*(xp-m.getPosition().getX())+m.getPosition().getY();
+			}
+			setFuturePosition(Point(xp,yp));
+		}
+		else
+			stay();
+	}
 }
 
 void Player::pointTo( Point p )

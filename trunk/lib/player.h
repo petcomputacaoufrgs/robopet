@@ -18,7 +18,7 @@ class Player: public MovingObject
   public:
     enum Role {  };
 
-    Player() { setId(-1); }
+    Player() { setId(-1); ask_ball = 0;}
     ~Player() {}
 	
 		
@@ -102,6 +102,11 @@ class Player: public MovingObject
 	bool 		isPointingTo( Point p );
     Player& operator=(const Player& other);
 
+    
+    //----- Variables -----
+
+	int ask_ball;
+			
   private:
     double _current_angle, _future_angle, _delta_angle;
     int _role;
