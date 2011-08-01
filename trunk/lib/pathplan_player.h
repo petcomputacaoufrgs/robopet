@@ -24,6 +24,6 @@ class PathplanPlayer : public Player
 		Point 		getActualNode();
 
 	private:	
-	
+		int var;
 };
 
