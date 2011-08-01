@@ -2,6 +2,7 @@
 
 void PathplanPlayer::calculateFuturePosition()
 {
+	var++;
 	// Case 1: no pathplanning has been calculated for this player.
 	if ( node == PATH_NOT_READY ) {
 		pathplan->setInitialPos( getPosition() );
@@ -9,12 +10,13 @@ void PathplanPlayer::calculateFuturePosition()
 		
 		cout << "running pathplan..." << endl;
 		pathplan->run();
+		var=0;
 		
 		if(pathplan->status == SUCCESS)
 			node = 0;
 	}
 	// Case 2: this player has reached it's final goal.
-	else if ( isAt( pathplan->getFinalPos(), 60 ) ) {
+	else if ( isAt( pathplan->getFinalPos(), 60 ) || var > 500 ) {
 		node = PATH_NOT_READY;
 		return;
 	}
