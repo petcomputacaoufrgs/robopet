@@ -87,6 +87,8 @@ class Player: public MovingObject
      * to be done!!!
      */
     void keepDistanceToBall(double);
+    
+    
 	void keepDistanceToBall(MovingObject, double);
 	
     /**
@@ -99,7 +101,14 @@ class Player: public MovingObject
      * @param p destiny point
      */
 	void 		pointTo( Point p );
+	
+	/**
+	 * Check if the robot's front is pointing to "p"
+	 * @param p desired point
+	 */
 	bool 		isPointingTo( Point p );
+	
+	
     Player& operator=(const Player& other);
 
     

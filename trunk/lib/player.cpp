@@ -96,9 +96,7 @@ void Player::pointTo( Point p )
 }
 
 bool Player::isPointingTo( Point p)
-{
-	int treshold = 0.1; //percentage of error
-
+{	
 	//ball_vec is the vector from the bot center to the ball center
 	RP::Vector desiredDirection(this->getPosition(), p);
 	desiredDirection.normalizeMe();
@@ -108,15 +106,18 @@ bool Player::isPointingTo( Point p)
 								sin(this->getCurrentAngle())*ROBOT_RADIUS_MM);
 	actualDirection.normalizeMe();
 
+	float dotProd = desiredDirection.dotProduct(actualDirection);
 	//desiredDirection (dot_product) actualDirection = |desiredDirection| * |actualDirection| * cos(theta)
 	//|desiredDirection| == |actualDirection| == 1, because both are normalized
 	//if theta ~ 0, the bot points to the ball
-	if(1-treshold <= desiredDirection.dotProduct(actualDirection))
+	
+	if(dotProd >= 0 && .95 <= dotProd)
+	{
 		return true;
-	else
-		return false;
+	}
+	
+	return false;
 }
-
 void Player::follow(MovingObject m)
 {
 	setFuturePosition(m.getPosition());
