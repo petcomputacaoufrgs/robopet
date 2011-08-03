@@ -6,6 +6,8 @@ enum {
 	TEAM_TOTAL
 };
 
+#define MAX_PLAYERS 5
+
 //---- MEASURES ----
 #define ARENA_WIDTH_MM 7400
 #define ARENA_HEIGHT_MM 5400
