@@ -4,7 +4,7 @@ void PathplanPlayer::calculateFuturePosition()
 {
 	itercount++;
 	
-	// Case 1: no pathplanning has been calculated for this player.
+	// Case 1: run pathplan
 	if ( node == PATH_NOT_READY ) {
 		pathplan->setInitialPos( getPosition() );
 		pathplan->setFinalPos( getFuturePosition() );
@@ -18,12 +18,12 @@ void PathplanPlayer::calculateFuturePosition()
 		else
 			setFuturePosition( getCurrentPosition() );
 	}
-	// Case 2: this player has reached it's final goal.
+	// Case 2: pathplan has to be recalculated
 	else if ( isAt( pathplan->getFinalPos(), 60 ) || itercount > 10 ) {
 		node = PATH_NOT_READY;
 		return;
 	}
-	// Case 3: this player has reached the destinated pathplan node.
+	// Case 3: advance to the next node
 	else if ( isAt( getActualNode(), 60 ) ) {
 		++node;
 	}
