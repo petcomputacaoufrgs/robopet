@@ -124,7 +124,19 @@ Node AStar::neighbor(Node n, int i, int j) {
 	return Node( (n.x)+i, (n.y)+j );
 }
 
-//given a source and a goal node, runs A* algorithm
+bool AStar::validatePath(Point newGoal, int maxvar)
+{
+	if(getFinalPos().getDistance(newGoal) > maxvar)
+		return false;
+	else {
+		for(unsigned int i=0; i<pathCells.size(); i++)
+			if( env[pathCells[i].x][pathCells[i].y] == OBSTACLE )
+				return false;
+	}
+	return true;	
+}
+
+
 void AStar::run() {
 
 	clockBase = clock();
@@ -220,6 +232,7 @@ void AStar::reconstructPath() {
 	
 	path.clear();
 	while(current != nodeinitialpos) {
+		pathCells.push_back( Node(current.getX(), current.getY()) );
 		path.push_back(a);
 		//goto previous node
 		current = came_from[current.x][current.y];

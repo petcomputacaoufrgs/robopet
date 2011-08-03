@@ -12,6 +12,8 @@
 #include "player.h"
 #include "point.h"
 
+#include "utils.h"
+
 using RP::Point;
 using namespace std;
 
@@ -101,6 +103,15 @@ class Pathplan
 		 * @return Point in mm (milimeters).
 		 */
 		virtual Point getFinalPos() = 0;
+		
+		/**
+		 * Check if the actual stored path is valid, checking if the goal hasn't changed too much and if it's possible to move across nodes.
+		 *
+		 * An example of use is to check if it's necessary to recalculate the path on a given environment that has changed.
+		 * @param newGoal New goal position (in mm).
+		 * @param maxvar Maximum variation allowd to the goal position (in mm).
+		 */
+		 virtual bool validatePath(Point newGoal, int maxvar) = 0;
 		
 		
 	protected:

@@ -119,6 +119,13 @@ class DiscretePathplan : public Pathplan
 		 */
 		void fillEnv_playerBox(int x, int y);
 		
+		/**
+		 * Check if the path between the points is blocked.
+		 * @param p1 Starting Point
+		 * @param p2 Ending Point
+		 */
+		bool isLineBlocked(Point p1, Point p2);
+		
 		// CONVERSION FUNCTIONS
 		/** 
 		 * Calculates the grid cells per mm horizontal ratio.
@@ -140,19 +147,19 @@ class DiscretePathplan : public Pathplan
 		/** 
 		 * Converts mm to grid celular coordinates, using the HORIZONTAL ratio.
 		 */
-		double MM_TO_CELLS_X(double x) { return x * (CELLS_PER_MM_X()); }
+		int MM_TO_CELLS_X(double x) { return x * (CELLS_PER_MM_X()); }
 		/** 
 		 * Converts mm to grid celular coordinates, using the VERTICAL ratio.
 		 */
-		double MM_TO_CELLS_Y(double y) { return y * (CELLS_PER_MM_Y()); }
+		int MM_TO_CELLS_Y(double y) { return y * (CELLS_PER_MM_Y()); }
 
 		/** 
 		 * Converts grid celular coordinates to mm, using the HORIZONTAL ratio.
 		 */
-		double CELLS_TO_MM_X(double x) { return x * (MM_PER_CELLS_X()); }
+		double CELLS_TO_MM_X(int x) { return x * (MM_PER_CELLS_X()); }
 		/** 
 		 * Converts grid celular coordinates to mm, using the VERTICAL ratio.
 		 */
-		double CELLS_TO_MM_Y(double y) { return y * (MM_PER_CELLS_Y()); }
+		double CELLS_TO_MM_Y(int y) { return y * (MM_PER_CELLS_Y()); }
 	
 };

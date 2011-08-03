@@ -74,18 +74,16 @@ class Rrt: public DiscretePathplan
 		int			stepsize;
 		double		goalProb;
 		float		timeLimit;
-		
 		vector<Point>	fullPath;
 
-		/**
-		 * Runs the Rrt algorithm
-		 */
 		void 		run();
+		bool 		validatePath(Point newGoal, int maxvar);
 
 
 	private:
 		RRTTree 	*tree, *lastTreePoint;
 		Point 		initial, goal;
+		vector<Point> pathCells; //final path in CELLS unit
 
 		/**
 		 * Generates a path between two points within a time limit.
@@ -130,13 +128,6 @@ class Rrt: public DiscretePathplan
 		 * @return A ordered pair within the field bounds
 		 */
 		Point 		randomState();
-		
-		/**
-		 * Select points in the field that better aproximates a straight line between two points
-		 * @param stat1 Starting Point
-		 * @param stat2 Finishing Point
-		 */
-		int 		bresenham(Point stat1, Point stat2);
 		
 		/**
 		 * Guarantee that the line between the two Points can be walked upon
