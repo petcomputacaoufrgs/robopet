@@ -20,6 +20,7 @@ void Rrt::run()
 {
 	clockBase = clock();
 	
+	pathCells.clear();
 	path.clear();
 	fullPath.clear();
 	status = NOTHING;
@@ -32,13 +33,14 @@ void Rrt::run()
     this->fullPath = tree->treeToVector(); 
 
 	if(status != ERROR_TIMELIMIT) {
-		this->path = findSolution();
+		this->pathCells = findSolution();
 		
 		// convert public Path to MM
-		for(unsigned int i=0; i<path.size(); i++) {
-			path[i].setXY( CELLS_TO_MM_X(path[i].getX()),
-						   CELLS_TO_MM_Y(path[i].getY()));
+		for(unsigned int i=0; i<pathCells.size(); i++) {
+			path.push_back( Point(CELLS_TO_MM_X(pathCells[i].getX()),
+								CELLS_TO_MM_Y(pathCells[i].getY())) );
 		}
+		
 	}
 
 	// convert public Full Path to MM
@@ -51,10 +53,22 @@ void Rrt::run()
 		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
 
 //	printPathplan();
-} 
+}
+
+bool Rrt::validatePath(Point newGoal, int maxvar)
+{
+	if(getFinalPos().getDistance(newGoal) > maxvar)
+		return false;
+	else {
+		for(unsigned int i=0; i<pathCells.size()-1; i++)
+			if( isLineBlocked( pathCells[i], pathCells[i+1]) )
+				return false;
+	}
+	return true;
+}
  
 /****************************************************************************************** 
- Código do ETDP dos CMDragons de 2009 
+ Código baseado no ETDP dos CMDragons de 2009 
  ******************************************************************************************/ 
  
 RRTTree* Rrt::rrtPlan() { 
@@ -186,76 +200,13 @@ Point Rrt::randomState() {
     randomState.setY( rand() % envMatrixY ); 
  
 	return randomState; 
-} 
- 
- 
-int Rrt::bresenham(Point stat1, Point stat2)
-// retorna 0 se consegue traçar linha entre os dois pontos 
-// útil para fazer um passo maior que uma unidade de celula.
-{      
-		int x1 = stat1.getX(); 
-		int x2 = stat2.getX(); 
-		int y1 = stat1.getY(); 
-		int y2 = stat2.getY(); 
-
-		int slope; 
-		int dx, dy, incE, incNE, d, x, y; 
-		// Onde inverte a linha x1 > x2 
-		if (x1 > x2){ 
-				return bresenham(stat2, stat1); 
-		} 
- 
-       if(x1 == x2){ //reta é paralela com eixo y 
-            if(y1 < y2) { 
-                for(y = y1; y <= y2; y++) 
-                    if (env[x1][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz 
-                        return 1;
-			} 
-            else 
-                for(y = y2; y <= y1; y++) 
-                    if (env[x1][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz 
-                        return 1; 
-       } 
-       else{ 
-               dx = x2 - x1; 
-               dy = y2 - y1; 
- 
-               if (dy < 0){ 
-                   slope = -1; 
-                   dy = -dy; 
-               } 
-               else{ 
-                  slope = 1; 
-               } 
-               // Constante de Bresenham 
-               incE = 2 * dy; 
-               incNE = 2 * dy - 2 * dx; 
-               d = 2 * dy - dx; 
-               y = y1; 
-               for (x = x1; x <= x2; x++){ 
-                   if (env[x][y] == OBSTACLE) //(x,y) é um ponto da linha ajustado à matriz 
-                      return 1; 
- 
-                   if (d <= 0){ 
-                     d += incE; 
-                   } 
-                   else{ 
-                     d += incNE; 
-                     y += slope; 
-                   } 
-               } 
- 
-               return 0; 
-       } 
-       
-       return 0;
- } 
+}
 
 int Rrt::collision(Point nearest, Point extended) { 
     if(extended.getX() >= 0 && extended.getX() < envMatrixX && 
        extended.getY() >= 0 && extended.getY() < envMatrixY) 
  
-        return bresenham(nearest, extended); 
+        return isLineBlocked(nearest, extended); 
         //return env[extended.getX()][extended.getY()] == OBSTACULO; //for stepsize=1
     else 
         return 1; 
@@ -289,31 +240,23 @@ void Rrt::findEnding(RRTTree *tree,Point goal,RRTTree **fim)
  
 std::vector<Point> Rrt::findSolution() { 
     
-    std::vector<Point> tempPath, correctedPath;
- 
     // First we find the last node of the tree, i.e. the goal.
     RRTTree *aux = lastTreePoint; 
     //findEnding(tree,goal,&aux);
     
     // With aux pointing to the last node of the tree, we reconstruct the solution tree by navigating upwards.
     while( aux != NULL ){ 
-        tempPath.push_back(aux->nodo); 
+        pathCells.push_back(aux->nodo); 
         aux = aux->pai; //"Who's your daddy?" - Darth Vader
     } 
 	
-	int size = tempPath.size();
-	if(size > 0) {
-		// Because we built the path upwards on the tree, the result is inverted (it starts in the end).
-		for(int i=0; i<size; i++)
-			correctedPath.push_back( tempPath[size-i-1] );
-		
+	if(pathCells.size() > 0)
 		status = SUCCESS;
-	}
-	// If no path was built then the goal wasn't in the tree, which means it wasn't reached.
+	// If no path was built then the goal wasn't in the tree, which means it wasn't reached at all.
 	else 
 		status = ERROR_UNKNOWN;
 		
-    return correctedPath; 
+    return pathCells; 
 } 
  
 void RRTTree::treeToVector_recursive(RRTTree *tree,vector<Point>*caminho) 

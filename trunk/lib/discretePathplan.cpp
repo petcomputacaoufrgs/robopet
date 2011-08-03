@@ -141,6 +141,69 @@ void DiscretePathplan::fillEnv_playerBox(int x, int y)
 		}
 }
 
+bool DiscretePathplan::isLineBlocked(Point p1, Point p2)
+/* The idea is to use the algorithm of Bresenham for rasterizing a 
+line in a grid, and then using the raster points to test for obstacles.*/
+{
+	int x1 = p1.getX(); 
+	int x2 = p2.getX(); 
+	int y1 = p1.getY(); 
+	int y2 = p2.getY(); 
+
+	int slope; 
+	int dx, dy, incE, incNE, d, x, y; 
+	// Onde inverte a linha x1 > x2 
+	if (x1 > x2){ 
+			return isLineBlocked(p2, p1); 
+	} 
+	
+	// line is parallel with Y Axis
+	if(x1 == x2){
+		if(y1 < y2) { 
+			for(y = y1; y <= y2; y++) 
+				if (env[x1][y] == OBSTACLE)
+					return true;
+		} 
+		else 
+			for(y = y2; y <= y1; y++) 
+				if (env[x1][y] == OBSTACLE)
+					return true; 
+	} 
+	else{ 
+		   dx = x2 - x1; 
+		   dy = y2 - y1; 
+
+		   if (dy < 0){ 
+			   slope = -1; 
+			   dy = -dy; 
+		   } 
+		   else{ 
+			  slope = 1; 
+		   } 
+		   // constant of Bresenham 
+		   incE = 2 * dy; 
+		   incNE = 2 * dy - 2 * dx; 
+		   d = 2 * dy - dx; 
+		   y = y1; 
+		   for (x = x1; x <= x2; x++){ 
+			   if (env[x][y] == OBSTACLE)
+				  return true; 
+
+			   if (d <= 0){ 
+				 d += incE; 
+			   } 
+			   else{ 
+				 d += incNE; 
+				 y += slope; 
+			   } 
+		   } 
+
+		   return false; 
+	} 
+
+	return false;
+ } 
+
 Point DiscretePathplan::getPathNode(int pointIndex)
 {
 	if( pointIndex>=0 && (unsigned int)pointIndex<path.size() )

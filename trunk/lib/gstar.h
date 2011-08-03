@@ -47,6 +47,7 @@ class GStar : public Pathplan {
 		void setRadius(int radius);
 		void setTreshold(int treshold);
 		void setSecureDistance();
+		bool validatePath(Point newGoal, int maxvar);
 
 		Obstacle getObstacle(int n);
 

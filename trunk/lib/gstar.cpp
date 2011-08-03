@@ -87,8 +87,10 @@ void GStar::bestWay()
 		while(j>0 && trocou == 0)
 		{
 			k=0;
-			while(straightIsBlocked(tmp_path[k], tmp_path[j], &ret) && k < j-1)
+			while(straightIsBlocked(tmp_path[k], tmp_path[j], &ret) && k < j-1) {
+				makePoints(ret.obstacle_id);
 				k++;
+			}
 						
 			if(k < j-1) //se achou um atalho
 			{
@@ -130,6 +132,8 @@ vector<Point> GStar::walkA(vector<Point> aPath, Point final, int obstID)
 		{
 			if(straightIsBlocked(actual, obst[obstID].p[0], &ret))
 			{//actual->A bloqueado, e agora?
+				makePoints(ret.obstacle_id);
+				
 				//cout<<"actual->A bloqueado"<<endl;
 				if(ret.obstacle_id != obstID)
 				{
@@ -150,6 +154,8 @@ vector<Point> GStar::walkA(vector<Point> aPath, Point final, int obstID)
 				
 				if(straightIsBlocked(actual, obst[obstID].p[2], &ret))
 				{//A->C bloqueado, e agora?
+					makePoints(ret.obstacle_id);
+					
 					aPath.pop_back();			
 					//cout<<"A->C bloqueado"<<endl;
 					return walkA(aPath, finalpos, ret.obstacle_id);
@@ -190,6 +196,8 @@ vector<Point> GStar::walkB(vector<Point> aPath, Point final, int obstID)
 		{
 			if(straightIsBlocked(actual, obst[obstID].p[1], &ret))
 			{
+				makePoints(ret.obstacle_id);
+				
 				//cout<<"actual->B bloqueado"<<endl;
 				if(ret.obstacle_id != obstID)
 					return walkB(aPath, finalpos, ret.obstacle_id);
@@ -208,6 +216,8 @@ vector<Point> GStar::walkB(vector<Point> aPath, Point final, int obstID)
 				
 				if(straightIsBlocked(actual, obst[obstID].p[3], &ret))
 				{
+					makePoints(ret.obstacle_id);
+					
 					aPath.pop_back();			
 					//cout<<"B->D bloqueado"<<endl;
 					return walkB(aPath, finalpos, ret.obstacle_id);
@@ -249,6 +259,8 @@ vector<Point> GStar::walk(vector<Point> aPath)
 		{	
 			if(straightIsBlocked(actual, finalpos, &ret))
 			{
+				makePoints(ret.obstacle_id);
+				
 				if(obst[ret.obstacle_id].p[2] != actual && obst[ret.obstacle_id].p[3] != actual)
 				{//aqui ele nao esta se batendo
 					pathA = walkA(aPath, finalpos, ret.obstacle_id);
@@ -300,6 +312,21 @@ void GStar::setSecureDistance()
 	this->secureDistance = ((((4*radius)+(2*treshold))*sqrt(2))/2.);
 }
 
+bool GStar::validatePath(Point newGoal, int maxvar)
+{
+	StackPoint foo;
+	
+	if(getFinalPos().getDistance(newGoal) > maxvar)
+		return false;
+	else {
+		for(unsigned int i=0; i<path.size()-1; i++)
+			if(straightIsBlocked( getPathNode(i), getPathNode(i+1), &foo))
+				return false;
+	}
+		
+	return true;
+}
+
 bool GStar::straightIsBlocked(Point initial, Point final, StackPoint* temp) //Return true if straightIsBlocked
 {
 	double x,y;
@@ -331,7 +358,6 @@ bool GStar::straightIsBlocked(Point initial, Point final, StackPoint* temp) //Re
 			if(Point(centerx,centery).getDistance(Point(x,y)) <= (2*radius + treshold))
 			{
 				temp->obstacle_id = j;
-				makePoints(j);
 				return true; //obstaculo
 			}
 		}

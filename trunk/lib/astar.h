@@ -67,14 +67,59 @@ typedef set<Node> NodeList;
 class AStar : public DiscretePathplan {
 
 	public:
-		AStar();
-		
+		AStar();		
 		AStar(Node start, Node goal);
-
 		~AStar();
 		
-		void init();
+		/**
+		 * Runs A* algorithm
+		 */
+		void run();
+		
+		bool validatePath(Point newGoal, int maxvar);
+		
+	private:
+		Node nodeinitialpos, nodefinalpos;
+		vector<Node> pathCells;
+		
+		/**
+		*The set of nodes already evaluated
+		*/
+		NodeList closed_set;
+		
+		/**
+		 * The set of tentative nodes to be evaluated
+		 */
+		NodeList open_set;
 
+		/**
+		 * The map of navigated nodes
+		 */
+		Node** came_from;
+
+		bool** closed;
+		bool** open;
+
+		/**
+		 * g equals to the distance from the
+		 * source Node to the current evaluated node,
+		 * through an optimal path
+		 */
+		float** g;
+
+		/**
+		 * h equals to the estimative distance from the
+		 * current evaluated Node to the goal Node (the minimum distance)
+		 */ 
+		float** h;
+
+		/**
+		 * f = g + h
+		 */
+		float** f;
+
+		void initialize();
+		
 		/**
 		 * @return True if node is inlimit
 		 */
@@ -116,54 +161,8 @@ class AStar : public DiscretePathplan {
 		Node neighbor(Node x, int i, int j);
 		
 		/**
-		 * Runs A* algorithm
-		 */
-		void run();
-		
-		/**
 		 * Construct the way of pathplan
 		 */
 		void reconstructPath();
-		
-	private:
-		Node nodeinitialpos, nodefinalpos;
-		
-		/**
-		*The set of nodes already evaluated
-		*/
-		NodeList closed_set;
-		
-		/**
-		 * The set of tentative nodes to be evaluated
-		 */
-		NodeList open_set;
-
-		/**
-		 * The map of navigated nodes
-		 */
-		Node** came_from;
-
-		bool** closed;
-		bool** open;
-
-		/**
-		 * g equals to the distance from the
-		 * source Node to the current evaluated node,
-		 * through an optimal path
-		 */
-		float** g;
-
-		/**
-		 * h equals to the estimative distance from the
-		 * current evaluated Node to the goal Node (the minimum distance)
-		 */ 
-		float** h;
-
-		/**
-		 * f = g + h
-		 */
-		float** f;
-
-		void initialize();
 };
 #endif

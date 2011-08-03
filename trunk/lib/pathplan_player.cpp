@@ -2,9 +2,11 @@
 
 void PathplanPlayer::calculateFuturePosition()
 {
+	#define MAXVARIANCE 100
+	
 	itercount++;
 	
-	// Case 1: run pathplan
+	// #1: Pathplan has to be (re)calculated.
 	if ( node == PATH_NOT_READY ) {
 		pathplan->setInitialPos( getPosition() );
 		pathplan->setFinalPos( getFuturePosition() );
@@ -18,13 +20,15 @@ void PathplanPlayer::calculateFuturePosition()
 		else
 			setFuturePosition( getCurrentPosition() );
 	}
-	// Case 2: pathplan has to be recalculated
-	else if ( isAt( pathplan->getFinalPos(), 60 ) || itercount > 10 ) {
+	// #2: Check if pathplan has to be recalculated
+	else if ( isAt( pathplan->getFinalPos(), MAXVARIANCE ) ||
+			  !pathplan->validatePath(getFuturePosition(),MAXVARIANCE) )
+	{
 		node = PATH_NOT_READY;
 		return;
 	}
-	// Case 3: advance to the next node
-	else if ( isAt( getActualNode(), 60 ) ) {
+	// #3: Advance to the next node
+	else if ( isAt( getActualNode(), MAXVARIANCE ) ) {
 		++node;
 	}
 	
