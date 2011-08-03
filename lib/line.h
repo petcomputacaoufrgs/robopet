@@ -38,6 +38,10 @@ class Line
 		
 		//----- Others -----
 		/**
+		*@return The line perpendicular to this one.*/	
+		Line getPerpendicular() const;
+		
+		/**
 		*Determinate if two lines intersect themselves*/	
 		bool intersects(const Line &r) const;
 		
@@ -90,11 +94,15 @@ class Line
 		double distance(const Line &r) const;
 
 		bool operator==(const Line &r) const;
+		
+		
 
 
 	private:
-				Vector _vector;
-				Point _point;
+	
+		Vector _vector;
+		Point _point;
+		
 };
 
 #endif // _LINE_H_

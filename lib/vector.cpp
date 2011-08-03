@@ -21,9 +21,7 @@ Vector::Vector(const Point &p): Point(p.getX(), p.getY()) {}
 
 Vector::Vector(const Point &p1, const Point &p2) : Point(p2 - p1) {}
 
-/******************************************************
-Funcao que calcula a norma de um vetor
-******************************************************/
+
 double Vector::getNorm() const
 {
     return sqrt ( square( _x ) + square( _y ) );
@@ -42,10 +40,6 @@ retorno: cosseno do angulo (double) e -1 se a norma eh 0
        return ( y / calculaNorma() );
 }*/
 
-/******************************************************
-Funcao para normalizar um vetor
-retorno: vetor normalizado
-******************************************************/
 Vector Vector::normalize() const
 {
 	  if(_x == 0 && _y == 0)
@@ -75,9 +69,6 @@ Vector& Vector::normalizeMe()
     return *this;
 }
 
-/******************************************************
-Função que retorna verdadeiro se os dois vetores são linearmente dependentes
-******************************************************/
 #include <stdio.h>
 bool Vector::linearlyDependent(const Vector &v) const
 {
@@ -130,11 +121,6 @@ void Vector::rotate(double theta)
 	_y = coordY;
 }
 
-/******************************************************
-Função que calcula o menor angulo positivo entre dois vetores
-em radianos.
-v: outro vetor
-******************************************************/
 double Vector::angle(Vector v) const
 {
 /*
@@ -146,21 +132,11 @@ double Vector::angle(Vector v) const
 	return acos(dotProduct(v)/ (float) (getNorm() * v.getNorm()));
 }
 
-/******************************************************
-Função que calcula o menor angulo positivo entre dois vetores
-em graus.
-v: outro vetor
-******************************************************/
 double Vector::angleDegrees(Vector v) const
 {
 	return toDegrees(angle(v));
 }
 
-/******************************************************
-Função que calcula o angulo no sentido horário
-entre dois vetores.
-v: outro vetor
-******************************************************/
 double Vector::angleCW(Vector v) const {
 	double alpha = myAngle();
 	double beta = v.myAngle();
@@ -171,38 +147,18 @@ double Vector::angleCW(Vector v) const {
 		return abs( beta-alpha );
 }
 
-/******************************************************
-Função que calcula o angulo no sentido horário
-entre dois vetores em graus.
-v: outro vetor
-******************************************************/
 double Vector::angleCWDegrees(Vector v) const {
 	return toDegrees(angleCW(v));
 }
 
-/******************************************************
-Função que calcula o angulo no sentido antihorário
-entre dois vetores.
-v: outro vetor
-******************************************************/
 double Vector::angleCCW(Vector v) const {
 	return v.angleCW(*this);	//cw(a,b) = ccw(b,a)
 }
 
-/******************************************************
-Função que calcula o angulo no sentido antihorário
-entre dois vetores em graus.
-v: outro vetor
-******************************************************/
 double Vector::angleCCWDegrees(Vector v) const {
 	return toDegrees(angleCCW(v));
 }
 
-/******************************************************
-Calcula o angulo do vetor com o eixo x, ie angulo no
-círculo trigonométrico.
-v: outro vetor
-******************************************************/
 double Vector::myAngle() const
 {
 	double angle;
@@ -218,31 +174,18 @@ double Vector::myAngle() const
 	return angle;
 }
 
-/******************************************************
-Calcula o angulo do vetor com o eixo x, ie angulo no
-círculo trigonométrico em graus.
-v: outro vetor
-******************************************************/
+
 double Vector::myAngleDegrees() const
 {
 	return toDegrees(myAngle());
 }
 
-
-/******************************************************
-Determina se dois vetores são perpendiculares
-v: outro vetor
-******************************************************/
 bool Vector::perpendicular(const Vector &v) const
 {
 	return dotProduct(v) ? false : true;
 }
 
 
-/******************************************************
-Calcula a projecao sobre o vetor passado como parametro
-v: outro vetor
-******************************************************/
 Vector Vector::projection(const Vector &v) const
 {
 	//assert(v.getNorm());
@@ -253,46 +196,26 @@ Vector Vector::projection(const Vector &v) const
 	return (dotProduct(v)/ sqrt( v.dotProduct(v) * this->dotProduct(*this) ) ) * v;
 }
 
-/******************************************************
- * Operador de adição de vetores
- * v: outro vetor
- * ******************************************************/
 Vector Vector::operator+(const Vector &v) const
 {
 		        return Vector(Point(*this) + Point(v));
 }
 
-/******************************************************
- * Operador de subtração de vetores
- * v: outro vetor
- * ******************************************************/
 Vector Vector::operator-(const Vector &v) const
 {
 		        return Vector(Point(*this) - Point(v));
 }
 
-/******************************************************
- * Operador de inversão de sinal
- * ******************************************************/
 Vector Vector::operator-() const
 {
 		        return Vector(-Point(*this));
 }
 
-/******************************************************
- * Operador para multiplicação por escalar
- * e: escalar
- * ******************************************************/
 Vector Vector::operator*(double e) const
 {
 		        return Vector(getX()*e, getY()*e);
 }
 
-/******************************************************
- * Operador para multiplicação por escalar
- * e: escalar
- * v: vetor
- * ******************************************************/
 Vector operator*(double e, const Vector &v)
 {
 		        return Vector(v.getX() * e, v.getY() * e);

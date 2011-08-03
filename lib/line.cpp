@@ -31,7 +31,6 @@ double Line::getLinearCoefficient() const
 
 
 
-
 void Line::setAngularCoefficient(double a)
 { *this = Line(a, getLinearCoefficient()); }
 
@@ -40,20 +39,16 @@ void Line::setLinearCoefficient(double b)
 
 
 
+Line Line::getPerpendicular() const
+{
+	return Line(-_vector.getY(),_vector.getX());
+}
 
-/**************************************
-Método que determina se duas Lines se intersectam
-r: outra Line
-**************************************/
 bool Line::intersects(const Line &r) const
 {
 	return (!parallel(r) || contains(r.getPoint()));
 }
 
-/**************************************
-Retorna o ponto de intersecção de duas Lines
-r: outra Line
-**************************************/
 Point Line::intersection(const Line &r) const
 {
 	//assert(intersects(r));
@@ -69,19 +64,11 @@ Point Line::intersection(const Line &r) const
 	else return Point(_point.getX(), r.image(_point.getX()));
 }
 
-/**************************************
-Método que determina se duas Lines são paralelas
-r: outra Line
-**************************************/
 bool Line::parallel(const Line &r) const
 {
 	return _vector.linearlyDependent(r.getVector());
 }
 
-/**************************************
-Método que determina o menor ângulo não-negativo entre duas Lines (em radianos)
-r: outra Line
-**************************************/
 double Line::angle(const Line &r) const
 {
 	double angulo1, angulo2;
@@ -91,19 +78,11 @@ double Line::angle(const Line &r) const
 	return (angulo1 < angulo2) ? angulo1 : angulo2;
 }
 
-/**************************************
-Método que determina se duas Lines são perpendiculares
-r: outra Line
-**************************************/
 bool Line::perpendicular(const Line &r) const
 {
 	return (_vector.perpendicular(r.getVector()));
 }
 
-/**************************************
-Método que determina se a reta contém um ponto
-p: ponto
-**************************************/
 bool Line::contains(const Point &p) const
 {
 	if(vertical())
@@ -112,26 +91,16 @@ bool Line::contains(const Point &p) const
 	return p.getY() == image(p.getX());
 }
 
-/**************************************
-Determina se uma Line é vertical
-**************************************/
 bool Line::vertical() const
 {
 	return !_vector.getX();
 }
 
-/**************************************
-Determina se uma Line é horizontal
-**************************************/
 bool Line::horizontal() const
 {
 	return !_vector.getY();
 }
 
-/**************************************
-Método que determina a imagem (y) de um valor na Line
-x: valor
-**************************************/
 double Line::image(double x) const
 {
 	if(vertical())
@@ -143,10 +112,6 @@ double Line::image(double x) const
 	return getAngularCoefficient() * x + getLinearCoefficient();
 }
 
-/**************************************
-Método que determina a pré-imagem (x) de uma valor na Line
-y: valor
-**************************************/
 double Line::preImage(double y) const
 {
 	//assert(!horizontal());
@@ -154,10 +119,6 @@ double Line::preImage(double y) const
 	return (y - getLinearCoefficient()) / getAngularCoefficient();
 }
 
-/**************************************
-Método que determina a distância entre um ponto e uma Line
-p: ponto
-**************************************/
 double Line::distance(const Point &p) const
 {
 	Vector linePoint(_point, p);
@@ -167,10 +128,6 @@ double Line::distance(const Point &p) const
 	return (linePoint - proj).getNorm();
 }
 
-/**************************************
-Método que determina a distância entre duas linhas
-r: outra Line
-**************************************/
 double Line::distance(const Line &r) const
 {
 	if(intersects(r))
@@ -179,11 +136,8 @@ double Line::distance(const Line &r) const
 	return distance(r.getPoint());
 }
 
-/**************************************
-Operador de == para a classe Line
-r: outra Line
-****************************************/
 bool Line::operator==(const Line &r) const
 {
 	return (intersects(r) && parallel(r));
 }
+
