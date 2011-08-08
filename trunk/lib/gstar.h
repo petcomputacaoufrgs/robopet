@@ -13,12 +13,6 @@ typedef struct str_Obstacle
 	Point p[4];
 } Obstacle;
 
-typedef struct str_StackPoint
-{
-	int obstacle_id;
-	int p;
-} StackPoint;
-
 typedef struct str_Path
 {
 	Point origin;
@@ -65,25 +59,24 @@ class GStar : public Pathplan {
 		int treshold;
 		double secureDistance;
 		Obstacle *obst;
-		stack<StackPoint> points;
-		stack<StackPoint> actualPoints;
-		stack< vector<Point> > oldPaths;
 
 		//vector<Point> pathGS;
 		
 		//----- Functions -----
 
 		/**
-		 * Descricao da funcao.
-		 * @return Descricao do valor de retorno.
+		 * Obstruction test based on discretization of the line.
+		 * @return True if it's obstructed.
+		 * @param obstId Pointer to store the ID of the obstructing obstacle.
 		 */
-		bool straightIsBlocked(Point initial, Point final, StackPoint* temp);
+		bool straightIsBlockedDiscrete(Point initial, Point final, int* obstId);
 		
 		/**
-		 * Descricao da funcao.
-		 * @return Descricao do valor de retorno.
+		 * Obstruction test based on algebric calculations with the line equation.
+		 * @return True if it's obstructed.
+		 * @param obstId Pointer to store the ID of the obstructing obstacle.
 		 */
-		bool straightIsBlockedB();
+		bool straightIsBlocked(Point p1, Point p2, int* obstId);
 		
 		/**
 		 * Descricao da funcao.
