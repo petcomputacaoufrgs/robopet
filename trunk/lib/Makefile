@@ -19,7 +19,8 @@ OBJ_NAMES= 	movingObject \
 			pathplan_player \
 			utils \
 			gstar \
-			astar
+			astar \
+			luaCppBridge
 
 OBJDIR = obj
 OBJ_FILES = $(addsuffix .o,$(OBJ_NAMES))

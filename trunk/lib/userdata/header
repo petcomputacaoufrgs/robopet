@@ -9,5 +9,6 @@
 #include "physicsRobot.h"
 #include "pathplan_player.h"
 #include "pathplan.h"
+#include "luaCppBridge.h"
 %}
 
