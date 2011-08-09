@@ -41,10 +41,6 @@ class Referee {
 	 @return Returns the current referee command or -1 if not available
 	 */
 	char receive();
-	
-	int getMyTeam() { return myTeam; }
-	
-	int myTeam;
 
 	private:
 
