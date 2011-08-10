@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <stdio.h>
 #include <string.h>
 using namespace std;
 
@@ -8,7 +9,7 @@ using namespace std;
 #include "utils.h"
 
 
-#define MAXC 128
+#define MAXC 64
 
 /**
  * Wrapper class for info to be trade between Lua and Cpp.
@@ -21,8 +22,8 @@ class LuaCppBridge
 		LuaCppBridge();
 		~LuaCppBridge();
 		
-		char 	playerRoles[MAX_PLAYERS][MAXC];
 		int 	myTeam;
+		char 	playerRoles[MAX_PLAYERS][MAXC];
 		
 		//Attributes can be accessed only by functions within Lua
 		void 	setMyTeam(int team);
