@@ -1,38 +1,34 @@
 #include "gstar.h"
 #include "point.h"
 #include "math.h"
-#include <cstdlib>
+//#include <cstdlib>
 using namespace std;
 
 
 #define PARTES 60//nr de partes que dividimos a reta
 #define LADO_QUADRADO (6*ROBOT_RADIUS_MM)//lado do quadrado de segurança
 #define DIST_ROBO_POINT ((LADO_QUADRADO*sqrt(2))/2)
-#define M (finalpos.getY() - initialpos.getY())/(finalpos.getX() - initialpos.getX())
 #define GSTAR_TIMELIMIT 0.05
 
+#define _TRESHOLD (ROBOT_RADIUS_MM/2)
+#define LIMIT_INSIDE_ROBOT (4*ROBOT_RADIUS_MM + _TRESHOLD)
+#define LIMIT_IS_BLOCKED (2*ROBOT_RADIUS_MM + _TRESHOLD)
 
-GStar::GStar() {
-	
-	setRadius(ROBOT_RADIUS_MM);
-	setTreshold(ROBOT_RADIUS_MM/2);
-	setSecureDistance();	
-}
+
+GStar::GStar() {}
 
 GStar::~GStar() {}
 
 void GStar::run() {
 	Point actual;
-	Obstacle o;
-	double distance;
-	double minDistance=INFINITY;
+		
+	clockBase = clock();
 	
 	path.clear();
 	paths.clear();
 	
-	clockBase = clock();
-
-	obst = (Obstacle*) calloc(obstacles.size(), sizeof(Obstacle));
+	obst = new Obstacle[obstacles.size()];
+	
 	for(unsigned int i=0; i<obstacles.size(); i++)
 	{
 		for(int j=0; j<4; j++)
@@ -54,29 +50,12 @@ void GStar::run() {
 		status = SUCCESS;
 		bestWay();	
 		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
-		//cout<<paths.size()<<endl;
 	}
 	else
 	{
 		if(status != ERROR_TIMELIMIT)
 			status = ERROR_UNREACHABLE;
 	}
-	
-
-	for (unsigned int i=0; i<paths.size(); i++)
-	{
-		distance=0;
-		for(unsigned int j=0; j<paths[i].size()-1; j++)
-		{
-			distance += paths[i][j].getDistance(paths[i][j+1]);
-		}
-		if(distance < minDistance)
-		{
-			minDistance = distance;
-			path = paths[i];
-		}
-	}
-	//cout<<minDistance<<endl;
 }
 
 void GStar::bestWay()
@@ -84,44 +63,98 @@ void GStar::bestWay()
 	int obstId;
 	vector<Point> tmp_path;
 	int trocou=0,j,k;
+    double distance;
+	double minDistance=INFINITY;
+	
+	//first try to clean the paths (find shortcuts)
 	for(int i=paths.size()-1; i>=0; i--)
 	{
 		tmp_path = paths[i];
 		
 		j = tmp_path.size()-1;
+		
+		distance =0;
+		
+
 		while(j>0 && trocou == 0)
 		{
 			k=0;
 			while(straightIsBlocked(tmp_path[k], tmp_path[j], &obstId) && k < j-1) {
-				makePoints(obstId);
 				k++;
 			}
 						
 			if(k < j-1) //se achou um atalho
 			{
-				//cout << "achou atalho" << endl;
 				tmp_path.erase(tmp_path.begin()+k+1,tmp_path.begin()+j);
-				trocou = 1;
+				trocou=1;
 			}
-			j--;		
+						
+			j--;
 		}
-		if(trocou)
-		{
-		//	cout << "trocou o/" << endl;
-			paths.push_back(tmp_path);
+		
+		if(trocou) {
+				paths[i] = tmp_path;
 		}	
-		trocou = 0;	
-	}	
+		trocou = 0;		
+	}
+	
+	// now get the best path
+	for (unsigned int i=0; i<paths.size(); i++)
+	{
+		distance=0;
+		
+		for(unsigned int j=0; j<paths[i].size()-1; j++) {
+			distance += paths[i][j].getDistance(paths[i][j+1]);
+		}
+		
+		if(distance < minDistance) {
+			minDistance = distance;
+			path = paths[i];
+		}
+	}
+
+		/*
+		while(j>0)
+		{
+			k=0;
+			while(straightIsBlocked(tmp_path[k], tmp_path[j], &obstId) && k < j-1) {
+				k++;
+			}
+			
+			distance += tmp_path[k].getDistance(tmp_path[j]);
+					
+			if(k < j-1) //se achou um atalho
+			{
+				tmp_path.erase(tmp_path.begin()+k+1,tmp_path.begin()+j);
+				j=tmp_path.size()-(j-k)-1;
+			}
+			else {
+				j--;
+			}
+		
+			cout << j << endl;	
+		}
+		
+		paths[i] = tmp_path;
+		
+		if(distance < minDistance) {
+			minDistance = distance;
+			path = paths[i];
+		}
+	}
+	
+	
+	cout << minDistance << endl;	*/
 }
 
+
 bool GStar::pointIsInsideRobot(Point p)
-{
+{	
 	for(unsigned int j=0; j<obstacles.size(); j++) 
 	{					
 			//equação circunferencia, se da dentro do circulo			 
-			if(obstacles[j].pos.getDistance(p) <= (4*radius + treshold))
-				
-				return true; //obstaculo
+			if(obstacles[j].pos.getDistance(p) <= LIMIT_INSIDE_ROBOT)
+								return true; //obstaculo
 	}
 	
 	return false;
@@ -140,8 +173,7 @@ vector<Point> GStar::walkA(vector<Point> aPath, Point final, int obstID)
 				makePoints(ret);
 				
 				//cout<<"actual->A bloqueado"<<endl;
-				if(ret != obstID)
-				{
+				if(ret != obstID) {
 					//cout << "Nao se bateu" << endl;
 					return walkA(aPath, finalpos, ret);
 				}	
@@ -149,29 +181,24 @@ vector<Point> GStar::walkA(vector<Point> aPath, Point final, int obstID)
 				{
 					//cout << "Se bateu fecha caminho" << endl;
 					aPath.empty();
-					return aPath;	
 				}
 			}
 			else
 			{//foi actual->A
 				actual = obst[obstID].p[0];
-				aPath.push_back(actual);
 				
 				if(straightIsBlocked(actual, obst[obstID].p[2], &ret))
 				{//A->C bloqueado, e agora?
 					makePoints(ret);
-					
-					aPath.pop_back();			
+						
 					//cout<<"A->C bloqueado"<<endl;
-					return walkA(aPath, finalpos, ret);
-								
+					return walkA(aPath, finalpos, ret);			
 				}
 				else
 				{//foi A->C
-					actual = obst[obstID].p[2];
-					aPath.push_back(actual);			
+					aPath.push_back(actual);
+					aPath.push_back(obst[obstID].p[2]);			
 					aPath = walk(aPath); //continua caminho
-					return aPath;
 				}
 			}
 		}
@@ -179,15 +206,15 @@ vector<Point> GStar::walkA(vector<Point> aPath, Point final, int obstID)
 		{
 			//cout << "Ponto dentro do robo" << endl;
 			aPath.empty();
-			return aPath;
 		}
 	}
 	else
 	{
 		status = ERROR_TIMELIMIT;
 		aPath.empty();
-		return aPath;
 	}
+	
+	return aPath;
 }
 
 vector<Point> GStar::walkB(vector<Point> aPath, Point final, int obstID)
@@ -204,35 +231,31 @@ vector<Point> GStar::walkB(vector<Point> aPath, Point final, int obstID)
 				makePoints(ret);
 				
 				//cout<<"actual->B bloqueado"<<endl;
-				if(ret != obstID)
+				if(ret != obstID) {
 					return walkB(aPath, finalpos, ret);
+				}
 				else
 				{
 					//cout << "Se bateu fecha caminho" << endl;
-					aPath.empty();
-					return aPath;	
+					aPath.empty();	
 				}
-				
 			}
 			else
 			{//foi actual->B
 				actual = obst[obstID].p[1];
-				aPath.push_back(actual);
 				
 				if(straightIsBlocked(actual, obst[obstID].p[3], &ret))
 				{
 					makePoints(ret);
-					
-					aPath.pop_back();			
+			
 					//cout<<"B->D bloqueado"<<endl;
 					return walkB(aPath, finalpos, ret);
 				}
 				else
 				{//foi B->D
-					actual = obst[obstID].p[3];
 					aPath.push_back(actual);
+					aPath.push_back(obst[obstID].p[3]);
 					aPath = walk(aPath); //continua caminho
-					return aPath;
 				}
 			}
 		}
@@ -240,15 +263,15 @@ vector<Point> GStar::walkB(vector<Point> aPath, Point final, int obstID)
 		{
 			//cout << "Ponto dentro do robo" << endl;
 			aPath.empty();
-			return aPath;
 		}
 	}
 	else
 	{
 		status = ERROR_TIMELIMIT;
 		aPath.empty();
-		return aPath;
 	}
+	
+	return aPath;
 }
 
 vector<Point> GStar::walk(vector<Point> aPath)
@@ -270,51 +293,43 @@ vector<Point> GStar::walk(vector<Point> aPath)
 				{//aqui ele nao esta se batendo
 					pathA = walkA(aPath, finalpos, ret);
 					pathB = walkB(aPath, finalpos, ret);
+					
 					if(pathA.back() == finalpos)
 					{
 						//cout << "chegou no fim A" << endl;
 						paths.push_back(pathA);
 					}
+					
 					if(pathB.back() == finalpos)
 					{
 						//cout << "chegou no fim B" << endl;
 						paths.push_back(pathB);
 					}
-					
 				}	
 				else
 				{//aqui ele ta se batendo
 					//cout << "Se bateu fecha caminho" << endl;
-					aPath.empty();
-					return aPath;	
+					aPath.empty();	
 				}			
 			}
 			else
 			{			
 				aPath.push_back(finalpos);
-				//paths.push_back(aPath);
 			}
-			return aPath;
 		}
 		else
 		{
 			//cout << "Ponto dentro do robo" << endl;
 			aPath.empty();
-			return aPath;
 		}
 	}
 	else
 	{
 		status = ERROR_TIMELIMIT;
 		aPath.empty();
-		return aPath;
 	}
-}
-
-/* Seta um distância na qual os robos que passarem por ela, estarão levemente distantes do robô obstáculo*/
-void GStar::setSecureDistance()
-{
-	this->secureDistance = ((((4*radius)+(2*treshold))*sqrt(2))/2.);
+	
+	return aPath;
 }
 
 bool GStar::validatePath(Point newGoal, int maxvar)
@@ -360,7 +375,7 @@ bool GStar::straightIsBlockedDiscrete(Point initial, Point final, int* obstId)
 			centerx = (obstacles[j].pos.getX());
 			centery = (obstacles[j].pos.getY());							
 			//equação circunferencia, se da dentro do circulo			 
-			if(Point(centerx,centery).getDistance(Point(x,y)) <= (2*radius + treshold))
+			if(Point(centerx,centery).getDistance(Point(x,y)) <= LIMIT_IS_BLOCKED)
 			{
 				*obstId = j;
 				return true; //obstaculo
@@ -377,8 +392,8 @@ bool GStar::straightIsBlockedDiscrete(Point initial, Point final, int* obstId)
 bool GStar::straightIsBlocked(Point p1, Point p2, int* obstId)
 {
 	double obsx,obsy;
-	double dist, distToInit, smallestDist=INFINITY;
-	double distPts = p1.getDistance(p2) + treshold;
+	double dist, distToInitp1, smallestDist=INFINITY;
+	double distPts = p1.getDistance(p2) + _TRESHOLD;
 	double initialX = p1.getX();
 	double initialY = p1.getY();
 	double finalX = p2.getX();
@@ -400,16 +415,17 @@ bool GStar::straightIsBlocked(Point p1, Point p2, int* obstId)
 		obsx = (obstacles[j].pos.getX());
 		obsy = (obstacles[j].pos.getY());
 		dist = (abs(obsx*a + obsy*b + c)/sqrtAB);
-
+		
+		distToInitp1 = p1.getDistance(obstacles[j].pos);
+		
 		//test if obstacle is valid (isn't out of the line segment)
-		if(obstacles[j].pos.getDistance(p1) < distPts && obstacles[j].pos.getDistance(p2) < distPts)		
-			if(dist <= 2*radius + treshold) { //test if obstructs
+		if(distToInitp1 < distPts && obstacles[j].pos.getDistance(p2) < distPts)		
+			if(dist <= LIMIT_IS_BLOCKED) { //test if obstructs
 				isBlocked = true;
 				
+				if(distToInitp1 < smallestDist) {
 				//use the distance to the inital point to determine the obstructing obstacle
-				distToInit = p1.getDistance(obstacles[j].pos);
-				if(distToInit < smallestDist) {
-					smallestDist = distToInit;
+					smallestDist = distToInitp1;
 					*obstId = j;
 				}
 			}
@@ -431,7 +447,7 @@ void GStar::makePoints(int x)
 		varX = finalpos.getX()-initialpos.getX();
 		varY = finalpos.getY()-initialpos.getY();
 
-		angle = atan(M) - 0.785398163; //-45°
+		angle = atan(varY / varX ) - 0.785398163; //-45°
 	
 		mAD = tan(angle);
 		mBC = -1/mAD;
@@ -480,12 +496,14 @@ void GStar::makePoints(int x)
 				obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
 			}
 		}
+		
 		if(abs(varX)!=varX)
 		{
 			temp = obst[x].p[0];
 			obst[x].p[0] = obst[x].p[3];
 			obst[x].p[3] = temp;
 		}
+		
 		if(abs(varY)==varY)
 		{
 			temp = obst[x].p[1];
@@ -493,14 +511,6 @@ void GStar::makePoints(int x)
 			obst[x].p[2] = temp;
 		}
 	}
-}
-
-void GStar::setRadius(int radius) {
-	this->radius = radius;
-}
-
-void GStar::setTreshold(int treshold ){
-	this->treshold = treshold;
 }
 
 Obstacle GStar::getObstacle(int n)
