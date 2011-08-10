@@ -16,7 +16,8 @@ void LuaCppBridge::setMyTeam(int team)
 
 void LuaCppBridge::setPlayerRole(int index, char role[])
 {
-	strcpy(playerRoles[index],role);
+	//printf("role %i: %s\n",index,role);
+	sprintf(playerRoles[index-1],"%s",role);
 }
 
 int LuaCppBridge::getMyTeam()
