@@ -23,6 +23,6 @@ enum {
 #define ROBOT_RADIUS_MM 90
 #define BALL_RADIUS_MM 27.5
 
-#define BORDER 650
+#define BORDER 675
 
 #define TRESHOLD 20

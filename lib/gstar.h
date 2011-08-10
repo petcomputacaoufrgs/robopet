@@ -4,6 +4,7 @@
 #include "pathplan.h"
 #include <vector>
 #include <stack>
+#include <map>
 
 using namespace std;
 
@@ -13,20 +14,15 @@ typedef struct str_Obstacle
 	Point p[4];
 } Obstacle;
 
-typedef struct str_Path
-{
-	Point origin;
-	Point dest;
-	double cost;
-} PathCost;
-
 /**
  * Documentation Pending
  * @ingroup Pathplan
  */
 
 class GStar : public Pathplan {
-
+	
+	//map<double,vector<Points> gsPaths;
+	
 	public:
 		//---- Constructor and Destructor ----
 		GStar();
@@ -38,9 +34,6 @@ class GStar : public Pathplan {
 
 		void setInitialPos(Point pos);
 		void setFinalPos(Point pos);
-		void setRadius(int radius);
-		void setTreshold(int treshold);
-		void setSecureDistance();
 		bool validatePath(Point newGoal, int maxvar);
 
 		Obstacle getObstacle(int n);
@@ -55,13 +48,8 @@ class GStar : public Pathplan {
 
 	protected:
 		//----- Variables -----
-		int radius;
-		int treshold;
-		double secureDistance;
-		Obstacle *obst;
-
-		//vector<Point> pathGS;
-		
+		Obstacle *obst;		
+				
 		//----- Functions -----
 
 		/**
