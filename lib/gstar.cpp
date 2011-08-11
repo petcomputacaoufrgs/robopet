@@ -48,8 +48,8 @@ void GStar::run() {
 	if(paths.size()>0)
 	{
 		status = SUCCESS;
-		bestWay();	
-		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
+		bestWay();
+    	elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
 	}
 	else
 	{
@@ -112,8 +112,8 @@ void GStar::bestWay()
 			path = paths[i];
 		}
 	}
-
-		/*
+/*
+		
 		while(j>0)
 		{
 			k=0;
@@ -132,7 +132,7 @@ void GStar::bestWay()
 				j--;
 			}
 		
-			cout << j << endl;	
+			//cout << j << endl;	
 		}
 		
 		paths[i] = tmp_path;
@@ -143,8 +143,7 @@ void GStar::bestWay()
 		}
 	}
 	
-	
-	cout << minDistance << endl;	*/
+	cout << minDistance << endl;*/
 }
 
 
