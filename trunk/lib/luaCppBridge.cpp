@@ -9,7 +9,7 @@ LuaCppBridge::LuaCppBridge()
 
 LuaCppBridge::~LuaCppBridge() {}
 
-void LuaCppBridge::setMyTeam(int team)
+void LuaCppBridge::setMyTeam(int *team)
 {
 	myTeam = team;
 }
@@ -22,5 +22,5 @@ void LuaCppBridge::setPlayerRole(int index, char role[])
 
 int LuaCppBridge::getMyTeam()
 {
-	return myTeam;
+	return *myTeam;
 }

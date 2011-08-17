@@ -22,11 +22,11 @@ class LuaCppBridge
 		LuaCppBridge();
 		~LuaCppBridge();
 		
-		int 	myTeam;
+		int 	*myTeam;
 		char 	playerRoles[MAX_PLAYERS][MAXC];
 		
 		//Attributes can be accessed only by functions within Lua
-		void 	setMyTeam(int team);
+		void 	setMyTeam(int *team);
 		void 	setPlayerRole(int index, char role[]);
 		int 	getMyTeam();
 	
