@@ -15,6 +15,3 @@ else
 		cd ..
 	fi
 fi
-
-make -B
-
