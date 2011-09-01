@@ -60,90 +60,47 @@ void GStar::run() {
 
 void GStar::bestWay()
 {
-	int obstId;
+	int obstId, j, shortcut;
 	vector<Point> tmp_path;
-	int trocou=0,j,k;
-    double distance;
-	double minDistance=INFINITY;
+	double distance, minDistance=INFINITY;
 	
-	//first try to clean the paths (find shortcuts)
-	for(int i=paths.size()-1; i>=0; i--)
+	for(unsigned int i=0; i<paths.size(); i++)
 	{
 		tmp_path = paths[i];
+		distance = 0;
+		shortcut = 0;
+		j = 0;
 		
-		j = tmp_path.size()-1;
-		
-		distance =0;
-		
-
-		while(j>0 && trocou == 0)
+		while (j < tmp_path.size()-1) // find shortcuts in the path
 		{
-			k=0;
-			while(straightIsBlocked(tmp_path[k], tmp_path[j], &obstId) && k < j-1) {
-				k++;
-			}
-						
-			if(k < j-1) //se achou um atalho
-			{
-				tmp_path.erase(tmp_path.begin()+k+1,tmp_path.begin()+j);
-				trocou=1;
-			}
-						
-			j--;
-		}
-		
-		if(trocou) {
-				paths[i] = tmp_path;
-		}	
-		trocou = 0;		
-	}
-	
-	// now get the best path
-	for (unsigned int i=0; i<paths.size(); i++)
-	{
-		distance=0;
-		
-		for(unsigned int j=0; j<paths[i].size()-1; j++) {
-			distance += paths[i][j].getDistance(paths[i][j+1]);
-		}
-		
-		if(distance < minDistance) {
-			minDistance = distance;
-			path = paths[i];
-		}
-	}
-/*
-		
-		while(j>0)
-		{
-			k=0;
-			while(straightIsBlocked(tmp_path[k], tmp_path[j], &obstId) && k < j-1) {
-				k++;
+			for (unsigned int k=tmp_path.size()-1; k > j+1 && (shortcut ==0) ; k--) {
+				if (!straightIsBlocked(tmp_path[j], tmp_path[k], &obstId)) {
+					//cout << "opa achou atalho!" << endl;
+					shortcut=k;
+				}
 			}
 			
-			distance += tmp_path[k].getDistance(tmp_path[j]);
-					
-			if(k < j-1) //se achou um atalho
-			{
-				tmp_path.erase(tmp_path.begin()+k+1,tmp_path.begin()+j);
-				j=tmp_path.size()-(j-k)-1;
+			if (shortcut != 0) {
+				tmp_path.erase(tmp_path.begin()+j+1, tmp_path.begin()+shortcut); // clean the path if find a shortcut
+				distance += tmp_path[j].getDistance(tmp_path[shortcut]);
+				shortcut=0;
 			}
 			else {
-				j--;
+				distance += tmp_path[j].getDistance(tmp_path[j+1]);
 			}
-		
-			//cout << j << endl;	
+				
+			j++;
 		}
 		
-		paths[i] = tmp_path;
+		paths[i] = tmp_path; // update the path
 		
-		if(distance < minDistance) {
+		if (distance < minDistance) { //saves the best the path
 			minDistance = distance;
 			path = paths[i];
 		}
 	}
 	
-	cout << minDistance << endl;*/
+	//cout << minDistance << endl;
 }
 
 
