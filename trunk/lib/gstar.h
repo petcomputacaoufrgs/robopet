@@ -3,8 +3,6 @@
 
 #include "pathplan.h"
 #include <vector>
-#include <stack>
-#include <map>
 
 using namespace std;
 
@@ -20,9 +18,7 @@ typedef struct str_Obstacle
  */
 
 class GStar : public Pathplan {
-	
-	//map<double,vector<Points> gsPaths;
-	
+		
 	public:
 		//---- Constructor and Destructor ----
 		GStar();
@@ -79,4 +75,3 @@ class GStar : public Pathplan {
 };
 
 #endif
-
