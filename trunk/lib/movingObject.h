@@ -16,7 +16,7 @@ using RP::MovingObject;
 class MovingObject
 {
   public:
-    MovingObject(double stX = 0, double stY = 0) : _current_position(stX, stY), _past_position(-1, -1), _future_position(-1, -1) {}
+    MovingObject(double stX = 0, double stY = 0) : _current_position(stX, stY), _past_position(-1, -1), _future_position(-1, -1), _pathplan_future_position (-1,-1) {}
 	MovingObject(const MovingObject& other);
     ~MovingObject() {}
 
@@ -24,6 +24,8 @@ class MovingObject
     inline const Point& getCurrentPosition() const { return _current_position; }
     inline const Point& getPastPosition() const { return _past_position; }
     inline const Point& getFuturePosition() const { return _future_position; }
+
+    inline const Point& getPathplanFuturePosition() const { return _pathplan_future_position; }
 
     inline double getDisplacement() const { return _displacement; }
 
@@ -51,6 +53,11 @@ class MovingObject
     void setFuturePositionX(double x);
     void setFuturePositionY(double y);
 
+    void setPathplanFuturePosition(Point newFuturePosition);
+    void setPathplanFuturePosition(double x, double y);
+    void setPathplanFuturePositionX(double x);
+    void setPathplanFuturePositionY(double y);
+
     void setDisplacement(double displacement);
    
     //----- Others -----
@@ -75,6 +82,7 @@ class MovingObject
     Point _current_position;
     Point _past_position;
     Point _future_position;
+    Point _pathplan_future_position;
 
     double _displacement;
 

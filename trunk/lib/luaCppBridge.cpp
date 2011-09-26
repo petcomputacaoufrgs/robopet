@@ -24,3 +24,9 @@ int LuaCppBridge::getMyTeam()
 {
 	return *myTeam;
 }
+
+void LuaCppBridge::setBallAsObstacle(bool isObstacle, int p)
+{
+	ballObstacle = isObstacle;
+	playerBallObstacle = p;
+}
