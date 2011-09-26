@@ -7,6 +7,7 @@ using namespace std;
 
 #include "constants.h"
 #include "utils.h"
+#include "player.h"
 
 
 #define MAXC 64
@@ -24,10 +25,13 @@ class LuaCppBridge
 		
 		int 	*myTeam;
 		char 	playerRoles[MAX_PLAYERS][MAXC];
+		bool	ballObstacle;
+		int		playerBallObstacle;
 		
 		//Attributes can be accessed only by functions within Lua
 		void 	setMyTeam(int *team);
 		void 	setPlayerRole(int index, char role[]);
 		int 	getMyTeam();
+		void setBallAsObstacle(bool isObstacle, int p);
 	
 };

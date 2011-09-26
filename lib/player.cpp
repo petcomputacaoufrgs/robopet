@@ -5,7 +5,8 @@ void Player::setCurrentAngle( double newCurrentAngle )
 { _current_angle = newCurrentAngle; }
 
 void Player::setFutureAngle( double newFutureAngle )
-{ _future_angle = newFutureAngle; }
+{ //_future_angle = newFutureAngle; 
+}
 
 void Player::setDeltaAngle( double newDeltaAngle )
 { _delta_angle = newDeltaAngle; }
@@ -51,7 +52,7 @@ Player& Player::operator=(const Player& other)
 
 void Player::kick() {
 	this->setKickerIntensity(999);
-	//this.setFuturePosition( _ball.getPosition() );
+	//this.setPathplanFuturePosition( _ball.getPosition() );
 }
 
 void Player::keepDistanceToBall(double d) {
@@ -61,7 +62,7 @@ void Player::keepDistanceToBall(double d) {
 void Player::keepDistanceToBall(MovingObject m, double d) {
 	double ma,xp,yp;
 	if(!isAt(m.getPosition(), d+80))
-		setFuturePosition(m.getPosition());
+		setPathplanFuturePosition(m.getPosition());
 	else
 	{
 		if(isAt(m.getPosition(), d))
@@ -77,7 +78,7 @@ void Player::keepDistanceToBall(MovingObject m, double d) {
 				xp=(d/sqrt(1+ma*ma))+m.getPosition().getX();
 				yp = ma*(xp-m.getPosition().getX())+m.getPosition().getY();
 			}
-			setFuturePosition(Point(xp,yp));
+			setPathplanFuturePosition(Point(xp,yp));
 		}
 		else
 			stay();
@@ -120,21 +121,20 @@ bool Player::isPointingTo( Point p)
 }
 void Player::follow(MovingObject m)
 {
-	setFuturePosition(m.getPosition());
+	setPathplanFuturePosition(m.getPosition());
 	double angle = Vector(getPosition(),m.getPosition()).angle(Vector(1,0));
 	setFutureAngle( angle );
 }
 
 void Player::goToPoint(Point p)
 {
-	setFuturePosition(p);
+	setPathplanFuturePosition(p);
 	double angle = Vector(getPosition(),p).angle(Vector(1,0));
 	setFutureAngle( angle );
 }
-
 void Player::stay()
 {
-	setFuturePosition(getCurrentPosition());
+	setPathplanFuturePosition(getCurrentPosition());
 	setFutureAngle(getCurrentAngle());
 }
 

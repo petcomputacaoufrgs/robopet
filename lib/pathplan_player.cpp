@@ -9,7 +9,7 @@ void PathplanPlayer::calculateFuturePosition()
 	// #1: Pathplan has to be (re)calculated.
 	if ( node == PATH_NOT_READY ) {
 		pathplan->setInitialPos( getPosition() );
-		pathplan->setFinalPos( getFuturePosition() );
+		pathplan->setFinalPos( getPathplanFuturePosition() );
 		
 		cout << "running pathplan..." << endl;
 		pathplan->run();
@@ -18,15 +18,21 @@ void PathplanPlayer::calculateFuturePosition()
 		if(pathplan->status == SUCCESS)
 			node = 0;
 		else
-			setFuturePosition( getCurrentPosition() );
+			setFuturePosition( getPathplanFuturePosition() );
 	}
 	// #2: Check if pathplan has to be recalculated
 	else if ( isAt( pathplan->getFinalPos(), MAXVARIANCE ) ||
-			  !pathplan->validatePath(getFuturePosition(),MAXVARIANCE) )
+			  pathplan->getFinalPos() != getPathplanFuturePosition())
 	{
 		node = PATH_NOT_READY;
 		return;
 	}
+/*	else if (itercount > 1000)
+	{
+		node = PATH_NOT_READY;
+		return;
+	}*/
+		
 	// #3: Advance to the next node
 	else if ( isAt( getActualNode(), MAXVARIANCE ) ) {
 		++node;

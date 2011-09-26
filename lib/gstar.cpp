@@ -8,11 +8,14 @@ using namespace std;
 #define PARTES 60//nr de partes que dividimos a reta
 #define LADO_QUADRADO (6*ROBOT_RADIUS_MM)//lado do quadrado de segurança
 #define DIST_ROBO_POINT ((LADO_QUADRADO*sqrt(2))/2)
+#define DIST_BOLA_POINT 200
 #define GSTAR_TIMELIMIT 0.05
 
 #define _TRESHOLD (ROBOT_RADIUS_MM/2)
-#define LIMIT_INSIDE_ROBOT (4*ROBOT_RADIUS_MM + _TRESHOLD)
+#define LIMIT_INSIDE_ROBOT (2*ROBOT_RADIUS_MM + _TRESHOLD)
 #define LIMIT_IS_BLOCKED (2*ROBOT_RADIUS_MM + _TRESHOLD)
+#define LIMIT_IS_BLOCKED_BALL (ROBOT_RADIUS_MM + 25)
+
 
 
 GStar::GStar() {}
@@ -109,7 +112,7 @@ bool GStar::pointIsInsideRobot(Point p)
 	for(unsigned int j=0; j<obstacles.size(); j++) 
 	{					
 			//equação circunferencia, se da dentro do circulo			 
-			if(obstacles[j].pos.getDistance(p) <= LIMIT_INSIDE_ROBOT)
+			if(obstacles[j].pos.getDistance(p) <= LIMIT_INSIDE_ROBOT && obstacles[j].type == ROBOT)
 								return true; //obstaculo
 	}
 	
@@ -371,20 +374,33 @@ bool GStar::straightIsBlocked(Point p1, Point p2, int* obstId)
 		obsx = (obstacles[j].pos.getX());
 		obsy = (obstacles[j].pos.getY());
 		dist = (abs(obsx*a + obsy*b + c)/sqrtAB);
-		
 		distToInitp1 = p1.getDistance(obstacles[j].pos);
 		
 		//test if obstacle is valid (isn't out of the line segment)
-		if(distToInitp1 < distPts && obstacles[j].pos.getDistance(p2) < distPts)		
-			if(dist <= LIMIT_IS_BLOCKED) { //test if obstructs
-				isBlocked = true;
-				
-				if(distToInitp1 < smallestDist) {
-				//use the distance to the inital point to determine the obstructing obstacle
-					smallestDist = distToInitp1;
-					*obstId = j;
+		if(distToInitp1 < distPts && obstacles[j].pos.getDistance(p2) < distPts)
+			if(obstacles[j].type != BALL)
+			{
+				if(dist <= LIMIT_IS_BLOCKED) { //test if obstructs
+					isBlocked = true;
+					
+					if(distToInitp1 < smallestDist) {
+					//use the distance to the inital point to determine the obstructing obstacle
+						smallestDist = distToInitp1;
+						*obstId = j;
+					}
 				}
 			}
+			else
+				if(dist <= LIMIT_IS_BLOCKED_BALL) { //test if obstructs
+						isBlocked = true;
+						cout<<"bola bloqueia"<<endl;
+						
+						if(distToInitp1 < smallestDist) {
+						//use the distance to the inital point to determine the obstructing obstacle
+							smallestDist = distToInitp1;
+							*obstId = j;
+						}
+					}
 	}
 	
 	return isBlocked;
@@ -407,20 +423,30 @@ void GStar::makePoints(int x)
 	
 		mAD = tan(angle);
 		mBC = -1/mAD;
-
-		if((abs(varX)==varX && abs(varY)==varY) || (abs(varX)!=varX && abs(varY)!=varY))
-		{
-			obst[x].p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-			obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
-			obst[x].p[0].setX(centerX - obst[x].p[3].getX() + centerX);
-			obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
 		
-			if(mBC>0)
+		if(obstacles[x].type!=BALL)
+		{
+			if((abs(varX)==varX && abs(varY)==varY) || (abs(varX)!=varX && abs(varY)!=varY))
 			{
-				obst[x].p[1].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-				obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
-				obst[x].p[2].setX(centerX - obst[x].p[1].getX() + centerX);
-				obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+				obst[x].p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+				obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+				obst[x].p[0].setX(centerX - obst[x].p[3].getX() + centerX);
+				obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+			
+				if(mBC>0)
+				{
+					obst[x].p[1].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+					obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+					obst[x].p[2].setX(centerX - obst[x].p[1].getX() + centerX);
+					obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+				}
+				else
+				{
+					obst[x].p[2].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
+					obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+					obst[x].p[1].setX(centerX - obst[x].p[2].getX() + centerX);
+					obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+				}
 			}
 			else
 			{
@@ -428,28 +454,69 @@ void GStar::makePoints(int x)
 				obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
 				obst[x].p[1].setX(centerX - obst[x].p[2].getX() + centerX);
 				obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+			
+				if(mAD>0)
+				{
+					obst[x].p[0].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+					obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+					obst[x].p[3].setX(centerX - obst[x].p[0].getX() + centerX);
+					obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+				}
+				else
+				{
+					obst[x].p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+					obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+					obst[x].p[0].setX(centerX - obst[x].p[3].getX() + centerX);
+					obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+				}
 			}
 		}
 		else
-		{
-			obst[x].p[2].setX((DIST_ROBO_POINT/sqrt((mBC*mBC)+1))+centerX);
-			obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
-			obst[x].p[1].setX(centerX - obst[x].p[2].getX() + centerX);
-			obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
-		
-			if(mAD>0)
+		{//é bola
+			cout<<"PONTOS PRA BOLA"<<endl;
+			if((abs(varX)==varX && abs(varY)==varY) || (abs(varX)!=varX && abs(varY)!=varY))
 			{
-				obst[x].p[0].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
-				obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
-				obst[x].p[3].setX(centerX - obst[x].p[0].getX() + centerX);
-				obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
-			}
-			else
-			{
-				obst[x].p[3].setX((DIST_ROBO_POINT/sqrt((mAD*mAD)+1))+centerX);
+				obst[x].p[3].setX((DIST_BOLA_POINT/sqrt((mAD*mAD)+1))+centerX);
 				obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
 				obst[x].p[0].setX(centerX - obst[x].p[3].getX() + centerX);
 				obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+			
+				if(mBC>0)
+				{
+					obst[x].p[1].setX((DIST_BOLA_POINT/sqrt((mBC*mBC)+1))+centerX);
+					obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+					obst[x].p[2].setX(centerX - obst[x].p[1].getX() + centerX);
+					obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+				}
+				else
+				{
+					obst[x].p[2].setX((DIST_BOLA_POINT/sqrt((mBC*mBC)+1))+centerX);
+					obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+					obst[x].p[1].setX(centerX - obst[x].p[2].getX() + centerX);
+					obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+				}
+			}
+			else
+			{
+				obst[x].p[2].setX((DIST_BOLA_POINT/sqrt((mBC*mBC)+1))+centerX);
+				obst[x].p[2].setY((mBC*(obst[x].p[2].getX()-centerX))+centerY);
+				obst[x].p[1].setX(centerX - obst[x].p[2].getX() + centerX);
+				obst[x].p[1].setY((mBC*(obst[x].p[1].getX()-centerX))+centerY);
+			
+				if(mAD>0)
+				{
+					obst[x].p[0].setX((DIST_BOLA_POINT/sqrt((mAD*mAD)+1))+centerX);
+					obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+					obst[x].p[3].setX(centerX - obst[x].p[0].getX() + centerX);
+					obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+				}
+				else
+				{
+					obst[x].p[3].setX((DIST_BOLA_POINT/sqrt((mAD*mAD)+1))+centerX);
+					obst[x].p[3].setY((mAD*(obst[x].p[3].getX()-centerX))+centerY);
+					obst[x].p[0].setX(centerX - obst[x].p[3].getX() + centerX);
+					obst[x].p[0].setY((mAD*(obst[x].p[0].getX()-centerX))+centerY);
+				}
 			}
 		}
 		

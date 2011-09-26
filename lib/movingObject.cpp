@@ -52,11 +52,25 @@ void MovingObject::setFuturePositionX(double x)
 void MovingObject::setFuturePositionY(double y)
 { _future_position = Point(getFuturePosition().getX(), y); }
 
+/*----------------------------------------------------
+ */
+ void MovingObject::setPathplanFuturePosition(Point newFuturePosition)
+{ _pathplan_future_position = newFuturePosition; }
 
+ void MovingObject::setPathplanFuturePosition(double x, double y)
+{ _pathplan_future_position = Point(x, y); }
+
+void MovingObject::setPathplanFuturePositionX(double x)
+{ _pathplan_future_position = Point(x, getPathplanFuturePosition().getY()); }
+
+void MovingObject::setPathplanFuturePositionY(double y)
+{ _pathplan_future_position = Point(getPathplanFuturePosition().getX(), y); }
+
+/*----------------------------------------------------
+ */
+ 
 void MovingObject::setDisplacement(double displacement)
 { _displacement = displacement; }
-
-
 
 Vector MovingObject::calcDisplacementVector()
 { return Vector(getCurrentPosition(), getFuturePosition()); }
