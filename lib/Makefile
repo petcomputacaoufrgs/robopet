@@ -20,7 +20,8 @@ OBJ_NAMES= 	movingObject \
 			utils \
 			gstar \
 			astar \
-			luaCppBridge
+			luaCppBridge \
+			sgstar
 
 OBJDIR = obj
 OBJ_FILES = $(addsuffix .o,$(OBJ_NAMES))
