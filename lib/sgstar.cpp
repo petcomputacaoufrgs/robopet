@@ -7,7 +7,7 @@ SGStar::~SGStar() {}
 void SGStar::run()
 {	
 	clockBase = clock();
-	cout << "SUPER G*" << endl;
+	//cout << "SUPER G*" << endl;
 	
 	//insere initialpos no vetor
 	Vertex init;
@@ -19,18 +19,26 @@ void SGStar::run()
 	//inicializa vetor de vertices
 	initVertexs();
 	
-	//insere finalpos no vetor
-	Vertex fim;
-	fim.dist = INFINITY;
-	fim.previous = -1;
-	fim.point = finalpos;
-	vetVertexs.push_back(fim);
+	numFinals = 0;
+	
+	if (isBlocked(finalpos))
+	{
+		aprocimateFinals();
+	}
+	else {
+		Vertex fim; //insere finalpos no vetor
+		fim.dist = INFINITY;
+		fim.previous = -1;
+		fim.point = finalpos;
+		vetVertexs.push_back(fim);
+		
+		numFinals = 1;
+	}
 	
 	//cria lista de adjacentes
 	createAdjList();
 		
 	int v = 0; //vertice
-	//indexFinalPos = (int)vetVertexs.size() - 1;
 	double distAux = 0;
 	multimap<double, int> prioriQ;
 	multimap<double, int>::iterator it;
@@ -53,29 +61,45 @@ void SGStar::run()
 	}
 	while (!prioriQ.empty());
 	
-	if (buildPath()) //se conseguiu chegar em algum final
-	{		
-		status = SUCCESS;
-		elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
-		cout << "dist = " << vetVertexs[indexFinalPos].dist << endl;
-	}
-	else //não consegue chegar no ponto final
-	{
-		status = ERROR_UNREACHABLE;
-	}
-
+	buildPath(); //se conseguiu chegar em algum final
+			
+	status = SUCCESS;
+	elapsedTime = (clock() - clockBase)/(float)CLOCKS_PER_SEC;
+	
 	vetVertexs.clear();
 }
 
+void SGStar::aprocimateFinals()
+{	
+	double cosxLimIsBlocked[8] = {LIMIT_IS_BLOCKED, .525322*LIMIT_IS_BLOCKED, -.448074*LIMIT_IS_BLOCKED, -.996088*LIMIT_IS_BLOCKED, -.59846*LIMIT_IS_BLOCKED, .367319*LIMIT_IS_BLOCKED, .984382*LIMIT_IS_BLOCKED, .666916*LIMIT_IS_BLOCKED };
+	double simxLimIsBlocked[8] = {.0, .850904*LIMIT_IS_BLOCKED, .893997*LIMIT_IS_BLOCKED, .0883687*LIMIT_IS_BLOCKED, -.801153*LIMIT_IS_BLOCKED, -.930095*LIMIT_IS_BLOCKED, -.176046*LIMIT_IS_BLOCKED, .745133*LIMIT_IS_BLOCKED };
+	
+	double centerX = finalpos.getX();
+	double centerY = finalpos.getY();
+	Vertex aux;
+		
+	for (int j=0; j<8; j++) {
+		aux.point.setX(centerX+cosxLimIsBlocked[j]);
+		aux.point.setY(centerY+simxLimIsBlocked[j]);
+	
+		if (!isBlocked(aux.point)) {
+			aux.dist = INFINITY;
+			aux.previous = -1;					
+			vetVertexs.push_back(aux);
+			
+			numFinals++;
+		}
+	}
+}
 
 // incializa vetor de vertices
 void SGStar::initVertexs()
 {
 	Vertex aux;
+	Point points[4];
 	
 	for (unsigned int i=0; i<obstacles.size(); i++) {
 		// cria os 4 pontos do obstáculo
-		Point points[4];
 		makePoints(obstacles[i].pos, points);
 		
 		// insere os 4 pontos do obstaculo no vetor de vertices
@@ -94,78 +118,59 @@ void SGStar::initVertexs()
 //cria as listas de vertices adjacentes para cada ponto
 void SGStar::createAdjList()
 {
-	int fim = vetVertexs.size()-1;
+	bool chegaFim=false;
 	
-	for (unsigned int i=0; i<fim-1; i++) {
-		cout << i << " -> ";
-		if (!straightIsBlocked(vetVertexs[i].point, vetVertexs[fim].point)) {
-			cout << " " << fim << endl;
-			vetVertexs[i].vertsAdj.insert(pair<double, int>(vetVertexs[i].point.getDistance(vetVertexs[fim].point), fim));
+	for (unsigned int i=0; i<vetVertexs.size() - numFinals; i++)
+	 {
+		//check if can go direct to one final point
+		for (int j = vetVertexs.size() - numFinals; j < vetVertexs.size(); j++)
+		{
+			if (!straightIsBlocked(vetVertexs[i].point, vetVertexs[j].point)) {
+				vetVertexs[i].vertsAdj.insert(pair<double, int>(vetVertexs[i].point.getDistance(vetVertexs[j].point), j));
+				chegaFim=true;
+			}
 		}
-		else
+		
+		if (!chegaFim)
 		{		
-			for (unsigned int j=i+1; j<fim-1; j++) {
-				if (!straightIsBlocked(vetVertexs[i].point, vetVertexs[j].point)) {
-					cout << j << " ";
-					vetVertexs[i].vertsAdj.insert(pair<double, int>(vetVertexs[i].point.getDistance(vetVertexs[j].point), j));
+			for (unsigned int k=i+1; k<vetVertexs.size() - numFinals; k++) 
+			{
+				if (!straightIsBlocked(vetVertexs[i].point, vetVertexs[k].point)) {
+					vetVertexs[i].vertsAdj.insert(pair<double, int>(vetVertexs[i].point.getDistance(vetVertexs[k].point), k));
 				}
 			}
 		}
-			
-		cout << endl;
 	}			
 }
 
 
-bool SGStar::buildPath()
+void SGStar::buildPath()
 {
-	double cosxLimIsBlocked[8] = {LIMIT_IS_BLOCKED, .525322*LIMIT_IS_BLOCKED, -.448074*LIMIT_IS_BLOCKED, -.996088*LIMIT_IS_BLOCKED, -.59846*LIMIT_IS_BLOCKED, .367319*LIMIT_IS_BLOCKED, .984382*LIMIT_IS_BLOCKED, .666916*LIMIT_IS_BLOCKED };
-	double simxLimIsBlocked[8] = {.0, .850904*LIMIT_IS_BLOCKED, .893997*LIMIT_IS_BLOCKED, .0883687*LIMIT_IS_BLOCKED, -.801153*LIMIT_IS_BLOCKED, -.930095*LIMIT_IS_BLOCKED, -.176046*LIMIT_IS_BLOCKED, .745133*LIMIT_IS_BLOCKED };
-
-	int i = vetVertexs.size()-1;
-	Point aux, nearPoint, prev = vetVertexs[vetVertexs[i].previous].point;
-	double minDist = INFINITY, distAux=0;
-	
+	int end=0, j=0;
+	double smallestDist = INFINITY;
 	path.clear();
 	
-	if (isBlocked(vetVertexs[i].point)) {
-		double centerX = vetVertexs[i].point.getX();
-		double centerY = vetVertexs[i].point.getY();
-		
-		for (int j=0; j<8; j++) {
-			aux.setX(centerX+cosxLimIsBlocked[j]);
-			aux.setY(centerY+simxLimIsBlocked[j]);
-			
-			distAux = prev.getDistance(aux);
-			if (minDist > distAux && !isBlocked(aux)) {
-				minDist = distAux;
-				nearPoint = aux;
-			}
-		}
-		
-		if (minDist != INFINITY) // achou um ponto para aproximar
-		{
-			path.insert(path.begin(), nearPoint);
-		}
-		else {
-			return false; //impossível aproximar um ponto
-		}	
+	//find the final point aprocimated whith the smallest distance
+	for (int i = vetVertexs.size() - numFinals; i < vetVertexs.size(); i++)
+	{
+		if (vetVertexs[i].dist < smallestDist) {
+			end = i;
+			smallestDist = vetVertexs[i].dist;
+		} 
 	}
-	else {
-		path.insert(path.begin(), vetVertexs[i].point); // ponto final não esta bloqueado
+		
+	path.push_back(vetVertexs[end].point); 		
+	j = vetVertexs[end].previous;
+	
+	while (j!=0)  // insere os pontos intermediarios do caminho
+	{
+		path.insert(path.begin(), vetVertexs[j].point);
+		j = vetVertexs[j].previous;
 	}
 	
-	i = vetVertexs[i].previous;
-	 
-	while (i!=0)  // insere os pontos intermediarios do caminho
-	{ 
-		path.insert(path.begin(), vetVertexs[i].point);
-		i = vetVertexs[i].previous;
-	}
+	path.insert(path.begin(), vetVertexs[j].point); // insere o ponto inicial
 	
-	path.insert(path.begin(), vetVertexs[i].point); // insere o ponto inicial
-
-	return true;
+	cout << "dist = " << vetVertexs[end].dist << endl;
 }
 
 

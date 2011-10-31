@@ -11,9 +11,8 @@ using namespace std;
 #define _TRESHOLD (ROBOT_RADIUS_MM/2)
 #define LIMIT_IS_BLOCKED (2*ROBOT_RADIUS_MM + _TRESHOLD)
 #define LIMIT_IS_BLOCKED_BALL (ROBOT_RADIUS_MM + 25)
-#define DIST_ROBO_POINT ((LADO_QUADRADO*sqrt(2))/2)
+#define DIST_ROBO_POINT (3*ROBOT_RADIUS_MM*sqrt(2))
 #define DIST_BOLA_POINT 200
-#define LADO_QUADRADO (6*ROBOT_RADIUS_MM)//lado do quadrado de segurança
 
 typedef struct {
 	double dist;
@@ -42,14 +41,15 @@ class SGStar : public Pathplan
 		
 	protected:
 		vector<Vertex> vetVertexs;
-		int indexFinalPos;
+		int numFinals;
 		
 		void initVertexs();
 		void createAdjList();
-		bool buildPath();
+		void buildPath();
 		bool straightIsBlocked(Point p1, Point p2);
 		void makePoints(Point p, Point aux[]);
 		bool isBlocked(Point x);
+		void aprocimateFinals();
 };
 
 #endif
